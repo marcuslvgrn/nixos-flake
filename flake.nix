@@ -6,36 +6,39 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
 
     # Home manager
-    home-manager.url = "github:nix-community/home-manager/release-25.05";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    home-manager,
-    ...
-  } @ inputs: let
-    inherit (self) outputs;
-  in {
+  outputs = inputs@{ nixpkgs, home-manager, ... }: {
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
     nixosConfigurations = {
       # FIXME replace with your hostname
       nixosX360 = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs outputs;};
-        modules = [./hosts/nixosX360/configuration.nix];
-      };
-    };
-
-    # Standalone home-manager configuration entrypoint
-   # Available through 'home-manager --flake .#your-username@your-hostname'
-    homeConfigurations = {
-      lovgren = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs;};
-        # > Our main home-manager configuration file <
-        modules = [./home-manager/home.nix];
+        system = "x86_64-linux";
+#        specialArgs = {inherit inputs outputs;};
+        modules = [
+          ./common/gnome.nix
+          ./common/grub.nix
+          ./common/networkmanager.nix
+          ./common/openssh.nix
+          ./common/soap-nix.nix
+          ./common/users.nix
+          ./hosts/nixosX360/configuration.nix
+          
+          # make home-manager as a module of nixos
+          # so that home-manager configuration will be deployed automatically when executing `nixos-rebuild switch`
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.lovgren = import ./home-manager/lovgren.nix;
+            home-manager.users.root    = import ./home-manager/root.nix;
+          }
+        ];
       };
     };
   };

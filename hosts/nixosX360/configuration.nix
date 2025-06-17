@@ -4,23 +4,24 @@
 
 { inputs, config, lib, pkgs, ... }:
 
-let
-  home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz;
-in
+#let
+#  home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz;
+#in
 {
   imports =
     [ 
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      # Home Manager
-      "${home-manager}/nixos"
-      ./gnome.nix
-#      ./xfce.nix
-      ./boot-loader.nix
-      ./networking.nix
-#      ./vmware.nix
-      ./soap-nix.nix
     ];
+
+  networking.hostName = "nixosX360"; 
+   
+  boot.loader.grub.extraEntries = ''
+    menuentry "Arch" {
+      set root=(hd0,gpt1)
+      chainloader /efi/grub/grubx64.efi
+    }
+  '';
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -35,8 +36,6 @@ in
   i18n.defaultLocale = "sv_SE.UTF-8";
   console = {
     font = "Lat2-Terminus16";
-  #  keyMap = "us";
-  #  useXkbConfig = true; # use xkb.options in tty.
   };
 
   # Configure keymap in X11
@@ -57,105 +56,27 @@ in
   # services.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-   users.users.lovgren = {
-     isNormalUser = true;
-     description = "Marcus Lövgren";
-     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-     packages = with pkgs; [
-       tree
-     ];
-     shell = pkgs.bash;
-     home = "/home/lovgren";
-   };
+#   users.users.lovgren = {
+#     isNormalUser = true;
+#     description = "Marcus Lövgren";
+#     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+#     packages = with pkgs; [
+#       tree
+#     ];
+#     shell = pkgs.bash;
+#     home = "/home/lovgren";
+#   };
 
    # Call commands and interactive bash start
    # Commands are separated by \n
    programs.bash.interactiveShellInit = "LANG=en_US.UTF-8\n neofetch\n";
 
-  #home manager
-  home-manager.users.root = { pkgs, ... }: {
-    #GIT
-    programs.git = {
-      enable = true;
-      userEmail = "marcuslvgrn@gmail.com";
-      userName = "marcuslvgrn";
-    };
-    programs.bash = {
-      enable = true;
-      shellAliases = {
-        ll = "ls -la";
-         l = "ls -alh";
-        ls = "ls --color=tty";
-      };
-    };
-    home.stateVersion = "25.05";
-    programs.home-manager.enable = true;
-  };
-  
-  home-manager.users.lovgren = { pkgs, ... }: {
-    home.sessionVariables = {
-      LANG = "sv_SE.UTF-8";
-    };
-    home.username = "lovgren";
-    home.homeDirectory = "/home/lovgren";
-    home.packages = with pkgs; [ 
-      gnomeExtensions.dash-to-dock
-    ];
-    programs.bash = {
-      enable = true;
-      shellAliases = {
-        ll = "ls -la";
-         l = "ls -alh";
-        ls = "ls --color=tty";
-      };
-    };
-    
-    #GIT
-    programs.git = {
-      enable = true;
-      userEmail = "marcuslvgrn@gmail.com";
-      userName = "marcuslvgrn";
-    };
-
-    dconf = {
-      enable = true;
-      settings."org/gnome/shell" = {
-        disable-user-extensions = false;
-        enabled-extensions = with pkgs.gnomeExtensions; [
-          dash-to-dock.extensionUuid
-        ];
-      };
-    };
-    # The state version is required and should stay at the version you
-    # originally installed.
-    home.stateVersion = "25.05";
-    programs.home-manager.enable = true;
-  };
-
-  programs = {
-    #FIREFOX
-    firefox = {
-      enable = true;
- #     enableGnomeExtensions = true;
-      languagePacks = [ "sv-SE" ];
-#      /* ---- EXTENSIONS ---- */
-#      # Check about:support for extension/add-on ID strings.
-#      # Valid strings for installation_mode are "allowed", "blocked",
-#      # "force_installed" and "normal_installed".
-#      ExtensionSettings = {
-#        
-#      };    
-    };
-  };
- 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    gedit
     wget
     efibootmgr
-    bitwarden
     neofetch
     gitFull
     #GPG
@@ -173,7 +94,13 @@ in
 #    pinentryFlavor = "curses";
     enableSSHSupport = true;
   };
-
+  
+  swapDevices = [ 
+    {
+      device = "/swap/swapfile";
+      size = 4*1024;
+    }
+  ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -182,18 +109,6 @@ in
   #   enable = true;
   #   enableSSHSupport = true;
   # };
-
-  #configure SSH
-  services.openssh = {
-    enable = true;
-    settings = {
-      X11Forwarding = true;
-      PermitRootLogin = "no"; # disable root login
-      PasswordAuthentication = true; # disable password login
-    };
-    openFirewall = true;
-  };
-
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
