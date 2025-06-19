@@ -1,7 +1,9 @@
 keys:
-  - &primary age1aj8nwyxg6kh5j8f8s4l6agr0vr424w27xs69tttgykwmpu3z2uts8xclpd
+  - &nixosVMWare age1aj8nwyxg6kh5j8f8s4l6agr0vr424w27xs69tttgykwmpu3z2uts8xclpd
+  - &nixosX360 age19cknes4sytvdsm4203ys6pttyhjw9h4d0ehlr35a07vrc6zvsd7qvhvkre
 creation_rules:
-  - path_regex: secrets/secrets.yaml
+  - path_regex: secrets/root-secrets.yaml
     key_groups:
     - age:
-      - *primary
+      - *nixosVMWare
+      - *nixosX360
