@@ -2,11 +2,11 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ inputs, config, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
-#let
-#  home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz;
-#in
+let
+  home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz;
+in
 {
   imports =
     [ 
@@ -14,18 +14,11 @@
       ./hardware-configuration.nix
     ];
 
-  networking.hostName = "nixosX360"; 
-   
-  boot.loader.grub.extraEntries = ''
-    menuentry "Arch" {
-      set root=(hd0,gpt1)
-      chainloader /efi/grub/grubx64.efi
-    }
-  '';
+  networking.hostName = "nixosVMWare"; 
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  
+
   # Enable the Flakes feature and the accompanying new nix command-line tool
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
@@ -36,6 +29,8 @@
   i18n.defaultLocale = "sv_SE.UTF-8";
   console = {
     font = "Lat2-Terminus16";
+  #  keyMap = "us";
+  #  useXkbConfig = true; # use xkb.options in tty.
   };
 
   # Configure keymap in X11
@@ -51,7 +46,7 @@
   #   enable = true;
   #   pulse.enable = true;
   # };
-
+  
   # Enable touchpad support (enabled default in most desktopManager).
   # services.libinput.enable = true;
 
@@ -77,7 +72,7 @@
     emacs
     nixfmt-classic
  ];
- 
+
   services.pcscd.enable = true;
   programs.gnupg.agent = {
     enable = true;
