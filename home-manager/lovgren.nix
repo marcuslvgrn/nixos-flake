@@ -1,6 +1,8 @@
 # This is your home-manager configuration file
 # Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
-{ nixpkgs, config, lib, pkgs, ... }: {
+{ nixpkgs, config, lib, pkgs, ... }:
+
+{
 
   # You can import other home-manager modules here
   imports = [
@@ -14,7 +16,7 @@
   # TODO: Set your username
   home = {
     username = "lovgren";
-    sessionVariables = { LANG = "sv_SE.UTF-8"; };
+    sessionVariables = { LANG = "sv_SE.UTF-8"; EDITOR = "emacs -nw"; };
     packages = with pkgs; [ gnomeExtensions.dash-to-dock ];
     shellAliases = {
       ll = "ls -la";

@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ pkgs, inputs, config, ... }:
 
 {
   # Pick only one of the below networking options.
@@ -13,7 +13,7 @@
   networking.networkmanager = {
     enable = true;
     ensureProfiles = {
-      environmentFiles = [ "/root/network-manager.env" ];
+      environmentFiles = [ config.sops.secrets."wifi.env".path ];
       profiles = {
         home-wifi = {
           connection = {
@@ -21,11 +21,11 @@
              type = "wifi";
           };
           wifi = {
-            ssid = "Southfork";
+            ssid = "$home_ssid";
           };
           wifi-security = {
             key-mgmt = "wpa-psk";
-            psk = "$WIFIPASSWORD";
+            psk = "$home_psk";
           };
         };
       };

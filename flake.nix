@@ -4,7 +4,11 @@
   inputs = {
     # Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-
+    # sops-nix
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # Home manager
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
@@ -12,7 +16,7 @@
     };
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, ... }: {
+  outputs = inputs@{ nixpkgs, home-manager, sops-nix, ... }: {
     # NixOS configuration entrypoint
     # Available through 'nixos-rebuild --flake .#your-hostname'
     nixosConfigurations = {
@@ -21,6 +25,7 @@
         #        specialArgs = {inherit inputs outputs;};
         modules = [
           ./hosts/nixosX360/configuration.nix
+          sops-nix.nixosModules.sops
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
@@ -32,9 +37,10 @@
       };
       nixosVMWare = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        #        specialArgs = {inherit inputs outputs;};
+        specialArgs = { inherit inputs home-manager; };
         modules = [
           ./hosts/nixosVMWare/configuration.nix
+          sops-nix.nixosModules.sops
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;

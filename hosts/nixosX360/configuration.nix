@@ -15,8 +15,8 @@
     ../../common/grub.nix
     ../../common/networkmanager.nix
     ../../common/openssh.nix
-    ../../common/soap-nix.nix
     ../../common/users.nix
+    ../../common/sops.nix
   ];
 
   networking.hostName = "nixosX360";

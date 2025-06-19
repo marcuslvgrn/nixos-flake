@@ -2,12 +2,9 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, home-manager, ... }:
 
-let
-  home-manager = builtins.fetchTarball
-    "https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz";
-in {
+{
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -15,9 +12,9 @@ in {
     ../../common/grub.nix
     ../../common/networkmanager.nix
     ../../common/openssh.nix
-    ../../common/soap-nix.nix
     ../../common/users.nix
     ../../common/vmware.nix
+    ../../common/sops.nix
   ];
 
   networking.hostName = "nixosVMWare";
