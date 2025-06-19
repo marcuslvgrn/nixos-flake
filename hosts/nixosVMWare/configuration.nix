@@ -5,16 +5,22 @@
 { config, lib, pkgs, ... }:
 
 let
-  home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz;
-in
-{
-  imports =
-    [ 
-      # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  home-manager = builtins.fetchTarball
+    "https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz";
+in {
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ../../common/gnome.nix
+    ../../common/grub.nix
+    ../../common/networkmanager.nix
+    ../../common/openssh.nix
+    ../../common/soap-nix.nix
+    ../../common/users.nix
+    ../../common/vmware.nix
+  ];
 
-  networking.hostName = "nixosVMWare"; 
+  networking.hostName = "nixosVMWare";
 
   # Use latest kernel.
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -29,8 +35,8 @@ in
   i18n.defaultLocale = "sv_SE.UTF-8";
   console = {
     font = "Lat2-Terminus16";
-  #  keyMap = "us";
-  #  useXkbConfig = true; # use xkb.options in tty.
+    #  keyMap = "us";
+    #  useXkbConfig = true; # use xkb.options in tty.
   };
 
   # Configure keymap in X11
@@ -46,13 +52,16 @@ in
   #   enable = true;
   #   pulse.enable = true;
   # };
-  
+
   # Enable touchpad support (enabled default in most desktopManager).
   # services.libinput.enable = true;
 
-   # Call commands and interactive bash start
-   # Commands are separated by \n
-   programs.bash.interactiveShellInit = "LANG=en_US.UTF-8\n neofetch\n";
+  # Call commands and interactive bash start
+  # Commands are separated by \n
+  programs.bash.interactiveShellInit = ''
+    LANG=en_US.UTF-8
+     neofetch
+  '';
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
@@ -71,21 +80,19 @@ in
     #
     emacs
     nixfmt-classic
- ];
+  ];
 
   services.pcscd.enable = true;
   programs.gnupg.agent = {
     enable = true;
-#    pinentryFlavor = "curses";
+    #    pinentryFlavor = "curses";
     enableSSHSupport = true;
   };
-  
-  swapDevices = [ 
-    {
-      device = "/swap/swapfile";
-      size = 4*1024;
-    }
-  ];
+
+  swapDevices = [{
+    device = "/swap/swapfile";
+    size = 4 * 1024;
+  }];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

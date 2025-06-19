@@ -14,47 +14,40 @@
   # TODO: Set your username
   home = {
     username = "lovgren";
-    sessionVariables = {
-      LANG = "sv_SE.UTF-8";
-    };
-    packages = with pkgs; [ 
-      gnomeExtensions.dash-to-dock
-    ];
+    sessionVariables = { LANG = "sv_SE.UTF-8"; };
+    packages = with pkgs; [ gnomeExtensions.dash-to-dock ];
     shellAliases = {
       ll = "ls -la";
-       l = "ls -alh";
+      l = "ls -alh";
       ls = "ls --color=tty";
     };
     stateVersion = "25.05";
   };
-   
-#  nixpkgs = {
-#    # You can add overlays here
-#    overlays = [
-#      # If you want to use overlays exported from other flakes:
-#      # neovim-nightly-overlay.overlays.default
-#
-#      # Or define it inline, for example:
-#      # (final: prev: {
-#      #   hi = final.hello.overrideAttrs (oldAttrs: {
-#      #     patches = [ ./change-hello-to-hi.patch ];
-#      #   });
-#      # })
-#    ];
-#    # Configure your nixpkgs instance
-#    config = {
-#      # Disable if you don't want unfree packages
-#      allowUnfree = true;
-#      # Workaround for https://github.com/nix-community/home-manager/issues/2942
-#      allowUnfreePredicate = _: true;
-#    };
-#  };
 
-  
-  programs.bash = {
-    enable = true;
-  };
-  
+  #  nixpkgs = {
+  #    # You can add overlays here
+  #    overlays = [
+  #      # If you want to use overlays exported from other flakes:
+  #      # neovim-nightly-overlay.overlays.default
+  #
+  #      # Or define it inline, for example:
+  #      # (final: prev: {
+  #      #   hi = final.hello.overrideAttrs (oldAttrs: {
+  #      #     patches = [ ./change-hello-to-hi.patch ];
+  #      #   });
+  #      # })
+  #    ];
+  #    # Configure your nixpkgs instance
+  #    config = {
+  #      # Disable if you don't want unfree packages
+  #      allowUnfree = true;
+  #      # Workaround for https://github.com/nix-community/home-manager/issues/2942
+  #      allowUnfreePredicate = _: true;
+  #    };
+  #  };
+
+  programs.bash = { enable = true; };
+
   #GIT
   programs.git = {
     enable = true;
@@ -66,16 +59,14 @@
     enable = true;
     settings."org/gnome/shell" = {
       disable-user-extensions = false;
-      enabled-extensions = with pkgs.gnomeExtensions; [
-        dash-to-dock.extensionUuid
-      ];
+      enabled-extensions = with pkgs.gnomeExtensions;
+        [ dash-to-dock.extensionUuid ];
     };
   };
-  
-#  home-manager.users.lovgren = { pkgs, ... }: {
-#    home.username = "lovgren";
-#    home.homeDirectory = "/home/lovgren";
-    
+
+  #  home-manager.users.lovgren = { pkgs, ... }: {
+  #    home.username = "lovgren";
+  #    home.homeDirectory = "/home/lovgren";
 
   programs.home-manager.enable = true;
 
@@ -84,12 +75,12 @@
   # home.packages = with pkgs; [ steam ];
 
   # Enable home-manager and git
-#  programs.home-manager.enable = true;
-#  programs.git.enable = true;
+  #  programs.home-manager.enable = true;
+  #  programs.git.enable = true;
 
   # Nicely reload system units when changing configs
-#  systemd.user.startServices = "sd-switch";
+  #  systemd.user.startServices = "sd-switch";
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
-#  home.stateVersion = "25.05";
+  #  home.stateVersion = "25.05";
 }
