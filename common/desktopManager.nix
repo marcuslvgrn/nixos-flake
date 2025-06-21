@@ -12,6 +12,7 @@
   environment.systemPackages = with pkgs; [
     gedit
     bitwarden-desktop
+    spotify
  ];
 
   programs = {

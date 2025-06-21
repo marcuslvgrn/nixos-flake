@@ -1,6 +1,17 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
+  nix.gc = {
+    automatic = true;
+    dates = "Mon..Sun *-*-* 12:00";
+    options = "--delete-older-than 10d";
+  };
+
+  nix.extraOptions = ''
+    min-free = ${toString (100 * 1024 * 1024)}
+    max-free = ${toString (1024 * 1024 * 1024)}
+  '';
+
   nixpkgs.config.allowUnfree = true;
 
   # Use latest kernel.
