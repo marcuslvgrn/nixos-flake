@@ -2,6 +2,11 @@
 
 {
 
+  imports = [
+    #Common desktop manager settings
+    ./desktopManager.nix
+  ];
+
   #Use network manager for xfce
   networking.networkmanager.enable = true;
   programs.nm-applet.enable = true;

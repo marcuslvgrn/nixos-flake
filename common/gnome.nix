@@ -1,6 +1,11 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
+  imports = [
+    #Common desktop manager settings
+    ./desktopManager.nix
+  ];
+
   # Enable GNOME and GDM
   services.xserver = {
     enable = true;
@@ -12,19 +17,6 @@
   # GNOME shell host connector
   services.gnome.gnome-browser-connector.enable = true;
 
-  # Autologin a user
-  services.displayManager = {
-    autoLogin.enable = true;
-    autoLogin.user = "lovgren";
-  };
-  
-  # List packages installed in system profile.
-  # You can use https://search.nixos.org/ to find more packages (and options).
-  environment.systemPackages = with pkgs; [
-    gedit
-    bitwarden
- ];
- 
   # Exclude some packages
   environment.gnome.excludePackages = (with pkgs; [
     atomix # puzzle game
@@ -43,22 +35,4 @@
     tali # poker game
     totem # video player
   ]);
-  
-  programs = {
-    #FIREFOX
-    firefox = {
-      enable = true;
- #     enableGnomeExtensions = true;
-      languagePacks = [ "sv-SE" ];
-#      /* ---- EXTENSIONS ---- */
-#      # Check about:support for extension/add-on ID strings.
-#      # Valid strings for installation_mode are "allowed", "blocked",
-#      # "force_installed" and "normal_installed".
-#      ExtensionSettings = {
-#        
-#      };    
-    };
-  };
- 
-
 }
