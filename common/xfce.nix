@@ -4,7 +4,7 @@
 
   #Use network manager for xfce
   networking.networkmanager.enable = true;
-  programs.nm-applet = true;
+  programs.nm-applet.enable = true;
 
   # Enable GNOME and GDM
   services.xserver = {
