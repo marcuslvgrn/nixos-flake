@@ -9,7 +9,7 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ../../common/configuration.nix
-    ../../common/gnome.nix
+    ../../common/xfce.nix
     ../../common/grub.nix
     ../../common/networkmanager.nix
     ../../common/openssh.nix
@@ -17,14 +17,7 @@
     ../../common/sops.nix
   ];
 
-  networking.hostName = "nixosX360";
-
-  boot.loader.grub.extraEntries = ''
-    menuentry "Arch" {
-      set root=(hd0,gpt1)
-      chainloader /efi/grub/grubx64.efi
-    }
-  '';
+  networking.hostName = "nixosASUS";
 
   swapDevices = [{
     device = "/swap/swapfile";
