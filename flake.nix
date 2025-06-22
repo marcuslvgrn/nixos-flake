@@ -22,7 +22,7 @@
     nixosConfigurations = {
       nixosX360 = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        #        specialArgs = {inherit inputs outputs;};
+        specialArgs = { inherit inputs home-manager; };
         modules = [
           ./hosts/nixosX360/configuration.nix
           sops-nix.nixosModules.sops
@@ -55,6 +55,21 @@
         specialArgs = { inherit inputs home-manager; };
         modules = [
           ./hosts/nixosASUS/configuration.nix
+          sops-nix.nixosModules.sops
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.lovgren = import ./home-manager/lovgren.nix;
+            home-manager.users.root = import ./home-manager/root.nix;
+          }
+        ];
+      };
+      nixosTranfor = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs home-manager; };
+        modules = [
+          ./hosts/nixosTranfor/configuration.nix
           sops-nix.nixosModules.sops
           home-manager.nixosModules.home-manager
           {

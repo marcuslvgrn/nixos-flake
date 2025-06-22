@@ -35,4 +35,14 @@
     tali # poker game
     totem # video player
   ]);
+
+#  home-manager.users.lovgren.home = {
+#    packages = with pkgs; [
+#    ];
+#  };
+  
+  environment.systemPackages = with pkgs; [
+      gnomeExtensions.dash-to-dock
+      gnomeExtensions.hide-top-bar
+    ];
 }

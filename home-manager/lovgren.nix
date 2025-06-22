@@ -17,7 +17,6 @@
   home = {
     username = "lovgren";
     sessionVariables = { LANG = "sv_SE.UTF-8"; EDITOR = "emacs -nw"; };
-    packages = with pkgs; [ gnomeExtensions.dash-to-dock ];
     shellAliases = {
       ll = "ls -la";
       l = "ls -alh";
