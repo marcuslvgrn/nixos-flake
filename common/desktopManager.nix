@@ -13,6 +13,8 @@
     gedit
     bitwarden-desktop
     spotify
+    protonvpn-gui
+    chromium
  ];
 
   programs = {
