@@ -18,6 +18,11 @@
 
   networking.hostName = "nixosTranfor";
 
+  #Packages only installed on this host
+  environment.systemPackages = with pkgs; [
+    docker-compose
+  ]; 
+
 #  swapDevices = [{
 #    device = "/swap/swapfile";
 #    size = 2 * 1024;
