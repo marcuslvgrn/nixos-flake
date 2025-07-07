@@ -26,10 +26,23 @@
     }
   '';
 
-#  swapDevices = [{
-#    device = "/swap/swapfile";
-#    size = 8 * 1024;
-#  }];
+  swapDevices = [{
+    device = "/swap/swapfile";
+    size = 16 * 1024;
+  }];
 
+  environment.systemPackages = with pkgs; [
+    fprintd
+  ];
+
+  services.fprintd.enable = true;
+  services.fprintd.tod.enable = true;
+  services.fprintd.tod.driver = pkgs.libfprint-2-tod1-goodix;
+
+    # Autologin a user
+  services.displayManager = {
+    autoLogin.enable = false;
+  };
+ 
 }
 

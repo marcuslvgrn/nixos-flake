@@ -24,5 +24,11 @@
     size = 2 * 1024;
   }];
 
+  # Autologin a user
+  services.displayManager = {
+    autoLogin.enable = true;
+    autoLogin.user = "lovgren";
+  };
+  
 }
 
