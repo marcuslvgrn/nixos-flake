@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, pkgs, inputs, modulesPath, ... }:
 
 {
   nix.gc = {
@@ -68,8 +68,11 @@
     #
     emacs
     nixfmt-classic
+    nixd
   ];
 
+  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+  
   services.pcscd.enable = true;
   programs.gnupg.agent = {
     enable = true;
