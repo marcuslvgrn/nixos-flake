@@ -61,7 +61,10 @@
     settings."org/gnome/shell" = {
       disable-user-extensions = false;
       enabled-extensions = with pkgs.gnomeExtensions;
-        [ dash-to-dock.extensionUuid ];
+        [ dash-to-dock.extensionUuid
+          appindicator.extensionUuid
+          hide-top-bar.extensionUuid
+        ];
     };
   };
 

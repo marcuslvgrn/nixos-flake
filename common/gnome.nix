@@ -44,5 +44,8 @@
   environment.systemPackages = with pkgs; [
       gnomeExtensions.dash-to-dock
       gnomeExtensions.hide-top-bar
+      gnomeExtensions.appindicator
+      gnome-tweaks
+      linssid
     ];
 }

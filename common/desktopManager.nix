@@ -1,6 +1,9 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
+  # Bluetooth
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
@@ -9,6 +12,12 @@
     spotify
     protonvpn-gui
     chromium
+    yt-dlp
+    nextcloud-client
+    bluez
+    bluez-tools
+    usbutils
+    pciutils
  ];
 
   programs = {

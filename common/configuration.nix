@@ -69,6 +69,9 @@
     emacs
     nixfmt-classic
     nixd
+    traceroute
+    dig
+    btrfs-progs
   ];
 
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
