@@ -47,6 +47,7 @@
   boot.kernelParams = [
     "resume_offset=533760"
     "resume=UUID=dcabbd78-7298-431a-8877-cabf3a77a6e2"
+    "kvm.enable_virt_at_load=0"
   ];
   boot.resumeDevice = "/dev/disk/by-uuid/dcabbd78-7298-431a-8877-cabf3a77a6e2";
 
