@@ -8,6 +8,7 @@ systemd.services.bluetooth-resume= {
   path = with pkgs; [ bash ];
   script = ''
     echo serial0-0 > /sys/module/hci_uart/drivers/serial:hci_uart_qca/bind
+    echo "Bluetooth-resume: Resumed normal operation" > /dev/kmsg
     '';          
 };
 
@@ -18,6 +19,7 @@ systemd.services.bluetooth-suspend= {
   path = with pkgs; [ bash ];
   script = ''
     echo serial0-0 > /sys/module/hci_uart/drivers/serial:hci_uart_qca/unbind
+    echo "Bluetooth-suspend: Suspeneded operation" > /dev/kmsg
     '';          
 };
 

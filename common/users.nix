@@ -4,7 +4,7 @@
    users.users.lovgren = {
      isNormalUser = true;
      description = "Marcus Lövgren";
-     extraGroups = [ "wheel" "networkmanager"];
+     extraGroups = [ "wheel" "networkmanager" ];
      shell = pkgs.bash;
      home = "/home/lovgren";
    };
