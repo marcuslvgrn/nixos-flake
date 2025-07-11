@@ -75,6 +75,7 @@
     traceroute
     dig
     btrfs-progs
+    stow # handle dotfiles in home directory
   ];
 
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];

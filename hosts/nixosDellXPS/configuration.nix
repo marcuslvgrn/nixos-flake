@@ -35,7 +35,13 @@
   }];
 
   #Enable fingerprint reader
-  environment.systemPackages = with pkgs; [ fprintd ];
+  environment.systemPackages = with pkgs; [
+    fprintd
+    libva-utils
+    vdpauinfo
+    intel-gpu-tools
+    bottles
+  ];
   services.fprintd.enable = true;
   services.fprintd.tod.enable = true;
   services.fprintd.tod.driver = pkgs.libfprint-2-tod1-goodix;
@@ -77,5 +83,18 @@
   # Includes the Wi-Fi and Bluetooth firmware for the QCA6390.
   hardware.enableRedistributableFirmware = true;
 
+  environment.sessionVariables = {
+    LIBVA_DRIVER_NAME = "iHD";
+    VDPAU_DRIVER = "va_gl";
+  };
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver
+      intel-vaapi-driver
+      libvdpau-va-gl
+      vpl-gpu-rt
+    ];
+  };
 }
 

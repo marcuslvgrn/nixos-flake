@@ -14,6 +14,10 @@
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+#    nixos-dotfiles = {
+#      url = "github:marcuslvgrn/nixos-dotfiles";
+#      flake = false;
+#    };
   };
 
   outputs = inputs@{ nixpkgs, home-manager, sops-nix, ... }:
@@ -47,6 +51,7 @@
         nixosVMWare = host-cfg "nixosVMWare";
         nixosASUS = host-cfg "nixosASUS";
         nixosTranfor = host-cfg "nixosTranfor";
+        nixosMinimal = host-cfg "nixosMinimal";
       };
     };
 }
