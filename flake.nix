@@ -14,24 +14,27 @@
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-#    nixos-dotfiles = {
-#      url = "github:marcuslvgrn/nixos-dotfiles";
-#      flake = false;
-#    };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, sops-nix, ... }:
+  outputs = inputs@{ nixpkgs, home-manager, disko, nixos-facter-modules
+    , sops-nix, ... }:
     let
       #This is the hosts configuration function, takes the hostname as argument
       host-cfg = hostname:
         #Declare the configuration
         nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit inputs home-manager hostname; };
+          specialArgs = { inherit inputs home-manager hostname disko; };
           modules = [
             #load the host specific configuration
             (./. + "/hosts" + ("/" + hostname) + "/configuration.nix")
             sops-nix.nixosModules.sops
+            disko.nixosModules.disko
             home-manager.nixosModules.home-manager
             {
               #These are arguments for home-manager
@@ -39,7 +42,9 @@
               home-manager.useUserPackages = true;
               home-manager.users.lovgren = import ./home-manager/lovgren.nix;
               home-manager.users.root = import ./home-manager/root.nix;
-            }
+              # Optionally, use home-manager.extraSpecialArgs to pass
+              # arguments to home.nix
+              home-manager.extraSpecialArgs = {inherit inputs;};          }
           ];
         };
     in {
