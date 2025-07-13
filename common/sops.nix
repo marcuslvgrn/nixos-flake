@@ -12,5 +12,7 @@
     age.keyFile = "/root/.config/sops/age/keys.txt";
     
     secrets."wifi.env" = { };
+    secrets."ssh/authorized_keys/lovgren" = {};
+    secrets."ssh/authorized_keys/root" = {};
   };
 }

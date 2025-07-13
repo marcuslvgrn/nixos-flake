@@ -2,48 +2,41 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ inputs, config, lib, pkgs, hostname, ... }:
+{ inputs, config, lib, pkgs, disko, hostname, home-manager, ... }:
 
 {
   imports = [
-    # Include the results of the hardware scan.
-    ./hardware-configuration.nix
     ../../common/grub.nix
-    ../../common/networkmanager.nix
     ../../common/openssh.nix
     ../../common/users.nix
-    ../../common/sops.nix
+    ../../common/configuration.nix
+    ../../common/virtualbox.nix
+    ./disk-config.nix
   ];
 
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.useDHCP = lib.mkDefault true;
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  networking.hostName = hostname;
-
-  # Set your time zone.
-  time.timeZone = "Europe/Stockholm";
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "sv_SE.UTF-8";
-  console = { font = "Lat2-Terminus16"; };
-
-  programs.bash.interactiveShellInit = ''
-    LANG=en_US.UTF-8
-    neofetch
-  '';
-
-  environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    gitFull
-    stow # handle dotfiles in home directory
-    neofetch
-  ];
-  
   swapDevices = [{
     device = "/swap/swapfile";
     size = 4 * 1024;
   }];
+
+  networking.hostName = hostname;
+
+  # Pick only one of the below networking options.
+  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+
+  networking.networkmanager = { enable = true; };
+
+  users.users.root.initialPassword = "test";
+  users.users.root.openssh.authorizedKeys.keyFiles = [
+    #this is populated by sops-nix
+    /run/secrets/ssh/authorized_keys/root
+  ];
+  users.users.lovgren.openssh.authorizedKeys.keyFiles = [
+    #this is populated by sops-nix
+    /run/secrets/ssh/authorized_keys/lovgren
+  ];
 
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
