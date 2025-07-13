@@ -16,6 +16,7 @@
     ../../common/users.nix
     ../../common/sops.nix
     ../../common/ssd.nix
+    ../../common/virtualbox-host.nix
     ../../services/ath11k-suspend.nix
     ../../services/bluetooth-suspend.nix
   ];
