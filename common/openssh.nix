@@ -6,7 +6,7 @@
     enable = true;
     settings = {
       X11Forwarding = true;
-      PermitRootLogin = "yes"; # disable root login
+      PermitRootLogin = "no"; # disable root login
       PasswordAuthentication = false; # disable password login
     };
     openFirewall = true;

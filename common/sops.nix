@@ -14,5 +14,7 @@
     secrets."wifi.env" = { };
     secrets."ssh/authorized_keys/lovgren" = {};
     secrets."ssh/authorized_keys/root" = {};
+#    secrets."passwords/lovgren" = {};
+#    secrets."passwords/root" = {};
   };
 }

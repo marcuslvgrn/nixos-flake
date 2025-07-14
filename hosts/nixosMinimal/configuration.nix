@@ -2,15 +2,18 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ inputs, config, lib, pkgs, disko, hostname, home-manager, ... }:
+{ inputs, config, lib, pkgs, disko, hostname, ... }:
 
 {
   imports = [
     ../../common/grub.nix
     ../../common/openssh.nix
     ../../common/users.nix
+    ../../common/sops.nix
     ../../common/configuration.nix
-    ../../common/virtualbox.nix
+    #../../common/networkmanager.nix
+    #../../common/virtualbox-guest.nix
+    #../../common/vmware-guest.nix
     ./disk-config.nix
   ];
 
@@ -27,16 +30,6 @@
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   networking.networkmanager = { enable = true; };
-
-  users.users.root.initialPassword = "test";
-  users.users.root.openssh.authorizedKeys.keyFiles = [
-    #this is populated by sops-nix
-    /run/secrets/ssh/authorized_keys/root
-  ];
-  users.users.lovgren.openssh.authorizedKeys.keyFiles = [
-    #this is populated by sops-nix
-    /run/secrets/ssh/authorized_keys/lovgren
-  ];
 
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.

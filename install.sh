@@ -1,48 +1,46 @@
-#sudo -i
-#
-#loadkeys sv-latin1
-#
-##mount drives
-#gdisk /dev/sda
-##EFI system partition, type is 0xef00
-#mkfs.fat -F 32 /dev/sda1
-#mkfs.btrfs /dev/sda2
-#mount /dev/sda2 /mnt
-#cd /mnt
-#btrfs subv create @
-#btrfs subv create @home
-#cd ..
-#umount /mnt
-#mount /dev/sda2 /mnt -o subvol=@
-#mkdir /mnt/home
-#mount /dev/sda2 /mnt/home -o subvol=@home
-#mkdir /mnt/efi
-#mount /dev/sda1 /mnt/efi
-#cd /mnt
-#btrfs subv create swap
-#chattr +C /mnt/swap
-#btrfs filesystem mkswapfile --size 4g --uuid clear /mnt/swap/swapfile
-#exit
-##drives mounted
-
+#!/usr/bin/env bash
 #connect through ssh
-passwd
-ip a
-# ssh to ip from install host terminal
-# connected through ssh
+#passwd
+#ip a
 
-#generate hardware config on target
-#nixos-generate-config --root /mnt --dir nixos-flake/hosts/nixosMinimal
-#then copy to host
+read -p "Type the IP number to install to: " ipnumber
+read -p "Type the host to install: " host
 
-#parition and install using nixos-anywhere
-nix run github:nix-community/nixos-anywhere -- --flake .#<host> --target-host root@<ip address>
-#nix run github:nix-community/nixos-anywhere -- --generate-hardware-config nixos-generate-config ./hosts/nixosMinimal/hardware-configuration.nix --flake .#nixosMinial --target-host root@<ip address>
-#clone flake repo
-ssh-keygen
-#add key to github settings
-cat .ssh/id_ed25519.pub
-git clone git@github.com:marcuslvgrn/nixos-flake
-git clone git@github.com:marcuslvgrn/nixos-dotfiles
-nixos-dotfiles/apply-dotfiles.sh
-sudo nixos-rebuild --flake . switch
+# Create a temporary directory
+temp=$(mktemp -d)
+
+# Function to cleanup temporary directory on exit
+cleanup() {
+  rm -rf "$temp"
+}
+trap cleanup EXIT
+
+#copy stuff
+install -d -m755 "$temp/root/.config"
+cp -r /root/.config/sops  "$temp/root/.config/"
+install -d -m755 "$temp/etc/ssh/authorized_keys.d"
+cp -r /run/secrets/ssh/authorized_keys/root "$temp/etc/ssh/authorized_keys.d/"
+install -d -m755 "$temp/home/lovgren"
+cp -r /home/lovgren/git $temp/home/lovgren
+#git clone git@github.com:marcuslvgrn/nixos-flake $temp/home/lovgren/git
+#git clone git@github.com:marcuslvgrn/nixos-dotfiles $temp/home/lovgren/git
+
+#cp -r /home/lovgren/git $temp/home/lovgren/
+install -d -m755 "$temp/home/lovgren/.ssh"
+cp /home/lovgren/.ssh/id_ed25519.pub "$temp/home/lovgren/.ssh/authorized_keys"
+
+# Install NixOS to the host system with our secrets
+nix run github:nix-community/nixos-anywhere -- --copy-host-keys --extra-files $temp \
+    --phases kexec,disko,install \
+    --chown /home/lovgren/git 1000:100 \
+    --chown /home/lovgren/.ssh 1000:100 \
+    --flake .#$host \
+    --target-host root@$ipnumber
+
+#reboot
+#nix run github:nix-community/nixos-anywhere -- --copy-host-keys --extra-files $temp --flake .#nixosMinimal --target-host root@192.168.0.195
+
+echo "You must now set the root and user passwords manually by executing \`nixos-enter --root /mnt\` and then running \`passwd\` in the shell of the new system."
+read -p "Press Enter to continue"
+echo "Also, run stow by /home/lovgren/git/nixos-dotfiles/apply-dotfiles.sh"
+read -p "Press Enter to continue"
