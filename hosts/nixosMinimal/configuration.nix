@@ -13,7 +13,7 @@
     ../../common/configuration.nix
     #../../common/networkmanager.nix
     #../../common/virtualbox-guest.nix
-    #../../common/vmware-guest.nix
+    ../../common/vmware-guest.nix
     ./disk-config.nix
   ];
 

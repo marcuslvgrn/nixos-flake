@@ -14,7 +14,7 @@
     ../../common/networkmanager.nix
     ../../common/openssh.nix
     ../../common/users.nix
-    ../../common/vmware.nix
+    ../../common/vmware-guest.nix
     ../../common/sops.nix
   ];
 
