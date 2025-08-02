@@ -24,16 +24,23 @@ cleanup() {
 }
 trap cleanup EXIT
 
-#copy stuff
-install -d -m755 "$temp/root/.config/sops/age"
-cp ./age.key $temp/root/.config/sops/age/keys.txt
+#copy stuff into --extra-files
 
+#AGE key
+install -d -m755 "$temp/root/.config/sops/age/age.key"
+cp /run/secrets/age/keys/$host/age.key "$temp/root/.config/sops/age/age.key"
+
+#SSH keys
+#authorized keys, for root
 install -d -m755 "$temp/etc/ssh/authorized_keys.d"
 cp -r /run/secrets/ssh/authorized_keys/root "$temp/etc/ssh/authorized_keys.d/"
-
+#authorized keys, for lovgren
 install -d -m755 "$temp/home/lovgren/.ssh"
-cp ./id_ed25519* $temp/home/lovgren/.ssh/
+#copy the key from installation host
 cp /home/lovgren/.ssh/id_ed25519.pub "$temp/home/lovgren/.ssh/authorized_keys"
+#ssh keys for target host
+cp /run/secrets/ssh/keys/$host/id_ed25519 "$temp/home/lovgren/.ssh/"
+cp /run/secrets/ssh/keys/$host/id_ed25519.pub "$temp/home/lovgren/.ssh/"
 
 # Install NixOS to the host system with our secrets
 nix run github:nix-community/nixos-anywhere -- \
