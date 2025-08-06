@@ -5,12 +5,6 @@
 
 echo "This script must be run as root."
 read -p "Press Enter to continue"
-echo "Start by creating the wanted SSH keys for the host."
-echo "Do this by running ssh-keygen -f ./id_ed25519 -P \"\", or copy them to ./id_ed25519 and ./id_25519.pub"
-read -p "Press Enter to continue"
-
-echo "The private age key to use is read from ./age.key. Create it if not already done"
-read -p "Press Enter to continue"
 
 read -p "Type the IP number to install to: " ipnumber
 read -p "Type the host type to install: " host
@@ -38,7 +32,7 @@ cp -r /run/secrets/ssh/authorized_keys/root "$temp/etc/ssh/authorized_keys.d/"
 install -d -m755 "$temp/home/lovgren/.ssh"
 #copy the key from installation host
 cp /home/lovgren/.ssh/id_ed25519.pub "$temp/home/lovgren/.ssh/authorized_keys"
-#ssh keys for target host
+#ssh keys for target host, from sops
 cp /run/secrets/ssh/keys/$host/id_ed25519 "$temp/home/lovgren/.ssh/"
 cp /run/secrets/ssh/keys/$host/id_ed25519.pub "$temp/home/lovgren/.ssh/"
 
@@ -52,7 +46,6 @@ nix run github:nix-community/nixos-anywhere -- \
     --flake /home/lovgren/git/nixos-flake#$host \
     --target-host root@$ipnumber
 
-#reboot
 #nix run github:nix-community/nixos-anywhere -- --copy-host-keys --extra-files $temp --flake .#nixosMinimal --target-host root@192.168.0.195
 
 echo "Run \`nixos-enter --root /mnt\`to enter the new system"

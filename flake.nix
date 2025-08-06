@@ -53,7 +53,8 @@
       nixosConfigurations = {
         nixosDellXPS = host-cfg "nixosDellXPS";
         nixosX360 = host-cfg "nixosX360";
-        nixosVMWare = host-cfg "nixosVMWare";
+        nixosVMWareMinimal = host-cfg "nixosVMWareMinimal";
+        nixosVMWareGnome = host-cfg "nixosVMWareGnome";
         nixosVBox = host-cfg "nixosVBox";
         nixosASUS = host-cfg "nixosASUS";
         nixosTranfor = host-cfg "nixosTranfor";

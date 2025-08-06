@@ -13,8 +13,8 @@
     ../../common/configuration.nix
     #../../common/networkmanager.nix
     #../../common/virtualbox-guest.nix
-    ../../common/vmware-guest.nix
-    ./disk-config.nix
+    #../../common/vmware-guest.nix
+    #./disk-config.nix
   ];
 
   networking.useDHCP = lib.mkDefault true;

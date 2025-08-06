@@ -14,8 +14,9 @@
     secrets."wifi.env" = { };
     secrets."ssh/authorized_keys/lovgren" = {};
     secrets."ssh/authorized_keys/root" = {};
-    secrets."ssh/keys/nixosVMWare/id_ed25519.pub" = {};
-    secrets."ssh/keys/nixosVMWare/id_ed25519" = {};
+    secrets."ssh/keys/nixosVMWareMinimal/id_ed25519.pub" = {};
+    secrets."ssh/keys/nixosVMWareMinimal/id_ed25519" = {};
+    secrets."age/keys/nixosVMWareMinimal/age.key" = {};
 #    secrets."passwords/lovgren" = {};
 #    secrets."passwords/root" = {};
   };

@@ -8,14 +8,15 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    ../../common/configuration.nix
+    ../../hosts/nixosMinimal/configuration.nix
+#    ../../common/configuration.nix
     ../../common/gnome.nix
-    ../../common/grub.nix
+#    ../../common/grub.nix
     ../../common/networkmanager.nix
-    ../../common/openssh.nix
-    ../../common/users.nix
+#    ../../common/openssh.nix
+#    ../../common/users.nix
     ../../common/vmware-guest.nix
-    ../../common/sops.nix
+#    ../../common/sops.nix
   ];
 
   networking.hostName = hostname;
