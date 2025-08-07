@@ -19,11 +19,6 @@
 
   networking.useDHCP = lib.mkDefault true;
 
-  swapDevices = [{
-    device = "/swap/swapfile";
-    size = 4 * 1024;
-  }];
-
   networking.hostName = hostname;
 
   # Pick only one of the below networking options.

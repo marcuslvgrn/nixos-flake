@@ -55,7 +55,8 @@
         nixosX360 = host-cfg "nixosX360";
         nixosVMWareMinimal = host-cfg "nixosVMWareMinimal";
         nixosVMWareGnome = host-cfg "nixosVMWareGnome";
-        nixosVBox = host-cfg "nixosVBox";
+        nixosVBoxMinimal = host-cfg "nixosVBoxMinimal";
+        nixosVBoxGnome = host-cfg "nixosVBoxGnome";
         nixosASUS = host-cfg "nixosASUS";
         nixosTranfor = host-cfg "nixosTranfor";
         nixosMinimal = host-cfg "nixosMinimal";

@@ -8,20 +8,16 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    ../../common/configuration.nix
+    ../../hosts/nixosMinimal/configuration.nix
     ../../common/gnome.nix
-    ../../common/grub.nix
     ../../common/networkmanager.nix
-    ../../common/openssh.nix
-    ../../common/users.nix
-    ../../common/sops.nix
     ../../common/ssd.nix
     ../../common/virtualbox-host.nix
     ../../services/ath11k-suspend.nix
     ../../services/bluetooth-suspend.nix
   ];
 
-  networking.hostName = hostname;
+  sops.age.keyFile = "/root/.config/age/keys/nixosDellXPS/age.key";
 
   boot.loader.grub.extraEntries = ''
     menuentry "Arch" {
@@ -30,7 +26,7 @@
     }
   '';
 
-  swapDevices = [{
+  swapDevices = lib.mkForce [{
     device = "/swap/swapfile";
     size = 16 * 1024;
   }];
