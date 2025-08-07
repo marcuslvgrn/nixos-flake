@@ -51,4 +51,16 @@
       vlc
   ];
 
+  home-manager.users.lovgren.dconf = {
+    enable = true;
+    settings."org/gnome/shell" = {
+      disable-user-extensions = false;
+      enabled-extensions = with pkgs.gnomeExtensions;
+        [ dash-to-dock.extensionUuid
+          appindicator.extensionUuid
+          hide-top-bar.extensionUuid
+        ];
+    };
+  };
+  
 }
