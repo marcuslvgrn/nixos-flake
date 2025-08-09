@@ -49,6 +49,7 @@
       gnome-boxes
       linssid
       vlc
+      gparted
   ];
 
   home-manager.users.lovgren.dconf = {
