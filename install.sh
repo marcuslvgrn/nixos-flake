@@ -21,8 +21,8 @@ trap cleanup EXIT
 #copy stuff into --extra-files
 
 #AGE key
-install -d -m755 "$temp/root/.config/age/keys/$host"
-cp /run/secrets/age/keys/$host/age.key "$temp/root/.config/age/keys/$host/age.key"
+#install -d -m755 "$temp/root/.config/age/keys/$host"
+#cp /run/secrets/age/keys/$host/age.key "$temp/root/.config/age/keys/$host/age.key"
 
 #SSH keys
 #authorized keys, for root

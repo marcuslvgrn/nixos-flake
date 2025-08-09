@@ -12,6 +12,7 @@
     ../../common/gnome.nix
     ../../common/networkmanager.nix
     ../../common/virtualbox-guest.nix
+    ./disk-config.nix
   ];
 
   networking.hostName = hostname;

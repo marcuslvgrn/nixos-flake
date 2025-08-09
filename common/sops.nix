@@ -18,10 +18,13 @@
     secrets."ssh/authorized_keys/root" = {};
     secrets."ssh/keys/nixosVMWareMinimal/id_ed25519.pub" = {};
     secrets."ssh/keys/nixosVMWareMinimal/id_ed25519" = {};
-    secrets."age/keys/nixosVMWareMinimal/age.key" = {};
+#    secrets."age/keys/nixosVMWareMinimal/age.key" = {};
     secrets."ssh/keys/nixosVBoxMinimal/id_ed25519.pub" = {};
     secrets."ssh/keys/nixosVBoxMinimal/id_ed25519" = {};
-    secrets."age/keys/nixosVBoxMinimal/age.key" = {};
+#    secrets."age/keys/nixosVBoxMinimal/age.key" = {};
+    secrets."ssh/keys/nixosVBoxGnome/id_ed25519.pub" = {};
+    secrets."ssh/keys/nixosVBoxGnome/id_ed25519" = {};
+#    secrets."age/keys/nixosVBoxGnome/age.key" = {};
 #    secrets."passwords/lovgren" = {};
 #    secrets."passwords/root" = {};
   };

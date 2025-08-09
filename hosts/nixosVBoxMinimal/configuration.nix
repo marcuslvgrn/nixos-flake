@@ -16,9 +16,6 @@
 
   networking.hostName = hostname;
 
-#  sops.age.keyFile = "/run/secrets/age/keys/nixosVBoxMinimal/age.key";
-  sops.age.keyFile = "/root/.config/age/keys/nixosVBoxMinimal/age.key";
-
   swapDevices = [{
     device = "/swap/swapfile";
     size = 4 * 1024;
