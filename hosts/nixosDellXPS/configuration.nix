@@ -17,8 +17,6 @@
     ../../services/bluetooth-suspend.nix
   ];
 
-  sops.age.keyFile = "/root/.config/age/keys/nixosDellXPS/age.key";
-
   boot.loader.grub.extraEntries = ''
     menuentry "Arch" {
       set root=(hd0,gpt1)
