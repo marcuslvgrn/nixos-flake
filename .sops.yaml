@@ -1,6 +1,6 @@
 keys:
   - &nixosVMWareMinimal age1aj8nwyxg6kh5j8f8s4l6agr0vr424w27xs69tttgykwmpu3z2uts8xclpd
-  - &nixosVMWareGnome age1vdjxrusgxffte8tunpxyszm7fnrewfuedkkwx8y6e2fcwas5ketqszhxpr
+  - &nixosVMWareGnome age1ztp6jatdt900aas06cppdt9avjx0hmyxhf3245r3skpnps7rr3gqxn0yel
   - &nixosVBoxMinimal age1vg88j3dc6ja4vt4dmyqpz0ljxq77q37tq53zz44k8dxe82vc8eus7hghfc
   - &nixosVBoxGnome age1vg88j3dc6ja4vt4dmyqpz0ljxq77q37tq53zz44k8dxe82vc8eus7hghfc
   - &nixosX360 age19cknes4sytvdsm4203ys6pttyhjw9h4d0ehlr35a07vrc6zvsd7qvhvkre
