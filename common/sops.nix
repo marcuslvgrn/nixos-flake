@@ -28,6 +28,15 @@
     secrets."ssh/keys/nixosVBoxGnome/id_ed25519.pub" = {};
     secrets."ssh/keys/nixosVBoxGnome/id_ed25519" = {};
     secrets."age/keys/nixosVBoxGnome/age.key" = {};
+    secrets."ssh/keys/nixosVBoxDellXPS/id_ed25519.pub" = {};
+    secrets."ssh/keys/nixosVBoxDellXPS/id_ed25519" = {};
+    secrets."age/keys/nixosVBoxDellXPS/age.key" = {};
+    secrets."ssh/keys/nixosVBoxX360/id_ed25519.pub" = {};
+    secrets."ssh/keys/nixosVBoxX360/id_ed25519" = {};
+    secrets."age/keys/nixosVBoxX360/age.key" = {};
+#    secrets."ssh/keys/nixosVBoxASUS/id_ed25519.pub" = {};
+#    secrets."ssh/keys/nixosVBoxASUS/id_ed25519" = {};
+#    secrets."age/keys/nixosVBoxASUS/age.key" = {};
 #    secrets."passwords/lovgren" = {};
 #    secrets."passwords/root" = {};
   };
