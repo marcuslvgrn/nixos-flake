@@ -7,17 +7,18 @@
 {
   imports = [
     # Include the results of the hardware scan.
-    ./hardware-configuration.nix
-    ../../common/configuration.nix
+#    ./hardware-configuration.nix
+    ../../hosts/nixosMinimal/configuration.nix
     ../../common/xfce.nix
-    ../../common/grub.nix
     ../../common/networkmanager.nix
-    ../../common/openssh.nix
-    ../../common/users.nix
-    ../../common/sops.nix
+    ./disk-config.nix
   ];
 
   networking.hostName = "nixosASUS";
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.enableRedistributableFirmware = true;
+  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   swapDevices = [{
     device = "/swap/swapfile";

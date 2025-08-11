@@ -11,11 +11,17 @@
   networking.networkmanager.enable = true;
   programs.nm-applet.enable = true;
 
-  # Enable GNOME and GDM
   services.xserver = {
     enable = true;
     desktopManager.xfce.enable = true;
     displayManager.lightdm.enable = true;
     xkb.layout = "se";
   };
+
+  environment.systemPackages = with pkgs; [
+      linssid
+      vlc
+      gparted
+  ];
+
 }

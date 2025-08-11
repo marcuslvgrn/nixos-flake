@@ -34,9 +34,9 @@
     secrets."ssh/keys/nixosX360/id_ed25519.pub" = {};
     secrets."ssh/keys/nixosX360/id_ed25519" = {};
     secrets."age/keys/nixosX360/age.key" = {};
-#    secrets."ssh/keys/nixosVBoxASUS/id_ed25519.pub" = {};
-#    secrets."ssh/keys/nixosVBoxASUS/id_ed25519" = {};
-#    secrets."age/keys/nixosVBoxASUS/age.key" = {};
+    secrets."ssh/keys/nixosASUS/id_ed25519.pub" = {};
+    secrets."ssh/keys/nixosASUS/id_ed25519" = {};
+    secrets."age/keys/nixosASUS/age.key" = {};
 #    secrets."passwords/lovgren" = {};
 #    secrets."passwords/root" = {};
   };
