@@ -6,6 +6,7 @@ keys:
   - &nixosX360 age19cknes4sytvdsm4203ys6pttyhjw9h4d0ehlr35a07vrc6zvsd7qvhvkre
   - &nixosASUS age12770nz20z57awadcze6jgu62uqpfscvux6x0vaf3zd2xxmjzde3sgs0e8n
   - &nixosDellXPS age1vdjxrusgxffte8tunpxyszm7fnrewfuedkkwx8y6e2fcwas5ketqszhxpr
+  - &root age188wtgt8zvfvmrdls7t5kmr4z9fjfapzpsekzlr37mvmp9dv539uq8dq3ek
 creation_rules:
   - path_regex: secrets/root-secrets.yaml
     key_groups:
@@ -17,3 +18,4 @@ creation_rules:
       - *nixosX360
       - *nixosASUS
       - *nixosDellXPS
+      - *root
