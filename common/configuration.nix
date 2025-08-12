@@ -82,6 +82,8 @@
     ssh-to-age
   ];
 
+  services.emacs.defaultEditor = true;
+
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
   
   services.pcscd.enable = true;
