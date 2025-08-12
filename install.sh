@@ -21,7 +21,7 @@ trap cleanup EXIT
 #copy stuff into --extra-files
 
 #AGE key
-install -d -m755 "$temp/root/.config/age/keys/$host"
+install -d -m755 "$temp/root/.config/sops/age"
 cp /run/secrets/age/keys/$host/age.key "$temp/root/.config/sops/age/keys.txt"
 
 #SSH keys
@@ -42,6 +42,7 @@ nix run github:nix-community/nixos-anywhere -- \
     --extra-files $temp \
     --phases kexec,disko,install \
     --chown /home/lovgren/.ssh 1000:100 \
+    --chown /root/.config/sops 0:0 \
     --flake /home/lovgren/git/nixos-flake#$host \
     --target-host root@$ipnumber
 
