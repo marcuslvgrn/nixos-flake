@@ -79,6 +79,7 @@
     dig
     btrfs-progs
     stow # handle dotfiles in home directory
+    ssh-to-age
   ];
 
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];

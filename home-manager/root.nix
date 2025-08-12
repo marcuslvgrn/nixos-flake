@@ -15,5 +15,9 @@
   };
   home.stateVersion = "25.05";
   programs.home-manager.enable = true;
+
+  home = {
+    sessionVariables = { LANG = "sv_SE.UTF-8"; EDITOR = "emacs -nw"; };
+  };
 }
 

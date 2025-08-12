@@ -9,9 +9,7 @@
     defaultSopsFile = ../secrets/root-secrets.yaml;
     defaultSopsFormat = "yaml";
 
-    age.sshKeyPaths = [ "/home/lovgren/.ssh/id_ed25519" ];
-    age.generateKey = false;
-    age.keyFile = "/root/.config/age/keys/age.key";
+    age.keyFile = "/root/.config/sops/age/keys.txt";
 
     secrets."wifi.env" = { };
     secrets."ssh/authorized_keys/lovgren" = {};
