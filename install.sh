@@ -22,7 +22,7 @@ trap cleanup EXIT
 
 #AGE key
 install -d -m755 "$temp/root/.config/sops/age"
-cp /run/secrets/age/keys/$host/age.key "$temp/root/.config/sops/age/keys.txt"
+cp /run/secrets/age/keys.txt "$temp/root/.config/sops/age/keys.txt"
 
 #SSH keys
 #authorized keys, for root
@@ -31,10 +31,10 @@ cp -r /run/secrets/ssh/authorized_keys/root "$temp/etc/ssh/authorized_keys.d/"
 #authorized keys, for lovgren
 install -d -m755 "$temp/home/lovgren/.ssh"
 #copy the key from installation host
-cp /home/lovgren/.ssh/id_ed25519.pub "$temp/home/lovgren/.ssh/authorized_keys"
+cp /run/secrets/ssh/authorized_keys/lovgren "$temp/home/lovgren/.ssh/authorized_keys"
 #ssh keys for target host, from sops
-cp /run/secrets/ssh/keys/$host/id_ed25519 "$temp/home/lovgren/.ssh/"
-cp /run/secrets/ssh/keys/$host/id_ed25519.pub "$temp/home/lovgren/.ssh/"
+cp /run/secrets/ssh/keys/id_ed25519 "$temp/home/lovgren/.ssh/"
+cp /run/secrets/ssh/keys/id_ed25519.pub "$temp/home/lovgren/.ssh/"
 
 # Install NixOS to the host system with our secrets
 nix run github:nix-community/nixos-anywhere -- \
