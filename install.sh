@@ -46,6 +46,7 @@ nix run github:nix-community/nixos-anywhere -- \
     --extra-files $temp \
     --phases kexec,disko,install,reboot \
     --chown /home/lovgren/.ssh 1000:100 \
+    --chown /home/lovgren/git 1000:100 \
     --chown /root/.config/sops 0:0 \
     --flake /home/lovgren/git/nixos-flake#$host \
     --target-host root@$ipnumber
