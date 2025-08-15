@@ -44,7 +44,7 @@ cp -r /home/lovgren/git/* "$temp/home/lovgren/git/"
 nix run github:nix-community/nixos-anywhere -- \
     --copy-host-keys \
     --extra-files $temp \
-    --phases kexec,disko,install \
+    --phases kexec,disko,install,reboot \
     --chown /home/lovgren/.ssh 1000:100 \
     --chown /root/.config/sops 0:0 \
     --flake /home/lovgren/git/nixos-flake#$host \
@@ -52,14 +52,14 @@ nix run github:nix-community/nixos-anywhere -- \
 
 #nix run github:nix-community/nixos-anywhere -- --copy-host-keys --extra-files $temp --flake .#nixosMinimal --target-host root@192.168.0.195
 
-echo "Run \`nixos-enter --root /mnt\`to enter the new system"
-read -p "Press Enter to continue"
-echo "Set the root and user passwords manually by executing  and then running \`passwd\` in the shell of the new system."
-read -p "Press Enter to continue"
-echo "Now reboot host"
-read -p "Press Enter to continue"
-echo "Run \`git clone git@github.com:marcuslvgrn/nixos-flake /home/lovgren/git/nixos-flake\` and \`git clone git@github.com:marcuslvgrn/nixos-dotfiles /home/lovgren/git/nixos-dotfiles\`"
-read -p "Press Enter to continue"
+#echo "Run \`nixos-enter --root /mnt\`to enter the new system"
+#read -p "Press Enter to continue"
+#echo "Set the root and user passwords manually by executing  and then running \`passwd\` in the shell of the new system."
+#read -p "Press Enter to continue"
+#echo "Now reboot host"
+#read -p "Press Enter to continue"
+#echo "Run \`git clone git@github.com:marcuslvgrn/nixos-flake /home/lovgren/git/nixos-flake\` and \`git clone git@github.com:marcuslvgrn/nixos-dotfiles /home/lovgren/git/nixos-dotfiles\`"
+#read -p "Press Enter to continue"
 echo "Run stow by \`/home/lovgren/git/nixos-dotfiles/apply-dotfiles.sh\`"
 read -p "Press Enter to continue"
 echo "run \`sudo nixos-rebuild --flake . switch\` in the nixos-flake directory"
