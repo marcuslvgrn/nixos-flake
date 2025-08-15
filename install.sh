@@ -30,7 +30,7 @@ install -d -m755 "$temp/etc/ssh/authorized_keys.d"
 cp -r /run/secrets/ssh/authorized_keys/root "$temp/etc/ssh/authorized_keys.d/"
 #authorized keys, for lovgren
 install -d -m755 "$temp/home/lovgren/.ssh"
-#copy the key from installation host
+#copy the authorized keys from installation host
 cp /run/secrets/ssh/authorized_keys/lovgren "$temp/home/lovgren/.ssh/authorized_keys"
 #ssh keys for target host, from sops
 cp /run/secrets/ssh/keys/id_ed25519 "$temp/home/lovgren/.ssh/"

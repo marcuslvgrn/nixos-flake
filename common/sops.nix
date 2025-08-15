@@ -17,7 +17,7 @@
     secrets."ssh/keys/id_ed25519.pub" = {};
     secrets."ssh/keys/id_ed25519" = {};
     secrets."age/keys.txt" = {};
-#    secrets."passwords/lovgren" = {};
-#    secrets."passwords/root" = {};
+    secrets."passwords/lovgren" = {};
+    secrets."passwords/root" = {};
   };
 }

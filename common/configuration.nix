@@ -80,6 +80,7 @@
     btrfs-progs
     stow # handle dotfiles in home directory
     ssh-to-age
+    mkpasswd
   ];
 
   services.emacs.defaultEditor = true;

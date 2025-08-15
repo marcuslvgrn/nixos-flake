@@ -7,6 +7,6 @@
     extraGroups = [ "wheel" "networkmanager" ];
     shell = pkgs.bash;
     home = "/home/lovgren";
-#    hashedPasswordFile = "${config.sops.secrets."passwords/lovgren".path}";
+    hashedPasswordFile = "${config.sops.secrets."passwords/lovgren".path}";
   };
 }
