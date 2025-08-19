@@ -9,22 +9,13 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ../../hosts/nixosMinimal/configuration.nix
-#    ../../common/configuration.nix
     ../../common/gnome.nix
-#    ../../common/grub.nix
     ../../common/networkmanager.nix
-#    ../../common/openssh.nix
-#    ../../common/users.nix
     ../../common/vmware-guest.nix
-#    ../../common/sops.nix
+     ./disk-config.nix
   ];
 
   networking.hostName = hostname;
-
-  swapDevices = [{
-    device = "/swap/swapfile";
-    size = 4 * 1024;
-  }];
 
 }
 

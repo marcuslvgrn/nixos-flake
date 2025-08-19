@@ -16,10 +16,5 @@
 
   networking.hostName = hostname;
 
-  swapDevices = [{
-    device = "/swap/swapfile";
-    size = 4 * 1024;
-  }];
-
 }
 
