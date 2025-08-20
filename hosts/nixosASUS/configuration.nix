@@ -6,24 +6,14 @@
 
 {
   imports = [
-    # Include the results of the hardware scan.
-#    ./hardware-configuration.nix
     ../../hosts/nixosMinimal/configuration.nix
     ../../common/xfce.nix
-    ../../common/networkmanager.nix
     ./disk-config.nix
   ];
 
   networking.hostName = "nixosASUS";
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.enableRedistributableFirmware = true;
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-
-  swapDevices = [{
-    device = "/swap/swapfile";
-    size = 2 * 1024;
-  }];
 
   # Autologin a user
   services.displayManager = {

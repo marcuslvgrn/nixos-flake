@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, modulesPath, ... }:
+{ config, lib, pkgs, inputs, modulesPath, hostname, ... }:
 
 {
   nix.gc = {
@@ -96,6 +96,9 @@
     enableSSHSupport = true;
   };
 
+  hardware.enableRedistributableFirmware = true;
+  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
@@ -109,6 +112,9 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
+
+  networking.hostName = hostname;
+  networking.useDHCP = lib.mkDefault true;
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you

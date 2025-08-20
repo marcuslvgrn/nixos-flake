@@ -6,18 +6,11 @@
 
 {
   imports = [
-    # Include the results of the hardware scan.
     ./hardware-configuration.nix
-    ../../common/configuration.nix
+    ../../hosts/nixosMinimal/configuration.nix
     ../../common/gnome.nix
-    ../../common/grub.nix
-    ../../common/networkmanager.nix
-    ../../common/openssh.nix
-    ../../common/users.nix
-    ../../common/sops.nix
+    ../../common/ssd.nix
   ];
-
-  networking.hostName = "nixosX360";
 
   boot.loader.grub.extraEntries = ''
     menuentry "Arch" {

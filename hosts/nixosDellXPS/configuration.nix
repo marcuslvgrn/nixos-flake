@@ -2,15 +2,13 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ inputs, config, lib, pkgs, hostname, ... }:
+{ inputs, config, lib, pkgs, ... }:
 
 {
   imports = [
-    # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ../../hosts/nixosMinimal/configuration.nix
     ../../common/gnome.nix
-    ../../common/networkmanager.nix
     ../../common/ssd.nix
     ../../common/virtualbox-host.nix
     ../../services/ath11k-suspend.nix
@@ -24,12 +22,11 @@
     }
   '';
 
-  swapDevices = lib.mkForce [{
+  swapDevices = [{
     device = "/swap/swapfile";
     size = 16 * 1024;
   }];
 
-  #Enable fingerprint reader
   environment.systemPackages = with pkgs; [
     fprintd
     libva-utils
@@ -37,6 +34,7 @@
     intel-gpu-tools
     bottles
   ];
+
   services.fprintd.enable = true;
   services.fprintd.tod.enable = true;
   services.fprintd.tod.driver = pkgs.libfprint-2-tod1-goodix;
@@ -75,9 +73,6 @@
     ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled"
   '';
 
-  # Includes the Wi-Fi and Bluetooth firmware for the QCA6390.
-  hardware.enableRedistributableFirmware = true;
-
   environment.sessionVariables = {
     LIBVA_DRIVER_NAME = "iHD";
     VDPAU_DRIVER = "va_gl";
@@ -92,4 +87,3 @@
     ];
   };
 }
-

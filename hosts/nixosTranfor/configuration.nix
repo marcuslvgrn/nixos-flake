@@ -6,27 +6,14 @@
 
 {
   imports = [
-    # Include the results of the hardware scan.
-    ./hardware-configuration.nix
-    ../../common/configuration.nix
-    ../../common/grub.nix
-    ../../common/networkmanager.nix
-    ../../common/openssh.nix
-    ../../common/users.nix
-    ../../common/sops.nix
+    ../../hosts/nixosMinimal/configuration.nix
+    ./disk-config.nix
   ];
-
-  networking.hostName = "nixosTranfor";
 
   #Packages only installed on this host
   environment.systemPackages = with pkgs; [
     docker-compose
   ]; 
-
-#  swapDevices = [{
-#    device = "/swap/swapfile";
-#    size = 2 * 1024;
-#  }];
 
 }
 
