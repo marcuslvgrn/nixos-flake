@@ -8,7 +8,7 @@
 #    delete_generations = "+5";
   };
 
-  users.mutableUsers = false;
+  users.mutableUsers = true;
 
   nix.extraOptions = ''
     min-free = ${toString (100 * 1024 * 1024)}
