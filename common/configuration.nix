@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, modulesPath, hostname, ... }:
+{ config, lib, pkgs, pkgs-unstable, inputs, modulesPath, hostname, ... }:
 
 {
   nix.gc = {
@@ -18,9 +18,6 @@
   nix.settings.auto-optimise-store = true;
 
   nixpkgs.config.allowUnfree = true;
-
-  # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Enable the Flakes feature and the accompanying new nix command-line tool
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -59,35 +56,43 @@
      neofetch
   '';
 
+  # Use latest kernel.
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
-  environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    wget
-    efibootmgr
-    neofetch
-    gitFull
-    #GPG
-    age
-    sops
-    gnupg
-    pinentry
-    pinentry-curses
-    #
-    emacs
-    nixfmt-classic
-    nixd
-    traceroute
-    dig
-    btrfs-progs
-    stow # handle dotfiles in home directory
-    ssh-to-age
-    mkpasswd
-  ];
+  environment.systemPackages =
+    (with pkgs; [
+      vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+      wget
+      efibootmgr
+      neofetch
+      gitFull
+      #GPG
+      age
+      sops
+      gnupg
+      pinentry
+      pinentry-curses
+      #
+      emacs
+      nixfmt-classic
+      nixd
+      traceroute
+      dig
+      btrfs-progs
+      stow # handle dotfiles in home directory
+      ssh-to-age
+      mkpasswd
+    ])
+    ++
+    (with pkgs-unstable; [
+      
+    ]);
 
   services.emacs.defaultEditor = true;
 
-  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+#  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
   
   services.pcscd.enable = true;
   programs.gnupg.agent = {

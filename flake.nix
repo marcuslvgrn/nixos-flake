@@ -22,15 +22,19 @@
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, disko, nixos-facter-modules
+  outputs = inputs@{ nixpkgs, nixpkgs-unstable, home-manager, disko, nixos-facter-modules
     , sops-nix, ... }:
     let
+      system = "x86_64-linux";
+      lib = nixpkgs.lib;
+      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs-unstable = nixpkgs-unstable.legacyPackages.${system};
       #This is the hosts configuration function, takes the hostname as argument
       host-cfg = hostname:
         #Declare the configuration
         nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs home-manager hostname disko; };
+          system = "${system}";
+          specialArgs = { inherit inputs home-manager hostname disko pkgs-unstable; };
           modules = [
             #load the host specific configuration
             (./. + "/hosts" + ("/" + hostname) + "/configuration.nix")
@@ -45,7 +49,8 @@
               home-manager.users.root = import ./home-manager/root.nix;
               # Optionally, use home-manager.extraSpecialArgs to pass
               # arguments to home.nix
-              home-manager.extraSpecialArgs = {inherit inputs;};          }
+              home-manager.extraSpecialArgs = { inherit inputs pkgs-unstable; };
+            }
           ];
         };
     in {
