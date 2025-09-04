@@ -12,25 +12,25 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/b6ef556e-fda7-4ed4-bb2f-db64ddef8b40";
+    { device = "/dev/disk/by-partlabel/ROOT";
       fsType = "btrfs";
-      options = [ "subvol=rootfs" ];
+      options = [ "subvol=@" ];
     };
 
   fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/b6ef556e-fda7-4ed4-bb2f-db64ddef8b40";
+    { device = "/dev/disk/by-partlabel/ROOT";
       fsType = "btrfs";
-      options = [ "subvol=home" ];
+      options = [ "subvol=@home" ];
     };
 
   fileSystems."/swap" =
-    { device = "/dev/disk/by-uuid/b6ef556e-fda7-4ed4-bb2f-db64ddef8b40";
+    { device = "/dev/disk/by-partlabel/ROOT";
       fsType = "btrfs";
-      options = [ "subvol=swap" ];
+      options = [ "subvol=@swap" ];
     };
 
   fileSystems."/efi" =
-    { device = "/dev/disk/by-uuid/B866-C111";
+    { device = "/dev/disk/by-partlabel/ESP";
       fsType = "vfat";
       options = [ "fmask=0022" "dmask=0022" ];
     };

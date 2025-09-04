@@ -84,6 +84,7 @@
       stow # handle dotfiles in home directory
       ssh-to-age
       mkpasswd
+      gptfdisk
     ])
     ++
     (with pkgs-unstable; [

@@ -9,6 +9,7 @@
         partitions = {
           esp = {
             name = "ESP";
+            label = "ESP";
             size = "500M";
             type = "EF00";
             content = {
@@ -19,6 +20,7 @@
           };
           root = {
             size = "100%";
+            label = "ROOT";
             content = {
               type = "btrfs";
               extraArgs = [ "-f" ]; # Override existing partition

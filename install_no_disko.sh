@@ -3,6 +3,11 @@
 #passwd
 #ip a
 
+#partition disks
+#create partition labels in gdisk (option c)
+#root partition should be called ROOT
+#esp partition should be called ESP
+
 echo "This script must be run as root."
 read -p "Press Enter to continue"
 
@@ -44,7 +49,7 @@ cp -r /home/lovgren/git/* "$temp/home/lovgren/git/"
 nix run github:nix-community/nixos-anywhere -- \
     --copy-host-keys \
     --extra-files $temp \
-    --phases kexec,disko,install,reboot \
+    --phases kexec,install,reboot \
     --chown /home/lovgren/.ssh 1000:100 \
     --chown /home/lovgren/git 1000:100 \
     --chown /root/.config/sops 0:0 \

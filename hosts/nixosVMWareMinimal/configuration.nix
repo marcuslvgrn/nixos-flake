@@ -8,6 +8,7 @@
   imports = [
     ../../hosts/nixosMinimal/configuration.nix
     ../../common/vmware-guest.nix
+    ./hardware-configuration.nix
     ./disk-config.nix
   ];
 
