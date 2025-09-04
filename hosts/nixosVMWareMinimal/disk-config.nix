@@ -28,16 +28,16 @@
               # unless their parent is mounted
               subvolumes = {
                 # Subvolume name is different from mountpoint
-                "/rootfs" = {
+                "/@" = {
                   mountpoint = "/";
                 };
                 # Subvolume name is the same as the mountpoint
-                "/home" = {
+                "/@home" = {
 #                  mountOptions = [ "compress=zstd" ];
                   mountpoint = "/home";
                 };
                 # Subvolume for the swapfile
-                "/swap" = {
+                "/@swap" = {
                   mountpoint = "/swap";
                   swap = {
                     swapfile.size = "4G";
