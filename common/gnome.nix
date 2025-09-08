@@ -45,6 +45,7 @@
       gnomeExtensions.dash-to-dock
       gnomeExtensions.hide-top-bar
       gnomeExtensions.appindicator
+      gnomeExtensions.hibernate-status-button
       gnome-tweaks
       gnome-boxes
       linssid
@@ -60,6 +61,7 @@
         [ dash-to-dock.extensionUuid
           appindicator.extensionUuid
           hide-top-bar.extensionUuid
+          hibernate-status-button.extensionUuid
         ];
     };
   };
