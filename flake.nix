@@ -66,6 +66,7 @@
         nixosASUS = host-cfg "nixosASUS";
         nixosTranfor = host-cfg "nixosTranfor";
         nixosMinimal = host-cfg "nixosMinimal";
+        nixosImac = host-cfg "nixosImac";
       };
     };
 }

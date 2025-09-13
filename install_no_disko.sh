@@ -46,10 +46,11 @@ install -d m755 "$temp/home/lovgren/git"
 cp -r /home/lovgren/git/* "$temp/home/lovgren/git/"
 
 # Install NixOS to the host system with our secrets
+#    --phases kexec,install,reboot \
 nix run github:nix-community/nixos-anywhere -- \
     --copy-host-keys \
     --extra-files $temp \
-    --phases kexec,install,reboot \
+    --phases kexec,install \
     --chown /home/lovgren/.ssh 1000:100 \
     --chown /home/lovgren/git 1000:100 \
     --chown /root/.config/sops 0:0 \
