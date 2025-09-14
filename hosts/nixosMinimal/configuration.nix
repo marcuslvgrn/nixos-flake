@@ -6,6 +6,7 @@
 
 {
   imports = [
+    ../../services/create-swapfile.nix
     ../../common/grub.nix
     ../../common/openssh.nix
     ../../common/users.nix

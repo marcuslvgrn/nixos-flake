@@ -10,7 +10,7 @@
     ../../common/gnome.nix
     ../../common/ssd.nix
     ./hardware-configuration.nix
-#    ./disk-config.nix
+    ./disk-config.nix
   ];
 
 #  boot.loader.grub.extraEntries = ''
