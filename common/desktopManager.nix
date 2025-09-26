@@ -17,6 +17,7 @@
     bluez-tools
     usbutils
     pciutils
+    libinput
  ];
 
   programs = {
