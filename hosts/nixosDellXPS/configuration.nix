@@ -2,7 +2,7 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ inputs, config, lib, pkgs, ... }:
+{ inputs, config, lib, pkgs, pkgs-unstable, ... }:
 
 {
   imports = [
@@ -27,13 +27,18 @@
     size = 16 * 1024;
   }];
 
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages =
+    (with pkgs; [
     fprintd
     libva-utils
     vdpauinfo
     intel-gpu-tools
     bottles
-  ];
+    ])
+    ++
+    (with pkgs-unstable; [
+
+    ]);
 
   services.fprintd.enable = true;
   services.fprintd.tod.enable = true;

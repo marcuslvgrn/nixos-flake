@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, pkgs, pkgs-unstable, modulesPath, ... }:
 
 {
   # Bluetooth
@@ -6,19 +6,26 @@
   hardware.bluetooth.powerOnBoot = true;
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
-  environment.systemPackages = with pkgs; [
-    bitwarden-desktop
-    spotify
-    protonvpn-gui
-    chromium
-    yt-dlp
-    nextcloud-client
-    bluez
-    bluez-tools
-    usbutils
-    pciutils
-    libinput
- ];
+  environment.systemPackages =
+    (with pkgs; [
+      bitwarden-desktop
+      spotify
+      protonvpn-gui
+      chromium
+      yt-dlp
+      nextcloud-client
+      bluez
+      bluez-tools
+      usbutils
+      pciutils
+    ])
+    ++
+    (with pkgs-unstable; [
+      libinput
+    ]);
+
+  # Enable touchpad support (enabled default in most desktopManager).
+  services.libinput.enable = true;
 
   programs = {
     #FIREFOX

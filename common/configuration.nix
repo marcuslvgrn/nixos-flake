@@ -46,9 +46,6 @@
   #   pulse.enable = true;
   # };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.libinput.enable = true;
-
   # Call commands and interactive bash start
   # Commands are separated by \n
   programs.bash.interactiveShellInit = ''
