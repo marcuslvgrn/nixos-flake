@@ -16,6 +16,7 @@
   # TODO: Set your username
   home = {
     username = "lovgren";
+    homeDirectory = "/home/lovgren";
     sessionVariables = { LANG = "sv_SE.UTF-8"; EDITOR = "emacs -nw"; SUDO_EDITOR = "emacs -nw"; };
     shellAliases = {
       ll = "ls -la";
