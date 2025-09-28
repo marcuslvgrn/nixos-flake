@@ -51,7 +51,6 @@
        ];
        mkConfig = cfg: {
          name = cfg.hostname;
-         networking.hostname = cfg.hostname;
          value = nixpkgs.lib.nixosSystem {
            system = cfg.system;
            modules = [
