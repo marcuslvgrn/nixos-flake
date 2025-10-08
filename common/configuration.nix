@@ -82,6 +82,7 @@
       ssh-to-age
       mkpasswd
       gptfdisk
+      nix-tree
     ])
     ++
     (with pkgs-unstable; [
