@@ -1,6 +1,11 @@
-{ inputs, config, lib, pkgs, ... }:
+{ inputs, config, lib, pkgs, pkgs-unstable, ... }:
 
 {
+  imports = [
+    #load the home manager module
+    inputs.home-manager.nixosModules.home-manager
+  ];
+
   users.users.lovgren = {
     isNormalUser = true;
     description = "Marcus Lövgren";
@@ -13,4 +18,20 @@
 
   #Disable root login with password
   users.users.root.hashedPassword = "!";
+
+  home-manager = {
+    #expose variables to loaded home-manager modules
+    extraSpecialArgs = {
+      inherit inputs pkgs-unstable;
+    };
+    #home manager user definition
+    users.lovgren = {
+      imports = [ ../home-manager/lovgren.nix ];
+    };
+    #home manager root definition
+    users.root = {
+      imports = [ ../home-manager/root.nix ];
+    };
+  };
+
 }

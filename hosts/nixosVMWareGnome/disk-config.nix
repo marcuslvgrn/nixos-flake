@@ -1,5 +1,11 @@
-{ lib, ... }:
+{ pkgs, inputs, ... }:
+
 {
+  #load the module
+  imports = [
+    inputs.disko.nixosModules.disko
+  ];
+  
   disko.devices = {
     disk.disk1 = {
       device = "/dev/sda";

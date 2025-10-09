@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, pkgs, pkgs-unstable, inputs, ... }:
 
 {
   imports = [
@@ -18,30 +18,31 @@
   services.gnome.gnome-browser-connector.enable = true;
 
   # Exclude some packages
-  environment.gnome.excludePackages = (with pkgs; [
-    atomix # puzzle game
-    cheese # webcam tool
-    epiphany # web browser
-    geary # email reader
-    gedit # text editor
-    gnome-characters
-    gnome-music
-    gnome-photos
-    gnome-terminal
-    gnome-tour
-    gnome-text-editor
-    hitori # sudoku game
-    iagno # go game
-    tali # poker game
-    totem # video player
-  ]);
-
-#  home-manager.users.lovgren.home = {
-#    packages = with pkgs; [
-#    ];
-#  };
+  environment.gnome.excludePackages =
+    (with pkgs; [
+      atomix # puzzle game
+      cheese # webcam tool
+      epiphany # web browser
+      geary # email reader
+      gedit # text editor
+      gnome-characters
+      gnome-music
+      gnome-photos
+      gnome-terminal
+      gnome-tour
+      gnome-text-editor
+      hitori # sudoku game
+      iagno # go game
+      tali # poker game
+      totem # video player
+    ])
+    ++
+    (with pkgs-unstable; [
+      
+    ]);
   
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages =
+    (with pkgs; [
       gnomeExtensions.dash-to-dock
       gnomeExtensions.hide-top-bar
       gnomeExtensions.appindicator
@@ -51,7 +52,11 @@
       linssid
       vlc
       gparted
-  ];
+    ])
+    ++
+    (with pkgs-unstable; [
+      
+    ]);
 
   home-manager.users.lovgren.dconf = {
     enable = true;

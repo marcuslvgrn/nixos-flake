@@ -1,4 +1,4 @@
-{ config, lib, pkgs, inputs, modulesPath, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
   #Enable SSD trim

@@ -1,8 +1,9 @@
 { pkgs, inputs, config, ... }:
 
 {
+  #load the module
   imports = [
-    #inputs.sops-nix.nixosModules.sops
+    inputs.sops-nix.nixosModules.sops
   ];
 
   sops = { 

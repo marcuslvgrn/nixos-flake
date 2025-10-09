@@ -1,4 +1,10 @@
-{ pkgs, ... }: {
+{ pkgs, inputs, ... }:
+{
+
+  imports = [
+
+  ];
+  
   #GIT
   programs.git = {
     enable = true;
@@ -13,10 +19,11 @@
       ls = "ls --color=tty";
     };
   };
-  home.stateVersion = "25.05";
+
   programs.home-manager.enable = true;
 
   home = {
+    stateVersion = "25.05";
     sessionVariables = { LANG = "sv_SE.UTF-8"; EDITOR = "emacs -nw"; };
   };
 }

@@ -1,4 +1,4 @@
-{ pkgs, inputs, config, ... }:
+{ pkgs, inputs, config, pkgs-unstable, ... }:
 
 {
   # Pick only one of the below networking options.

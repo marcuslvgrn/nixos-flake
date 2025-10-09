@@ -1,4 +1,4 @@
-{ config, lib, pkgs, pkgs-unstable, inputs, modulesPath, hostname, ... }:
+{ config, lib, pkgs, pkgs-unstable, cfg, ... }:
 
 {
   nix.gc = {
@@ -117,7 +117,7 @@
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
-  networking.hostName = hostname;
+  networking.hostName = cfg.hostname;
   networking.useDHCP = lib.mkDefault true;
 
   # Copy the NixOS configuration file and link it from the resulting system

@@ -20,6 +20,7 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    #Gather system information
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
     #Nix user repository
     nur = {
@@ -32,8 +33,7 @@
     };
   };
   
-  outputs = inputs@{ nixpkgs, nixpkgs-unstable, home-manager, disko,
-                     nixos-facter-modules, sops-nix, flake-utils, ... }:
+  outputs = inputs@{ self, ... }:
      let
        configurations = [
          #All machines, their hostnames and machine type
@@ -49,47 +49,33 @@
          { hostname = "nixosMinimal"; system = "x86_64-linux"; }
          { hostname = "nixosImac"; system = "x86_64-linux"; }
        ];
-       mkConfig = cfg: {
+       #A function that takes a configuration (as above) as argument
+       #and returns a nixosSystem
+       mkConfig = cfg: let
+         pkgs-unstable = inputs.nixpkgs-unstable.legacyPackages.${cfg.system};
+       in {
          name = cfg.hostname;
-         value = nixpkgs.lib.nixosSystem {
+         value = inputs.nixpkgs.lib.nixosSystem {
            system = cfg.system;
            modules = [
              {
                imports = [
                  #load the host specific configuration
                  (./. + "/hosts" + ("/" + cfg.hostname) + "/configuration.nix")
-                 #load the sops-nix module
-                 sops-nix.nixosModules.sops
-                 #load the disko module
-                 disko.nixosModules.disko
-                 #load the home manager module
-                 home-manager.nixosModules.home-manager
                ];
-               #home manager user definition
-               home-manager.users.lovgren = {
-                 imports = [ ./home-manager/lovgren.nix ];
-               };
-               #home manager root definition
-               home-manager.users.root = {
-                 imports = [ ./home-manager/root.nix ];
-#                 {
-                   # Optionally, use home-manager.extraSpecialArgs to pass
-                   # arguments to home.nix
-#                   home-manager.extraSpecialArgs = { inherit inputs; };
-                   #               home-manager.extraSpecialArgs = { inherit inputs pkgs-unstable; };
-#                 };
-               };
              }
            ];
            #expose variables to loaded modules
            specialArgs = {
-             hostname = cfg.hostname;
-             pkgs-unstable = nixpkgs-unstable.legacyPackages.${cfg.system};
-             #               inherit inputs home-manager cfg disko pkgs-unstable;
+             #var = value;
+             #expose variables from this scope to imported modules with same name
+             inherit inputs cfg pkgs-unstable;
            };
          };
        };
      in {
+       #Assemble all the system configurations, looping through the variable configurations
+       #By calling the function mkConfig on each entry
        nixosConfigurations = builtins.listToAttrs (map mkConfig configurations);
      };
 }
