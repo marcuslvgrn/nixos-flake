@@ -37,7 +37,6 @@
      let
        configurations = [
          #All machines, their hostnames and machine type
-         { hostname = "nixosVMWareGnome"; system = "x86_64-linux"; }
          { hostname = "nixosDellXPS"; system = "x86_64-linux"; }
          { hostname = "nixosX360"; system = "x86_64-linux"; }
          { hostname = "nixosVMWareMinimal"; system = "x86_64-linux"; }

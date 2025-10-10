@@ -1,37 +1,79 @@
 { inputs, config, lib, pkgs, pkgs-unstable, ... }:
 
-{
+let
+  users = [
+    {
+      realname = "Marcus Lövgren";
+      username="lovgren";
+      email="marcuslvgrn@gmail.com";
+      gituser="marcuslvgrn";
+    }
+    {
+      realname = "Gerd Lövgren";
+      username="gerd";
+      email="gerd.lovgren@gmail.com";
+      gituser="tmp";
+    }
+  ];
+
+  # Shared home-manager config file
+  commonHomeConfig = ../home-manager/common.nix;
+
+  #Create users
+  mkUser = usrcfg: {
+    name = usrcfg.username;
+    value = {
+      isNormalUser = true;
+      home = "/home/${usrcfg.username}";
+      extraGroups = [ "wheel" "networkmanager" ];
+      description = usrcfg.realname;
+      shell = pkgs.bash;
+      initialHashedPassword = "$y$j9T$S649krHeSXw6y3v0QOEUZ/$C8FV.4gjcybfSjjtLWtSy/HSw0tCA9TEWsGI/iD6pE/";
+      #    hashedPasswordFile = "${config.sops.secrets."passwords/lovgren".path}";
+    };
+  };
+
+  #Setup home manager for all users
+  mkHomeUser = usrcfg:
+    let
+      # Check if there is a per-user config file; fallback to common
+      userConfigPath = builtins.toString (../home-manager) + "/" + usrcfg.username + ".nix";
+      userConfigExists = builtins.pathExists userConfigPath;
+    in
+      {
+        "${usrcfg.username}" = {
+          imports =
+            lib.optional userConfigExists userConfigPath
+            ++ [ commonHomeConfig ];
+          # Expose useful args to the home-manager configs
+          _module.args = {
+            inherit inputs pkgs-unstable usrcfg;
+          };
+        };
+      };
+  
+in {
   imports = [
     #load the home manager module
     inputs.home-manager.nixosModules.home-manager
   ];
-
-  users.users.lovgren = {
-    isNormalUser = true;
-    description = "Marcus Lövgren";
-    extraGroups = [ "wheel" "networkmanager" ];
-    shell = pkgs.bash;
-    home = "/home/lovgren";
-    initialHashedPassword = "$y$j9T$S649krHeSXw6y3v0QOEUZ/$C8FV.4gjcybfSjjtLWtSy/HSw0tCA9TEWsGI/iD6pE/";
-#    hashedPasswordFile = "${config.sops.secrets."passwords/lovgren".path}";
-  };
-
-  #Disable root login with password
-  users.users.root.hashedPassword = "!";
-
+  
+  # Configure all users' Home Manager setups
+  users.users =
+    # // here is a merge operator
+    (builtins.listToAttrs (map mkUser users)) // {
+      root.hashedPassword = "!";
+    };
+  
   home-manager = {
-    #expose variables to loaded home-manager modules
-    extraSpecialArgs = {
-      inherit inputs pkgs-unstable;
+    #foldl' merges user definitions into one users attrset
+    # // here is a merge operator
+    users = builtins.foldl' lib.recursiveUpdate {} (map mkHomeUser users) // {
+      root = {
+        imports = [ ../home-manager/root.nix ];
+      };
     };
-    #home manager user definition
-    users.lovgren = {
-      imports = [ ../home-manager/lovgren.nix ];
-    };
-    #home manager root definition
-    users.root = {
-      imports = [ ../home-manager/root.nix ];
-    };
+    extraSpecialArgs = { inherit inputs pkgs-unstable; };
   };
-
+  environment.variables.EDITOR = "emacs -nw";
 }
