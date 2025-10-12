@@ -52,7 +52,7 @@
   '';
 
   # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  #boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
