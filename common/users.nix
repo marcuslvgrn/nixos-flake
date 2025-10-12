@@ -7,12 +7,14 @@ let
       username="lovgren";
       email="marcuslvgrn@gmail.com";
       gituser="marcuslvgrn";
+      uid=1000;
     }
     {
       realname = "Gerd Lövgren";
       username="gerd";
       email="gerd.lovgren@gmail.com";
       gituser="tmp";
+      uid=1001;
     }
   ];
 
@@ -28,8 +30,8 @@ let
       extraGroups = [ "wheel" "networkmanager" ];
       description = usrcfg.realname;
       shell = pkgs.bash;
-      initialHashedPassword = "$y$j9T$S649krHeSXw6y3v0QOEUZ/$C8FV.4gjcybfSjjtLWtSy/HSw0tCA9TEWsGI/iD6pE/";
       hashedPasswordFile = config.sops.secrets."passwords/${usrcfg.username}".path;
+      uid=usrcfg.uid;
     };
   };
 
@@ -78,5 +80,5 @@ in {
   environment.variables.EDITOR = "emacs -nw";
 
   #If set to true, you are free to add new users and groups to the system with the ordinary useradd and groupadd commands. On system activation, the existing contents of the /etc/passwd and /etc/group files will be merged with the contents generated from the users.users and users.groups options. The initial password for a user will be set according to users.users, but existing passwords will not be changed.
-  users.mutableUsers = true;
+  users.mutableUsers = false;
 }

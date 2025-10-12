@@ -38,7 +38,8 @@ install -d m755 "$temp/home/lovgren/git"
 cp -r /home/lovgren/git/* "$temp/home/lovgren/git/"
 
 # Install NixOS to the host system with our secrets
-$(sudo nix run github:nix-community/nixos-anywhere -- --copy-host-keys --extra-files $temp --build-on-remote --phases kexec,disko,install,reboot --chown /home/lovgren/.ssh 1000:100 --chown /home/lovgren/git 1000:100 --chown /root/.config/sops 0:0 --flake /home/lovgren/git/nixos-flake#$host --target-host root@$ipnumber)
+#$(sudo nix run github:nix-community/nixos-anywhere -- --copy-host-keys --extra-files $temp --build-on-remote --phases kexec,disko,install,reboot --chown /home/lovgren/.ssh 1000:100 --chown /home/lovgren/git 1000:100 --chown /root/.config/sops 0:0 --flake /home/lovgren/git/nixos-flake#$host --target-host root@$ipnumber)
+sudo nix run github:nix-community/nixos-anywhere -- --copy-host-keys --extra-files $temp --phases kexec,disko,install,reboot --chown /home/lovgren/.ssh 1000:100 --chown /home/lovgren/git 1000:100 --chown /root/.config/sops 0:0 --flake /home/lovgren/git/nixos-flake#$host --target-host root@$ipnumber
 
 echo "Run stow by \`/home/lovgren/git/nixos-dotfiles/apply-dotfiles.sh\`"
 read -p "Press Enter to continue"
