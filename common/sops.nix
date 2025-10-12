@@ -18,7 +18,17 @@
     secrets."ssh/keys/id_ed25519.pub" = {};
     secrets."ssh/keys/id_ed25519" = {};
     secrets."age/keys.txt" = {};
-    secrets."passwords/lovgren" = {};
-    secrets."passwords/root" = {};
+    secrets."passwords/lovgren" = {
+      #make password available to users module, can then be used with hashedPasswordFile during user creation
+      neededForUsers = true;
+    };
+    secrets."passwords/gerd" = {
+      #make password available to users module, can then be used with hashedPasswordFile during user creation
+      neededForUsers = true;
+    };
+    secrets."passwords/root" = {
+      #make password available to users module, can then be used with hashedPasswordFile during user creation
+      neededForUsers = true;
+    };
   };
 }

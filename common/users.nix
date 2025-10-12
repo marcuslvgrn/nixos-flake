@@ -29,7 +29,7 @@ let
       description = usrcfg.realname;
       shell = pkgs.bash;
       initialHashedPassword = "$y$j9T$S649krHeSXw6y3v0QOEUZ/$C8FV.4gjcybfSjjtLWtSy/HSw0tCA9TEWsGI/iD6pE/";
-      #    hashedPasswordFile = "${config.sops.secrets."passwords/lovgren".path}";
+      hashedPasswordFile = config.sops.secrets."passwords/${usrcfg.username}".path;
     };
   };
 
@@ -76,4 +76,7 @@ in {
     extraSpecialArgs = { inherit inputs pkgs-unstable; };
   };
   environment.variables.EDITOR = "emacs -nw";
+
+  #If set to true, you are free to add new users and groups to the system with the ordinary useradd and groupadd commands. On system activation, the existing contents of the /etc/passwd and /etc/group files will be merged with the contents generated from the users.users and users.groups options. The initial password for a user will be set according to users.users, but existing passwords will not be changed.
+  users.mutableUsers = true;
 }
