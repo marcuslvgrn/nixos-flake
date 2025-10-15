@@ -41,10 +41,10 @@
   services.power-profiles-daemon.enable = true;
   #  # Suspend first then hibernate when closing the lid
   #  services.logind.lidSwitch = "suspend-then-hibernate";
-  services.logind.lidSwitch = "hibernate";
+  services.logind.settings.Login.HandleLidSwitch = "hibernate";
   #  # Hibernate on power button pressed
-  services.logind.powerKey = "hibernate";
-  services.logind.powerKeyLongPress = "poweroff";
+  services.logind.settings.Login.HandlePowerKey = "hibernate";
+  services.logind.settings.Login.HandlePowerKeyLongPress = "poweroff";
 
 #  # Suspend first
 #  boot.kernelParams = ["mem_sleep_default=deep"];

@@ -1,15 +1,20 @@
-{ config, lib, pkgs, pkgs-unstable, ... }:
+{ config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
+  nixpkgs.config.allowUnfree = true;
+
   # Bluetooth
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages =
-    (with pkgs; [
-      bitwarden-desktop
+    (with pkgs-stable; [
+    ])
+    ++
+    (with pkgs-unstable; [
       spotify
+      bitwarden-desktop
       protonvpn-gui
       chromium
       yt-dlp
@@ -18,9 +23,6 @@
       bluez-tools
       usbutils
       pciutils
-    ])
-    ++
-    (with pkgs-unstable; [
       libinput
     ]);
 

@@ -8,24 +8,25 @@
     #Secrets management
     sops-nix = {
       url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     #Home manager
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
-      inputs.nixpkgs.follows = "nixpkgs";
+#      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     #Disk partitioning
     disko = {
       url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     #Gather system information
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
     #Nix user repository
     nur = {
       url = "nur";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     #Flake utils, for example automatic machine type identification
     flake-utils = {
@@ -51,24 +52,39 @@
        #A function that takes a configuration (as above) as argument
        #and returns a nixosSystem
        mkConfig = cfg: let
-         pkgs-unstable = inputs.nixpkgs-unstable.legacyPackages.${cfg.system};
+         pkgs-stable = import inputs.nixpkgs {
+           system = cfg.system;
+           config.allowUnfree = true;
+         };
+         pkgs-unstable = import inputs.nixpkgs-unstable {
+           system = cfg.system;
+           config.allowUnfree = true;
+         };
        in {
          name = cfg.hostname;
-         value = inputs.nixpkgs.lib.nixosSystem {
+         value = inputs.nixpkgs-unstable.lib.nixosSystem {
            system = cfg.system;
            modules = [
+             # Enable Home Manager
+             inputs.home-manager.nixosModules.home-manager
+             # Host-specific configuration
+             ./hosts/${cfg.hostname}/configuration.nix
+             # Set allowUnfree globally
              {
-               imports = [
-                 #load the host specific configuration
-                 (./. + "/hosts" + ("/" + cfg.hostname) + "/configuration.nix")
+               nixpkgs.config.allowUnfree = true;
+               nixpkgs.overlays = [
+                 (final: prev: {
+                   unstable = pkgs-unstable;
+                 })
                ];
              }
            ];
+           
            #expose variables to loaded modules
            specialArgs = {
              #var = value;
              #expose variables from this scope to imported modules with same name
-             inherit inputs cfg pkgs-unstable;
+             inherit inputs cfg pkgs-stable pkgs-unstable;
            };
          };
        };

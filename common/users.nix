@@ -55,10 +55,6 @@ let
       };
   
 in {
-  imports = [
-    #load the home manager module
-    inputs.home-manager.nixosModules.home-manager
-  ];
   
   # Configure all users' Home Manager setups
   users.users =
