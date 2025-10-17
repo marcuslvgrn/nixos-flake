@@ -15,6 +15,10 @@
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    home-manager-unstable = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     #Disk partitioning
     disko = {
       url = "github:nix-community/disko";
@@ -37,38 +41,76 @@
      let
        configurations = [
          #All machines, their hostnames and machine type
-         { hostname = "nixosDellXPS"; system = "x86_64-linux"; }
-         { hostname = "nixosX360"; system = "x86_64-linux"; }
-         { hostname = "nixosVMWareMinimal"; system = "x86_64-linux"; }
-         { hostname = "nixosVMWareGnome"; system = "x86_64-linux"; }
-         { hostname = "nixosVBoxMinimal"; system = "x86_64-linux"; }
-         { hostname = "nixosVBoxGnome"; system = "x86_64-linux"; }
-         { hostname = "nixosASUS"; system = "x86_64-linux"; }
-         { hostname = "nixosTranfor"; system = "x86_64-linux"; }
-         { hostname = "nixosMinimal"; system = "x86_64-linux"; }
-         { hostname = "nixosImac"; system = "x86_64-linux"; }
+         { hostname = "nixosDellXPS";
+           system = "x86_64-linux";
+           isStable = true; }
+         { hostname = "nixosX360";
+           system = "x86_64-linux";
+           isStable = false; }
+         { hostname = "nixosVMWareMinimal";
+           system = "x86_64-linux";
+           isStable = true; }
+         { hostname = "nixosVMWareGnome";
+           system = "x86_64-linux";
+           isStable = true; }
+         { hostname = "nixosVBoxMinimal";
+           system = "x86_64-linux";
+           isStable = true; }
+         { hostname = "nixosVBoxGnome";
+           system = "x86_64-linux";
+           isStable = true; }
+         { hostname = "nixosASUS";
+           system = "x86_64-linux";
+           isStable = true; }
+         { hostname = "nixosTranfor";
+           system = "x86_64-linux";
+           isStable = true; }
+         { hostname = "nixosMinimal";
+           system = "x86_64-linux";
+           isStable = true; }
+         { hostname = "nixosImac";
+           system = "x86_64-linux";
+           isStable = true; }
        ];
        #A function that takes a configuration (as above) as argument
        #and returns a nixosSystem
        mkConfig = cfg: let
-         pkgs-unstable = inputs.nixpkgs-unstable.legacyPackages.${cfg.system};
+         pkgs-stable = import inputs.nixpkgs {
+           system = cfg.system;
+           config.allowUnfree = true;
+         };
+         pkgs-unstable = import inputs.nixpkgs-unstable {
+           system = cfg.system;
+           config.allowUnfree = true;
+         };
        in {
          name = cfg.hostname;
-         value = inputs.nixpkgs.lib.nixosSystem {
+         value = (
+           if cfg.isStable
+           then inputs.nixpkgs
+           else inputs.nixpkgs-unstable
+         ).lib.nixosSystem {
            system = cfg.system;
            modules = [
+             # Enable Home Manager
+             (if cfg.isStable then
+               inputs.home-manager.nixosModules.home-manager
+              else
+                inputs.home-manager-unstable.nixosModules.home-manager
+             )
+             # Host-specific configuration
+             ./hosts/${cfg.hostname}/configuration.nix
+             # Set allowUnfree globally
              {
-               imports = [
-                 #load the host specific configuration
-                 (./. + "/hosts" + ("/" + cfg.hostname) + "/configuration.nix")
-               ];
+               nixpkgs.config.allowUnfree = true;
              }
            ];
+
            #expose variables to loaded modules
            specialArgs = {
-             #var = value;
+             cfgPkgs = if cfg.isStable then pkgs-stable else pkgs-unstable;
              #expose variables from this scope to imported modules with same name
-             inherit inputs cfg pkgs-unstable;
+             inherit inputs cfg pkgs-stable pkgs-unstable;
            };
          };
        };

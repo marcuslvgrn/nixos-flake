@@ -2,7 +2,7 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ inputs, config, lib, pkgs, ... }:
+{ inputs, config, lib, cfg, pkgs, ... }:
 
 {
   imports = [
@@ -39,12 +39,17 @@
   #Power management
   powerManagement.enable = true;
   services.power-profiles-daemon.enable = true;
-  #  # Suspend first then hibernate when closing the lid
-  #  services.logind.lidSwitch = "suspend-then-hibernate";
-  services.logind.lidSwitch = "hibernate";
-  #  # Hibernate on power button pressed
-  services.logind.powerKey = "hibernate";
-  services.logind.powerKeyLongPress = "poweroff";
+  services.logind = if cfg.isStable then {
+#    lidSwitch = "suspend-then-hibernate";
+    lidSwitch = "hibernate";
+    powerKey = "hibernate";
+    powerKeyLongPress = "poweroff";
+  } else {
+#    settings.Login.HandleLidSwitch = "suspend-then-hibernate";
+    settings.Login.HandleLidSwitch = "hibernate";
+    settings.Login.HandlePowerKey = "hibernate";
+    settings.Login.HandlePowerKeyLongPress = "poweroff";
+  };
 
 #  # Suspend first
 #  boot.kernelParams = ["mem_sleep_default=deep"];

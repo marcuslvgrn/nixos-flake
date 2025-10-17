@@ -1,8 +1,4 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-
-{ inputs, config, lib, pkgs, ... }:
+{ inputs, config, lib, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
   imports = [
@@ -11,9 +7,17 @@
   ];
 
   #Packages only installed on this host
-  environment.systemPackages = with pkgs; [
-    docker-compose
-  ]; 
-
+  environment.systemPackages =
+      (with cfgPkgs; [
+        docker-compose
+      ])
+      ++
+      (with pkgs-stable; [
+        
+      ])
+      ++
+      (with pkgs-unstable; [
+        
+      ]); 
 }
 

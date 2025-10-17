@@ -55,17 +55,12 @@ let
       };
   
 in {
-  imports = [
-    #load the home manager module
-    inputs.home-manager.nixosModules.home-manager
-  ];
-  
   # Configure all users' Home Manager setups
   users.users =
     # // here is a merge operator
-    (builtins.listToAttrs (map mkUser users)) // {
-      root.hashedPassword = "!";
-    };
+    (builtins.listToAttrs (map mkUser users))
+    //
+    { root.hashedPassword = "!"; };
   
   home-manager = {
     #foldl' merges user definitions into one users attrset

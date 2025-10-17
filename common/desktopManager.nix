@@ -1,4 +1,4 @@
-{ config, lib, pkgs, pkgs-unstable, ... }:
+{ config, lib, cfg, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
   # Bluetooth
@@ -7,9 +7,9 @@
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages =
-    (with pkgs; [
-      bitwarden-desktop
+    (with cfgPkgs; [
       spotify
+      bitwarden-desktop
       protonvpn-gui
       chromium
       yt-dlp
@@ -18,6 +18,11 @@
       bluez-tools
       usbutils
       pciutils
+      libinput
+    ])
+    ++
+    (with pkgs-stable; [
+
     ])
     ++
     (with pkgs-unstable; [

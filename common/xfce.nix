@@ -16,10 +16,19 @@
     xkb.layout = "se";
   };
 
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages =
+    (with cfgPkgs; [
       linssid
       vlc
       gparted
-  ];
+    ])
+    ++
+    (with pkgs-stable; [
+      
+    ])
+    ++
+    (with pkgs-unstable; [
+      
+    ]);
 
 }

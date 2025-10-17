@@ -1,8 +1,18 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
-  environment.systemPackages = with pkgs; [
-  ];
+  environment.systemPackages =
+    (with cfgPkgs; [
+      
+    ])
+    ++
+    (with pkgs-stable; [
+      
+    ])
+    ++
+    (with pkgs-unstable; [
+    
+    ]);
 
   #Enable virtualbox
   virtualisation.virtualbox.host.enable = true;

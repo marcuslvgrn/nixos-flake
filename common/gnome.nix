@@ -1,4 +1,4 @@
-{ config, lib, pkgs, pkgs-unstable, inputs, ... }:
+{ config, lib, cfg, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
   imports = [
@@ -6,20 +6,25 @@
     ./desktopManager.nix
   ];
 
-  # Enable GNOME and GDM
-  services.xserver = {
-    enable = true;
-    desktopManager.gnome.enable = true;
-    displayManager.gdm.enable = true;
-    xkb.layout = "se";
-  };
+  services = let
+    baseServices = {
+      xserver.enable = true;
+      xserver.xkb.layout = "se";
+      gnome.gnome-browser-connector.enable = true;
+    };
+    gnomeService = if cfg.isStable then {
+      xserver.desktopManager.gnome.enable = lib.mkForce true;
+      xserver.displayManager.gdm.enable = true;
+    } else {
+      desktopManager.gnome.enable = lib.mkForce true;
+      displayManager.gdm.enable = true;
+    };
+  in
+    baseServices // gnomeService;
   
-  # GNOME shell host connector
-  services.gnome.gnome-browser-connector.enable = true;
-
   # Exclude some packages
   environment.gnome.excludePackages =
-    (with pkgs; [
+    (with cfgPkgs; [
       atomix # puzzle game
       cheese # webcam tool
       epiphany # web browser
@@ -37,12 +42,16 @@
       totem # video player
     ])
     ++
+    (with pkgs-stable; [
+      
+    ])
+    ++
     (with pkgs-unstable; [
       
     ]);
   
   environment.systemPackages =
-    (with pkgs; [
+    (with cfgPkgs; [
       gnomeExtensions.dash-to-dock
       gnomeExtensions.hide-top-bar
       gnomeExtensions.appindicator
@@ -54,6 +63,10 @@
       gparted
     ])
     ++
+    (with pkgs-stable; [
+      
+    ])
+    ++
     (with pkgs-unstable; [
       
     ]);
@@ -62,12 +75,21 @@
     enable = true;
     settings."org/gnome/shell" = {
       disable-user-extensions = false;
-      enabled-extensions = with pkgs.gnomeExtensions;
-        [ dash-to-dock.extensionUuid
-          appindicator.extensionUuid
-          hide-top-bar.extensionUuid
-          hibernate-status-button.extensionUuid
-        ];
+      enabled-extensions =
+        (with cfgPkgs.gnomeExtensions;
+          [ dash-to-dock.extensionUuid
+            appindicator.extensionUuid
+            hide-top-bar.extensionUuid
+            hibernate-status-button.extensionUuid
+          ])
+        ++
+        (with pkgs-stable.gnomeExtensions; [
+          
+        ])
+        ++
+        (with pkgs-unstable.gnomeExtensions; [
+          
+        ]);
     };
   };
   

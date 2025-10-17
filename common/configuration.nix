@@ -1,5 +1,4 @@
-{ config, lib, pkgs, pkgs-unstable, cfg, ... }:
-
+{ config, lib, cfg, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
 {
   nix.gc = {
     automatic = true;
@@ -14,8 +13,6 @@
   '';
 
   nix.settings.auto-optimise-store = true;
-
-  nixpkgs.config.allowUnfree = true;
 
   # Enable the Flakes feature and the accompanying new nix command-line tool
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -57,7 +54,7 @@
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages =
-    (with pkgs; [
+    (with cfgPkgs; [
       vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
       wget
       efibootmgr
@@ -81,6 +78,10 @@
       mkpasswd
       gptfdisk
       nix-tree
+    ])
+    ++
+    (with pkgs-stable; [
+      
     ])
     ++
     (with pkgs-unstable; [
