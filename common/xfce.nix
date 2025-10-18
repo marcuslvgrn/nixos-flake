@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
 
