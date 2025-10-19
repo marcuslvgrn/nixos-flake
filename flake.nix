@@ -65,6 +65,9 @@
          { hostname = "nixosTranfor";
            system = "x86_64-linux";
            isStable = true; }
+         { hostname = "nixosTranfor2";
+           system = "x86_64-linux";
+           isStable = true; }
          { hostname = "nixosMinimal";
            system = "x86_64-linux";
            isStable = true; }
