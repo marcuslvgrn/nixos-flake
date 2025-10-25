@@ -1,6 +1,10 @@
 { config, lib, cfg, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
+  imports = [
+    ./flatpak.nix
+  ];
+  
   # Bluetooth
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
@@ -19,6 +23,7 @@
       usbutils
       pciutils
       libinput
+      gimp
     ])
     ++
     (with pkgs-stable; [

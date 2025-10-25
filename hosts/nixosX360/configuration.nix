@@ -9,6 +9,7 @@
     ./hardware-configuration.nix
     ../../hosts/nixosMinimal/configuration.nix
     ../../common/gnome.nix
+    ../../common/virtualbox-host.nix
     ../../common/ssd.nix
   ];
 

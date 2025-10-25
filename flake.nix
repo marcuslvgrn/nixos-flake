@@ -35,6 +35,7 @@
     flake-utils = {
       url = "github:numtide/flake-utils";
     };
+    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
   };
   
   outputs = inputs@{ self, ... }:
@@ -95,6 +96,8 @@
          ).lib.nixosSystem {
            system = cfg.system;
            modules = [
+             #nix-flatpak
+             inputs.nix-flatpak.nixosModules.nix-flatpak
              # Enable Home Manager
              (if cfg.isStable then
                inputs.home-manager.nixosModules.home-manager

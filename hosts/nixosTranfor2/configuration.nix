@@ -1,7 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-
 { inputs, config, lib, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
@@ -13,7 +9,7 @@
     ../../common/vaultwarden.nix
     ./disk-config.nix
   ];
-
+  
   services = {
     technitium-dns-server = {
       enable = true;
@@ -51,18 +47,25 @@
       };
     };
   };
-
+  
   virtualisation.docker = {
     enable = true;
     storageDriver = "btrfs";
   };
   
   #Packages only installed on this host
-  environment.systemPackages = with cfgPkgs; [
-    technitium-dns-server
-    compose2nix
-    docker-compose
-  ]; 
-
+  environment.systemPackages =
+    (with cfgPkgs; [
+      technitium-dns-server
+      compose2nix
+      docker-compose
+    ])
+    ++
+    (with pkgs-stable; [
+      
+    ])
+    ++
+    (with pkgs-unstable; [
+      
+    ]); 
 }
-
