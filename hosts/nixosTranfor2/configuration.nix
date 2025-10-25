@@ -8,6 +8,9 @@
   imports = [
     ../../hosts/nixosMinimal/configuration.nix
     ../../common/virtualbox-guest.nix
+#    ../../common/nextcloud.nix
+    ../../common/nginx.nix
+    ../../common/vaultwarden.nix
     ./disk-config.nix
   ];
 
@@ -58,6 +61,7 @@
   environment.systemPackages = with cfgPkgs; [
     technitium-dns-server
     compose2nix
+    docker-compose
   ]; 
 
 }

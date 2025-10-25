@@ -1,22 +1,8 @@
 { inputs, config, lib, pkgs, pkgs-unstable, ... }:
 
 let
-  users = [
-    {
-      realname = "Marcus Lövgren";
-      username="lovgren";
-      email="marcuslvgrn@gmail.com";
-      gituser="marcuslvgrn";
-      uid=1000;
-    }
-    {
-      realname = "Gerd Lövgren";
-      username="gerd";
-      email="gerd.lovgren@gmail.com";
-      gituser="tmp";
-      uid=1001;
-    }
-  ];
+  userData = import ./userData.nix;
+  allUsers = userData.users ++ userData.systemUsers;
 
   # Shared home-manager config file
   commonHomeConfig = ../home-manager/common.nix;
@@ -25,13 +11,17 @@ let
   mkUser = usrcfg: {
     name = usrcfg.username;
     value = {
-      isNormalUser = true;
-      home = "/home/${usrcfg.username}";
-      extraGroups = [ "wheel" "networkmanager" ];
-      description = usrcfg.realname;
-      shell = pkgs.bash;
-      hashedPasswordFile = config.sops.secrets."passwords/${usrcfg.username}".path;
-      uid=usrcfg.uid;
+      group = usrcfg.group or "nogroup";
+      isNormalUser = usrcfg.normalUser or false;
+      isSystemUser = usrcfg.systemUser or false;
+      home = lib.mkIf (usrcfg.normalUser or false)
+        "${config.users.homeBaseDir or "/home"}/${usrcfg.username}";
+      extraGroups = usrcfg.extragroups or [];
+      description = usrcfg.realname or "";
+      shell = lib.mkIf (usrcfg.normalUser or false) pkgs.bashInteractive;
+      hashedPasswordFile = lib.mkIf (usrcfg.normalUser or false)
+        config.sops.secrets."passwords/${usrcfg.username}".path;
+      uid=usrcfg.uid or null;
     };
   };
 
@@ -42,34 +32,32 @@ let
       userConfigPath = builtins.toString (../home-manager) + "/" + usrcfg.username + ".nix";
       userConfigExists = builtins.pathExists userConfigPath;
     in
-      {
+      lib.mkIf (usrcfg.normalUser or false) {
         "${usrcfg.username}" = {
-          imports =
-            lib.optional userConfigExists userConfigPath
-            ++ [ commonHomeConfig ];
-          # Expose useful args to the home-manager configs
+          imports = lib.optional userConfigExists userConfigPath ++ [ commonHomeConfig ];
           _module.args = {
             inherit inputs pkgs-unstable usrcfg;
           };
         };
       };
-  
 in {
   # Configure all users' Home Manager setups
   users.users =
     # // here is a merge operator
-    (builtins.listToAttrs (map mkUser users))
-    //
+    (builtins.listToAttrs (map mkUser allUsers)) //
     { root.hashedPassword = "!"; };
+
+#  users.groups.mysql = {};
   
   home-manager = {
     #foldl' merges user definitions into one users attrset
     # // here is a merge operator
-    users = builtins.foldl' lib.recursiveUpdate {} (map mkHomeUser users) // {
-      root = {
-        imports = [ ../home-manager/root.nix ];
-      };
-    };
+    users = (builtins.foldl' lib.recursiveUpdate {} (map mkHomeUser allUsers)) //
+            {
+              root = {
+                imports = [ ../home-manager/root.nix ];
+              };
+            };
     extraSpecialArgs = { inherit inputs pkgs-unstable; };
   };
   environment.variables.EDITOR = "emacs -nw";
