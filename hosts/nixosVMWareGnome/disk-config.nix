@@ -1,5 +1,4 @@
-{ pkgs, inputs, ... }:
-
+{ pkgs, lib, inputs, ... }:
 {
   #load the module
   imports = [
@@ -39,7 +38,7 @@
                 };
                 # Subvolume name is the same as the mountpoint
                 "/@home" = {
-#                  mountOptions = [ "compress=zstd" ];
+                  #mountOptions = [ "compress=zstd" ];
                   mountpoint = "/home";
                 };
                 # Subvolume for the swapfile

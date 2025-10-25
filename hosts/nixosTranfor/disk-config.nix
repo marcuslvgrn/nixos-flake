@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ pkgs, lib, inputs, ... }:
 {
   #load the module
   imports = [
@@ -14,6 +14,7 @@
         partitions = {
           esp = {
             name = "ESP";
+            label = "ESP";
             size = "500M";
             type = "EF00";
             content = {
@@ -24,6 +25,7 @@
           };
           root = {
             size = "100%";
+            label = "ROOT";
             content = {
               type = "btrfs";
               extraArgs = [ "-f" ]; # Override existing partition
@@ -31,19 +33,19 @@
               # unless their parent is mounted
               subvolumes = {
                 # Subvolume name is different from mountpoint
-                "/rootfs" = {
+                "/@" = {
                   mountpoint = "/";
                 };
                 # Subvolume name is the same as the mountpoint
-                "/home" = {
-#                  mountOptions = [ "compress=zstd" ];
+                "/@home" = {
+                  #mountOptions = [ "compress=zstd" ];
                   mountpoint = "/home";
                 };
                 # Subvolume for the swapfile
-                "/swap" = {
+                "/@swap" = {
                   mountpoint = "/swap";
                   swap = {
-                    swapfile.size = "2G";
+                    swapfile.size = "4G";
                   };
                 };
               };
