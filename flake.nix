@@ -44,7 +44,7 @@
          #All machines, their hostnames and machine type
          { hostname = "nixosDellXPS";
            system = "x86_64-linux";
-           isStable = true; }
+           isStable = false; }
          { hostname = "nixosX360";
            system = "x86_64-linux";
            isStable = false; }

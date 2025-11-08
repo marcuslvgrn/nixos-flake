@@ -1,4 +1,4 @@
-{ config, lib, usrcfg, pkgs, pkgs-unstable, inputs, ... }:
+{ config, lib, cfg, usrcfg, pkgs, pkgs-unstable, inputs, ... }:
 
 {
   imports = [
@@ -43,10 +43,15 @@
   programs.bash = { enable = true; };
 
   #GIT
-  programs.git = {
+  programs.git = if cfg.isStable then {
     enable = true;
     userEmail = "${usrcfg.email}";
     userName = "${usrcfg.gituser}";
+  } else {
+    enable = true;
+    settings.user.email = "${usrcfg.email}";
+    settings.user.name = "${usrcfg.gituser}";
+
   };
 
   programs.home-manager.enable = true;

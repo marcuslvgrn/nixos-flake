@@ -19,8 +19,8 @@
     secrets."ssh/keys/id_ed25519" = {};
     secrets."age/keys.txt" = {};
     secrets."nextcloud.env" = {
-      owner = "nextcloud";
-      group = "keys";
+#      owner = "nextcloud";
+#      group = "keys";
     };
     secrets."passwords/lovgren" = {
       #make password available to users module, can then be used with hashedPasswordFile during user creation
@@ -35,8 +35,8 @@
       neededForUsers = true;
     };
     secrets."dynv6-credentials" = {
-      owner = "nginx";
-      group = "nginx";
+#      owner = "nginx";
+#      group = "nginx";
     };
     secrets."vaultwarden-env" = {};
   };

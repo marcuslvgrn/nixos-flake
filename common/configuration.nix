@@ -49,8 +49,8 @@
   '';
 
   # Use latest kernel.
-  #boot.kernelPackages = pkgs.linuxPackages_latest;
-
+  boot.kernelPackages = if cfg.isStable then cfgPkgs.linuxPackages else cfgPkgs.linuxPackages_latest;
+    
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages =
@@ -64,7 +64,7 @@
       age
       sops
       gnupg
-      pinentry
+#      pinentry
       pinentry-curses
       #
       emacs

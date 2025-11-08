@@ -1,4 +1,4 @@
-{ inputs, config, lib, pkgs, pkgs-unstable, ... }:
+{ inputs, config, cfg, lib, pkgs, pkgs-unstable, ... }:
 
 let
   userData = import ./userData.nix;
@@ -36,7 +36,7 @@ let
         "${usrcfg.username}" = {
           imports = lib.optional userConfigExists userConfigPath ++ [ commonHomeConfig ];
           _module.args = {
-            inherit inputs pkgs-unstable usrcfg;
+            inherit inputs pkgs-unstable cfg usrcfg;
           };
         };
       };
