@@ -9,7 +9,15 @@
   home = {
     username = usrcfg.username;
     homeDirectory = "/home/${usrcfg.username}";
-    sessionVariables = { LANG = "sv_SE.UTF-8";};
+    sessionVariables = {
+      LANG = "sv_SE.UTF-8";
+#      XDG_DATA_DIRS = lib.mkMerge [
+#        (lib.mkDefault "/run/current-system/sw/share")
+#        (lib.mkIf (config.home.username != null)
+#          "/etc/profiles/per-user/${config.home.username}/share")
+#      ];
+#      GSETTINGS_SCHEMA_DIR = "/run/current-system/sw/share/glib-2.0/schemas";
+    };
     shellAliases = {
       ll = "ls -la";
       l = "ls -alh";

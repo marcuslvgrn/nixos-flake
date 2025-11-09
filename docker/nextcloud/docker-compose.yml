@@ -1,0 +1,107 @@
+#services:
+#  aio-mastercontainer:
+#    image: nextcloud/all-in-one:latest
+#    container_name: nextcloud-aio-mastercontainer
+#    restart: always
+#    ports:
+#      - "81:80"
+#      - "8081:8080"
+#    volumes:
+#      - nextcloud_aio_mastercontainer:/mnt/docker-aio-config
+#      - /var/run/docker.sock:/var/run/docker.sock  # 👈 THIS IS REQUIRED
+#    environment:
+#      # Optional: preconfigure AIO to auto-install
+#      - NEXTCLOUD_ADMIN_USER=admin
+#      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASS}
+##      - NEXTCLOUD_ADMIN_PASSWORD=supersecret
+##      - NEXTCLOUD_TRUSTED_DOMAINS=tranfor2.local
+##      - NEXTCLOUD_DATADIR=/mnt/ncdata
+#      - SKIP_DOMAIN_VALIDATION=true
+#      - APACHE_PORT=8080
+#      - AIO_DISABLE_BACKUP_SECTION=true
+#
+#volumes:
+#  nextcloud_aio_mastercontainer:
+
+volumes:
+  nextcloud:
+  db:
+  redis_data:
+
+services:
+  db:
+    image: mariadb:11.4
+    container_name: nextcloud-db
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASS}
+      - MYSQL_PASSWORD=${MYSQL_PASS}
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+
+  redis:
+    image: redis:alpine
+    container_name: nextcloud-redis
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASS:-}
+    # optional: persist redis data
+    volumes:
+      - redis_data:/data
+
+#  appapi-daemon:
+#    image: ghcr.io/cloud-py-api/app_api_deploy_daemon:latest
+#    container_name: nextcloud-appapi-daemon
+#    restart: always
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    environment:
+#      - APP_API_LOG_LEVEL=info
+
+  nextcloud:
+    image: nextcloud
+    container_name: nextcloud
+    restart: always
+    ports:
+      - 81:80
+    links:
+      - db
+    volumes:
+      - nextcloud:/var/www/html
+      - /mnt/data/mp3:/mp3:ro
+    environment:
+      - MYSQL_PASSWORD=${MYSQL_PASS}
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_HOST=db
+      - NEXTCLOUD_TRUSTED_DOMAINS=mlowncloud2.dynv6.net
+      - NEXTCLOUD_ADMIN_USER=admin
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASS}
+      - OVERWRITEHOST=mlowncloud2.dynv6.net
+      - OVERWRITEPROTOCOL=https
+      - PHP_UPLOAD_LIMIT=10G
+      - MEMORY_LIMIT=512M
+      - REDIS_HOST=redis
+      - REDIS_HOST_PASSWORD=${REDIS_PASS:-}
+      - NEXTCLOUD_CONFIG_MEMCACHE_LOCAL=\OC\Memcache\APCu
+      - NEXTCLOUD_CONFIG_MEMCACHE_LOCKING=\OC\Memcache\Redis
+      - NEXTCLOUD_CONFIG_MEMCACHE_DISTRIBUTED=\OC\Memcache\Redis
+#    entrypoint: >
+#      sh -c "
+#        # Start Apache in background so OCC can run
+#        apache2-foreground &
+#
+#        echo 'Waiting for Nextcloud to initialize...';
+#        until php occ status >/dev/null 2>&1; do
+#          sleep 5;
+#        done;
+#
+#        echo 'Registering AppAPI Deploy Daemon...';
+#        php occ app_api:daemon:register --url 'http://appapi-daemon:8065' --default || true;
+#
+#        # Keep container alive
+#        wait
+#      "
+
