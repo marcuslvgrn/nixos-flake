@@ -1,19 +1,28 @@
 { config, cfgPkgs, lib, ... }:
 let
   # Define all your domains and backend services here 👇
+#    "mlowncloud2.dynv6.net"  = "http://192.168.0.117:81";
   proxyHosts = {
-    "mlbitwarden2.dynv6.net" = "http://192.168.0.117:8222";
-    "mlowncloud2.dynv6.net"  = "http://192.168.0.117:81";
-    "mlpihole2.dynv6.net"    = "http://192.168.0.117:5380";
+    "mlbitwarden2.dynv6.net" = {
+      target = "http://192.168.0.117:8222";
+    };
+    "mlpihole2.dynv6.net" = {
+      target = "http://192.168.0.117:5380";
+    };
+    "mlairsonic.dynv6.net" = {
+      target = "http://192.168.0.117:4040";
+    };
   };
 
   # Helper to create vhost definitions from proxyHosts
-  mkVhost = host: target: {
+  mkVhost = host: cfg: {
     enableACME = true;
     forceSSL = true;
+    serverName = host;
     locations."/" = {
-      proxyPass = target;
-      # proxyWebsockets = true; # uncomment if needed
+      proxyPass = cfg.target;
+      extraConfig = (cfg.extraConfig or "");
+#    # proxyWebsockets = true; # uncomment if needed
     };
   };
 in
@@ -27,15 +36,6 @@ in
     certs = lib.genAttrs (builtins.attrNames proxyHosts) (domain: {
       webroot = "/var/lib/acme/acme-challenge";
     });
-#    certs."mlowncloud2.dynv6.net" = {
-#      webroot = "/var/lib/acme/acme-challenge";
-#    };
-#    certs."mlbitwarden2.dynv6.net" = {
-#      webroot = "/var/lib/acme/acme-challenge";
-#    };
-#    certs."mlpihole2.dynv6.net" = {
-#      webroot = "/var/lib/acme/acme-challenge";
-#    };
   };
 
   users.users.nginx.extraGroups = [ "acme" ];
@@ -59,36 +59,5 @@ in
     }
     //
     lib.mapAttrs mkVhost proxyHosts; # add all proxied HTTPS vhosts
-#      "mlbitwarden2.dynv6.net" =  {
-#        enableACME = true;
-#        forceSSL = true;
-#        locations = {
-#          "/" = {
-#            proxyPass = "http://192.168.0.117:8222";
-##            proxyWebsockets = true; # needed if you need to use WebSocket
-#          };
-#        };
-#      };
-#      "mlowncloud2.dynv6.net" =  {
-#        enableACME = true;
-#        forceSSL = true;
-#        locations = {
-#          "/" = {
-#            proxyPass = "http://192.168.0.117:81";
-##            proxyWebsockets = true; # needed if you need to use WebSocket
-#          };
-#        };
-#      };
-#      "mlpihole2.dynv6.net" =  {
-#        enableACME = true;
-#        forceSSL = true;
-#        locations = {
-#          "/" = {
-#            proxyPass = "http://192.168.0.117:5380";
-##            proxyWebsockets = true;
-#          };
-#        };
-#      };
-#    };
   };
 }

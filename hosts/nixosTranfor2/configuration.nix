@@ -17,7 +17,8 @@ in {
   imports = [
     ../../hosts/nixosMinimal/configuration.nix
     ../../common/virtualbox-guest.nix
-#    ../../common/nextcloud.nix
+    ../../common/nextcloud.nix
+    ../../common/airsonic.nix
     ../../common/nginx.nix
     ../../common/vaultwarden.nix
     ./disk-config.nix
@@ -75,6 +76,7 @@ in {
       #to solve ssh -X errors from gnome
       glib.dev
       gsettings-desktop-schemas
+      php82
     ])
     ++
     (with pkgs-stable; [
