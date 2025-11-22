@@ -13,12 +13,12 @@
     ../../common/ssd.nix
   ];
 
-  boot.loader.grub.extraEntries = ''
-    menuentry "Arch" {
-      set root=(hd0,gpt1)
-      chainloader /efi/grub/grubx64.efi
-    }
-  '';
+#  boot.loader.grub.extraEntries = ''
+#    menuentry "Arch" {
+#      set root=(hd0,gpt1)
+#      chainloader /efi/grub/grubx64.efi
+#    }
+#  '';
 
   swapDevices = [{
     device = "/dev/disk/by-uuid/5737d59b-b0f2-4de9-b4e3-b1f52b723ab0";
