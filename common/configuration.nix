@@ -78,6 +78,8 @@
       mkpasswd
       gptfdisk
       nix-tree
+      gcc
+      gnumake
     ])
     ++
     (with pkgs-stable; [
