@@ -9,19 +9,13 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/dcabbd78-7298-431a-8877-cabf3a77a6e2";
+    { device = "/dev/disk/by-partlabel/NIXOSROOT";
       fsType = "btrfs";
       options = [ "subvol=@" ];
     };
 
-  fileSystems."/var/log" =
-    { device = "/dev/disk/by-uuid/dcabbd78-7298-431a-8877-cabf3a77a6e2";
-      fsType = "btrfs";
-      options = [ "subvol=@var_log" ];
-    };
-
   fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/dcabbd78-7298-431a-8877-cabf3a77a6e2";
+    { device = "/dev/disk/by-partlabel/NIXOSROOT";
       fsType = "btrfs";
       options = [ "subvol=@home" ];
     };

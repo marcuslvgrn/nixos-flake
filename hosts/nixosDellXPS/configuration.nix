@@ -52,12 +52,12 @@
   services.displayManager = { autoLogin.enable = false; };
 
   #Specify hibernation options
+#    "resume=UUID=0a718fe8-0e53-40b6-82aa-c1829c2c4ead"
   boot.kernelParams = [
     "resume_offset=533760"
-    "resume=UUID=dcabbd78-7298-431a-8877-cabf3a77a6e2"
     "kvm.enable_virt_at_load=0"
   ];
-  boot.resumeDevice = "/dev/disk/by-uuid/dcabbd78-7298-431a-8877-cabf3a77a6e2";
+  boot.resumeDevice = "/dev/disk/by-partlabel/NIXOSROOT";
 
   #Power management
   powerManagement.enable = true;
