@@ -1,4 +1,4 @@
-{ config, lib, cfg, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
+{ config, lib, cfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
   imports = [
@@ -11,7 +11,7 @@
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages =
-    (with cfgPkgs; [
+    (with pkgs; [
       spotify
       bitwarden-desktop
       protonvpn-gui

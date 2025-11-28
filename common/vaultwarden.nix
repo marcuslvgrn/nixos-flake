@@ -1,4 +1,4 @@
-{ config, cfgPkgs, lib, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   services.vaultwarden = {

@@ -1,4 +1,4 @@
-{ config, lib, cfg, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
+{ config, lib, cfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
   imports = [
@@ -24,7 +24,7 @@
   
   # Exclude some packages
   environment.gnome.excludePackages =
-    (with cfgPkgs; [
+    (with pkgs; [
       atomix # puzzle game
       cheese # webcam tool
       epiphany # web browser
@@ -51,7 +51,7 @@
     ]);
   
   environment.systemPackages =
-    (with cfgPkgs; [
+    (with pkgs; [
       gnomeExtensions.dash-to-dock
       gnomeExtensions.hide-top-bar
       gnomeExtensions.appindicator
@@ -76,7 +76,7 @@
     settings."org/gnome/shell" = {
       disable-user-extensions = false;
       enabled-extensions =
-        (with cfgPkgs.gnomeExtensions;
+        (with pkgs.gnomeExtensions;
           [ dash-to-dock.extensionUuid
             appindicator.extensionUuid
             hide-top-bar.extensionUuid

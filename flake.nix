@@ -114,7 +114,7 @@
 
            #expose variables to loaded modules
            specialArgs = {
-             cfgPkgs = if cfg.isStable then pkgs-stable else pkgs-unstable;
+#             cfgPkgs = if cfg.isStable then pkgs-stable else pkgs-unstable;
              #expose variables from this scope to imported modules with same name
              inherit inputs cfg pkgs-stable pkgs-unstable;
            };

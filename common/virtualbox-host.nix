@@ -1,8 +1,8 @@
-{ config, lib, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
+{ config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
   environment.systemPackages =
-    (with cfgPkgs; [
+    (with pkgs; [
       
     ])
     ++

@@ -1,4 +1,4 @@
-{ config, cfgPkgs, lib, ... }:
+{ config, pkgs, lib, ... }:
 let
   # Define all your domains and backend services here 👇
   proxyHosts = {

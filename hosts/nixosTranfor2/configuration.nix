@@ -1,4 +1,4 @@
-{ inputs, config, lib, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
+{ inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 let
   # Overlay to force GTK2 for Emacs
@@ -68,7 +68,7 @@ in {
   
   #Packages only installed on this host
   environment.systemPackages =
-    (with cfgPkgs; [
+    (with pkgs; [
       technitium-dns-server
       compose2nix
       docker-compose
@@ -89,7 +89,7 @@ in {
 #  environment.pathsToLink = [
 #    "/share/glib-2.0/schemas"
 #  ];
-#  environment.etc."glib-2.0/schemas".source = "${cfgPkgs.gsettings-desktop-schemas}/share/glib-2.0/schemas";
+#  environment.etc."glib-2.0/schemas".source = "${pkgs.gsettings-desktop-schemas}/share/glib-2.0/schemas";
 #
 #  environment.sessionVariables = {
 #    XDG_DATA_DIRS = "/run/current-system/sw/share";
@@ -101,7 +101,7 @@ in {
 #    text = ''
 #      if [ -d "/run/current-system/sw/share/glib-2.0/schemas" ]; then
 #        echo "Compiling GLib schemas..."
-#        ${cfgPkgs.glib.dev}/bin/glib-compile-schemas /run/current-system/sw/share/glib-2.0/schemas
+#        ${pkgs.glib.dev}/bin/glib-compile-schemas /run/current-system/sw/share/glib-2.0/schemas
 #      fi
 #    '';
 #  };

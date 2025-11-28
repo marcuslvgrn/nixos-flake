@@ -1,4 +1,4 @@
-{ config, lib, cfg, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
+{ config, lib, cfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
 {
   nix.gc = {
     automatic = true;
@@ -51,12 +51,12 @@
   '';
 
   # Use latest kernel.
-  boot.kernelPackages = if cfg.isStable then cfgPkgs.linuxPackages else cfgPkgs.linuxPackages_latest;
+  boot.kernelPackages = if cfg.isStable then pkgs.linuxPackages else pkgs.linuxPackages_latest;
     
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages =
-    (with cfgPkgs; [
+    (with pkgs; [
       vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
       wget
       efibootmgr

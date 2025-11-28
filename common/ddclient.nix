@@ -1,4 +1,4 @@
-{ inputs, config, lib, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
+{ inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 {
   services.ddclient = {
     enable = true;

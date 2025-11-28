@@ -1,4 +1,4 @@
-{ inputs, config, lib, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
+{ inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
   imports = [
@@ -8,7 +8,7 @@
 
   #Packages only installed on this host
   environment.systemPackages =
-      (with cfgPkgs; [
+      (with pkgs; [
         docker-compose
       ])
       ++

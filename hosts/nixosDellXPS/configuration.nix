@@ -2,7 +2,7 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ inputs, config, lib, cfg, cfgPkgs, pkgs-stable, pkgs-unstable, ... }:
+{ inputs, config, lib, cfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
   imports = [
@@ -28,7 +28,7 @@
   }];
 
   environment.systemPackages =
-    (with cfgPkgs; [
+    (with pkgs; [
       fprintd
       libva-utils
       vdpauinfo
@@ -46,7 +46,7 @@
 
   services.fprintd.enable = true;
   services.fprintd.tod.enable = true;
-  services.fprintd.tod.driver = cfgPkgs.libfprint-2-tod1-goodix;
+  services.fprintd.tod.driver = pkgs.libfprint-2-tod1-goodix;
 
   # Autologin a user
   services.displayManager = { autoLogin.enable = false; };
@@ -94,7 +94,7 @@
   hardware.graphics = {
     enable = true;
     extraPackages =
-      (with cfgPkgs; [
+      (with pkgs; [
         intel-media-driver
         intel-vaapi-driver
         libvdpau-va-gl
