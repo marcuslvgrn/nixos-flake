@@ -48,7 +48,12 @@
   #    };
   #  };
 
-  programs.bash = { enable = true; };
+  programs.bash = {
+    enable = true;
+    sessionVariables = {
+      LANG = "en_US.UTF-8";
+    };
+  };
 
   #GIT
   programs.git = if cfg.isStable then {

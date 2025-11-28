@@ -44,7 +44,6 @@
   # Call commands and interactive bash start
   # Commands are separated by \n
   programs.bash.interactiveShellInit = ''
-    LANG=en_US.UTF-8
      neofetch
   '';
 
