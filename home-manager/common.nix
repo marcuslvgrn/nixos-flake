@@ -50,9 +50,10 @@
 
   programs.bash = {
     enable = true;
-    sessionVariables = {
-      LANG = "en_US.UTF-8";
-    };
+    initExtra = ''
+      export LANG="en_US.UTF-8"
+      export LC_MESSAGES="en_US.UTF-8"
+    '';
   };
 
   #GIT

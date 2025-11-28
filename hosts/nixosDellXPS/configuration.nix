@@ -52,7 +52,6 @@
   services.displayManager = { autoLogin.enable = false; };
 
   #Specify hibernation options
-#    "resume=UUID=0a718fe8-0e53-40b6-82aa-c1829c2c4ead"
   boot.kernelParams = [
     "resume_offset=4838900"
     "kvm.enable_virt_at_load=0"
@@ -62,15 +61,16 @@
   #Power management
   powerManagement.enable = true;
   services.power-profiles-daemon.enable = true;
+  #In Gnome, power key behavior is set by the settings app!
   services.logind = if cfg.isStable then {
 #    lidSwitch = "suspend-then-hibernate";
     lidSwitch = "hibernate";
-    powerKey = "hibernate";
+#    powerKey = "hibernate";
     powerKeyLongPress = "poweroff";
   } else {
 #    settings.Login.HandleLidSwitch = "suspend-then-hibernate";
     settings.Login.HandleLidSwitch = "hibernate";
-    settings.Login.HandlePowerKey = "hibernate";
+#    settings.Login.HandlePowerKey = "hibernate";
     settings.Login.HandlePowerKeyLongPress = "poweroff";
   };
 

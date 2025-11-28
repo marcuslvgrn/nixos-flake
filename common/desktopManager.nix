@@ -97,12 +97,14 @@
 #        };
         /* ---- PREFERENCES ---- */
         # Set preferences shared by all profiles.
-#        Preferences = { 
-#          "browser.contentblocking.category" = { Value = "strict"; Status = "locked"; };
+      preferences = {
+        "intl.locale.requested" = "sv-SE,en-US";
+        "services.sync.username" = "marcuslvgrn@gmail.com";
+        #          "browser.contentblocking.category" = { Value = "strict"; Status = "locked"; };
 #          "extensions.pocket.enabled" = lock-false;
 #          "extensions.screenshots.disabled" = lock-true;
 #          add global preferences here...
-#        };
+        };
         /* ---- PROFILES ---- */
         # Switch profiles via about:profiles page.
         # For options that are available in Home-Manager see
