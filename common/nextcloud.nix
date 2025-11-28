@@ -58,7 +58,7 @@
     caching.redis = true;
     config = {
       # Explicit database config
-      dbtype = "pgsql";
+      dbtype = "mysql";
       adminuser = "admin";
       adminpassFile = config.sops.secrets."nextcloud-admin-pass".path;
     };

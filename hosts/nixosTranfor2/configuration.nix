@@ -21,14 +21,12 @@ in {
     ../../common/airsonic.nix
     ../../common/nginx.nix
     ../../common/vaultwarden.nix
+    ../../common/technitium.nix
+    ./hardware-configuration.nix
     ./disk-config.nix
   ];
-  
+
   services = {
-    technitium-dns-server = {
-      enable = true;
-      openFirewall = true;
-    };
     samba = {
       enable = true;
       smbd.enable = true;
@@ -44,7 +42,7 @@ in {
           # note: localhost is the ipv6 localhost ::1
           "hosts allow" = "192.168.0. 127.0.0.1 localhost";
           "hosts deny" = "0.0.0.0/0";
-          "guest account" = "nobody";
+          "guest account" = "lovgren";
           "map to guest" = "bad user";
           "create mask" = "0664";
           "directory mask" = "0775";

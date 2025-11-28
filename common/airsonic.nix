@@ -3,8 +3,8 @@
 {
   services.airsonic = {
     enable = true;
-    listenAddress = "192.168.0.117";
-    contextPath = "/airsonic";
+    listenAddress = "192.168.0.7";
+    contextPath = "/";
     jvmOptions = [
       "-Dserver.use-forward-headers=true"
     ];

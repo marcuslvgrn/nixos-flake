@@ -13,7 +13,7 @@
       SIGNUPS_ALLOWED = false;
 
       #update to actual IP
-      ROCKET_ADDRESS = "192.168.0.117";
+      ROCKET_ADDRESS = "192.168.0.7";
       ROCKET_PORT = 8222;
       ROCKET_LOG = "critical";
       
