@@ -76,6 +76,7 @@ in {
       glib.dev
       gsettings-desktop-schemas
       php82
+      mariadb
     ])
     ++
     (with pkgs-stable; [

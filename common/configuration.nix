@@ -82,7 +82,6 @@
       nix-tree
       gcc
       gnumake
-      mariadb
     ])
     ++
     (with pkgs-stable; [
