@@ -22,6 +22,7 @@ in {
     ../../common/nginx.nix
     ../../common/vaultwarden.nix
     ../../common/technitium.nix
+    ../../common/ddclient.nix
     ./hardware-configuration.nix
     ./disk-config.nix
   ];

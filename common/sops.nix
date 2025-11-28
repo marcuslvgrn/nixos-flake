@@ -39,5 +39,6 @@
 #      group = "nginx";
     };
     secrets."vaultwarden-env" = {};
+    secrets."ddclient-pass" = {};
   };
 }
