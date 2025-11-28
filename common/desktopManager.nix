@@ -16,6 +16,7 @@
       bitwarden-desktop
       protonvpn-gui
       chromium
+      brave
       yt-dlp
       nextcloud-client
       bluez
