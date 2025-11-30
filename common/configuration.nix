@@ -82,6 +82,7 @@
       nix-tree
       gcc
       gnumake
+      compsize
     ])
     ++
     (with pkgs-stable; [

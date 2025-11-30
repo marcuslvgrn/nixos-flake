@@ -76,7 +76,6 @@ in {
       gsettings-desktop-schemas
       php82
       mariadb
-      compsize
     ])
     ++
     (with pkgs-stable; [

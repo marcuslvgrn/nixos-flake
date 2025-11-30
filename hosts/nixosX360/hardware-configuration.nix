@@ -11,19 +11,28 @@
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/4aabc80c-9556-4323-862e-17a0452e695a";
       fsType = "btrfs";
-      options = [ "subvol=@" ];
+      options = [
+        "subvol=@"
+        "compress=zstd:1"
+      ];
     };
 
   fileSystems."/home" =
     { device = "/dev/disk/by-uuid/4aabc80c-9556-4323-862e-17a0452e695a";
       fsType = "btrfs";
-      options = [ "subvol=@home" ];
+      options = [
+        "subvol=@home"
+        "compress=zstd:1"
+      ];
     };
 
   fileSystems."/var/log" =
     { device = "/dev/disk/by-uuid/4aabc80c-9556-4323-862e-17a0452e695a";
       fsType = "btrfs";
-      options = [ "subvol=@var_log" ];
+      options = [
+        "subvol=@var_log"
+        "compress=zstd:1"
+      ];
     };
 
   fileSystems."/efi" =
