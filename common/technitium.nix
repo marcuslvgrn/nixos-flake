@@ -29,6 +29,7 @@
     technitium-dns-server = {
       enable = true;
       openFirewall = true;
+      package = pkgs-unstable.technitium-dns-server;
     };
   };
 }

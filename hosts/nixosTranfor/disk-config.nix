@@ -6,8 +6,23 @@
   ];
   
   disko.devices = {
+    #for multi disk btrfs, declare secondary drives first
     disk.disk1 = {
-      device = "/dev/sda";
+      device = "/dev/disk/by-id/ata-Samsung_SSD_860_EVO_250GB_S3YJNX0K804219W";
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          root = {
+            size = "100%";
+            label = "ROOT2";
+          };
+        };
+      };
+    };
+    #this is the primary drive, reference other drives as extraArgs
+    disk.disk2 = {
+      device = "/dev/disk/by-id/ata-KINGSTON_SV300S37A240G_50026B724B08A4E8";
       type = "disk";
       content = {
         type = "gpt";
@@ -15,7 +30,7 @@
           esp = {
             name = "ESP";
             label = "ESP";
-            size = "500M";
+            size = "100M";
             type = "EF00";
             content = {
               type = "filesystem";
@@ -28,24 +43,31 @@
             label = "ROOT";
             content = {
               type = "btrfs";
-              extraArgs = [ "-f" ]; # Override existing partition
+              extraArgs = [
+                "--force"
+                "--data single"
+                "--metadata raid1"
+                "/dev/disk/by-partlabel/ROOT2"
+              ];
               # Subvolumes must set a mountpoint in order to be mounted,
               # unless their parent is mounted
               subvolumes = {
                 # Subvolume name is different from mountpoint
                 "/@" = {
+                  mountOptions = [ "compress=zstd:1" ];
                   mountpoint = "/";
                 };
                 # Subvolume name is the same as the mountpoint
                 "/@home" = {
-                  #mountOptions = [ "compress=zstd" ];
+                  mountOptions = [ "compress=zstd:1" ];
                   mountpoint = "/home";
                 };
                 # Subvolume for the swapfile
                 "/@swap" = {
+                  mountOptions = [ "compress=zstd:1" ];
                   mountpoint = "/swap";
                   swap = {
-                    swapfile.size = "4G";
+                    swapfile.size = "8G";
                   };
                 };
               };

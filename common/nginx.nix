@@ -14,13 +14,13 @@ let
       recommendedTlsSettings = false;
 #      locationPath = "/router/";
     };
-    "mlbitwarden2.dynv6.net" = {
+    "mlvaultwarden.dynv6.net" = {
       target = "http://192.168.0.7:8222";
       recommendedProxySettings = true;
       recommendedTlsSettings = true;
 #      locationPath = "/bitwarden/";
     };
-    "mlpihole2.dynv6.net" = {
+    "mltechnitium.dynv6.net" = {
       target = "http://192.168.0.7:5380";
       recommendedProxySettings = true;
       recommendedTlsSettings = true;

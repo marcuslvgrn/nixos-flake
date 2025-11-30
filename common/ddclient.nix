@@ -24,6 +24,7 @@
     protocol = "dyndns2";
     passwordFile = config.sops.secrets."ddclient-pass".path;
     server = "dynv6.com";
-#    verbose = true;
+    username = "none";
+    #    verbose = true;
   };
 }

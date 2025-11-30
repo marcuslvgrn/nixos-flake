@@ -22,13 +22,13 @@
     enable = true;
     package = pkgs.nextcloud32;
     https = true;
-    hostName = "mlowncloud2.dynv6.net";
+    hostName = "mlnextcloud.dynv6.net";
     configureRedis = true;
     database.createLocally = true;
     datadir = "/var/lib/nextcloud";
     settings = let
       prot = "https"; # or https
-      host = "mlowncloud2.dynv6.net";
+      host = "mlnextcloud.dynv6.net";
       dir = "/nextcloud";
     in {
       appstoreenabled = true;
