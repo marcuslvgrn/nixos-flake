@@ -21,6 +21,10 @@
   services.nextcloud = {
     enable = true;
     package = pkgs.nextcloud32;
+    extraApps = {
+      inherit (config.services.nextcloud.package.packages.apps) news contacts calendar tasks;
+    };
+    extraAppsEnable = true;
     https = true;
     hostName = "mlnextcloud.dynv6.net";
     configureRedis = true;

@@ -8,29 +8,29 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-partlabel/ROOT";
-      fsType = "btrfs";
-      options = [ "subvol=@" ];
-    };
-
-  fileSystems."/mnt/data" =
-    { device = "/dev/disk/by-partlabel/ROOT";
-      fsType = "btrfs";
-      options = [ "subvol=@data" ];
-    };
-
-  fileSystems."/home" =
-    { device = "/dev/disk/by-partlabel/ROOT";
-      fsType = "btrfs";
-      options = [ "subvol=@home" ];
-    };
-
-  fileSystems."/efi" =
-    { device = "/dev/disk/by-partlabel/ESP";
-      fsType = "vfat";
-      options = [ "fmask=0022" "dmask=0022" ];
-    };
+#  fileSystems."/" =
+#    { device = "/dev/disk/by-partlabel/ROOT";
+#      fsType = "btrfs";
+#      options = [ "subvol=@" ];
+#    };
+#
+#  fileSystems."/mnt/data" =
+#    { device = "/dev/disk/by-partlabel/ROOT";
+#      fsType = "btrfs";
+#      options = [ "subvol=@data" ];
+#    };
+#
+#  fileSystems."/home" =
+#    { device = "/dev/disk/by-partlabel/ROOT";
+#      fsType = "btrfs";
+#      options = [ "subvol=@home" ];
+#    };
+#
+#  fileSystems."/efi" =
+#    { device = "/dev/disk/by-partlabel/ESP";
+#      fsType = "vfat";
+#      options = [ "fmask=0022" "dmask=0022" ];
+#    };
 
 #  swapDevices = [ {
 #    device = "/swap/swapfile";

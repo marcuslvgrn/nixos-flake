@@ -62,6 +62,10 @@
                   mountOptions = [ "compress=zstd:1" ];
                   mountpoint = "/home";
                 };
+                "/@data" = {
+                  mountOptions = [ "compress=zstd:1" ];
+                  mountpoint = "/mnt/data";
+                };
                 # Subvolume for the swapfile
                 "/@swap" = {
                   mountOptions = [ "compress=zstd:1" ];
