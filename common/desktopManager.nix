@@ -38,6 +38,7 @@
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
   services.teamviewer.enable = true;
+  services.printing.enable = true;
   
   programs = {
     #FIREFOX
