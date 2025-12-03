@@ -32,6 +32,12 @@ let
       recommendedTlsSettings = true;
 #      locationPath = "/airsonic/";
     };
+    "mlproxmox.dynv6.net" = {
+      target = "http://192.168.0.10:8006";
+      recommendedProxySettings = true;
+      recommendedTlsSettings = true;
+#      locationPath = "/airsonic/";
+    };
   };
 
   # Helper to create vhost definitions from proxyHosts
