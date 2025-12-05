@@ -57,15 +57,10 @@
   };
 
   #GIT
-  programs.git = if cfg.isStable then {
-    enable = true;
-    userEmail = "${usrcfg.email}";
-    userName = "${usrcfg.gituser}";
-  } else {
+  programs.git = {
     enable = true;
     settings.user.email = "${usrcfg.email}";
     settings.user.name = "${usrcfg.gituser}";
-
   };
 
   programs.home-manager.enable = true;

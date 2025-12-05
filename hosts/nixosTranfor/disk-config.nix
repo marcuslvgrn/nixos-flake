@@ -20,6 +20,19 @@
         };
       };
     };
+    disk.disk3 = {
+      device = "/dev/disk/by-id/ata-Crucial_CT525MX300SSD1_17291800BCF6";
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          root = {
+            size = "100%";
+            label = "ROOT3";
+          };
+        };
+      };
+    };
     #this is the primary drive, reference other drives as extraArgs
     disk.disk2 = {
       device = "/dev/disk/by-id/ata-KINGSTON_SV300S37A240G_50026B724B08A4E8";
