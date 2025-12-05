@@ -8,5 +8,6 @@
     jvmOptions = [
       "-Dserver.use-forward-headers=true"
     ];
+    maxMemory = 256;
   };
 }
