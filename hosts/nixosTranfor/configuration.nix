@@ -28,6 +28,12 @@ in {
   ];
 
   services = {
+    cron = {
+      enable = true;
+      systemCronJobs = [
+        "0 1 * * *   root   rtcwake -m off -s 21600 >> /root/cron.log 2>&1"
+      ];
+    };
     samba = {
       enable = true;
       smbd.enable = true;
@@ -76,6 +82,8 @@ in {
       gsettings-desktop-schemas
       php82
       mariadb
+      util-linux
+      ethtool
     ])
     ++
     (with pkgs-stable; [

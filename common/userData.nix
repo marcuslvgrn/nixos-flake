@@ -4,7 +4,7 @@
       realname = "Marcus Lövgren";
       username="lovgren";
       group="users";
-      extragroups=[ "wheel" "networkmanager" ];
+      extragroups=[ "wheel" "networkmanager" "rtc"];
       email="marcuslvgrn@gmail.com";
       gituser="marcuslvgrn";
       uid=1000;
