@@ -6,22 +6,12 @@
     ./desktopManager.nix
   ];
 
-  services = let
-    baseServices = {
-      xserver.enable = true;
-      xserver.xkb.layout = "se";
-      gnome.gnome-browser-connector.enable = true;
-    };
-    gnomeService = if cfg.isStable then {
-      xserver.desktopManager.gnome.enable = lib.mkForce true;
-      xserver.displayManager.gdm.enable = true;
-    } else {
-      desktopManager.gnome.enable = lib.mkForce true;
-      displayManager.gdm.enable = true;
-    };
-  in
-    baseServices // gnomeService;
-  
+  services = {
+    gnome.gnome-browser-connector.enable = true;
+    desktopManager.gnome.enable = lib.mkForce true;
+    displayManager.gdm.enable = true;
+  };
+
   # Exclude some packages
   environment.gnome.excludePackages =
     (with pkgs; [

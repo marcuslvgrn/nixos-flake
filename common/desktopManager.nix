@@ -4,6 +4,11 @@
   imports = [
     ./flatpak.nix
   ];
+
+  services = {
+    xserver.enable = true;
+    xserver.xkb.layout = "se";
+  };
   
   # Bluetooth
   hardware.bluetooth.enable = true;
@@ -25,6 +30,7 @@
       pciutils
       libinput
       gimp
+      libreoffice
     ])
     ++
     (with pkgs-stable; [
