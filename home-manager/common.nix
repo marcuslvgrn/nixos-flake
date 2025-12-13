@@ -5,33 +5,33 @@
 
   ];
 
-  gtk = {
-    enable = true;
-    
-    iconTheme = {
-      name = "adwaita";
-      package = pkgs.adwaita-icon-theme;
-    };
-    
-    theme = {
-      name = "adwaita";
-      package = pkgs.adwaita-qt;
-    };
-    
-    gtk3.extraConfig = {
-      Settings = ''
-        gtk-application-prefer-dark-theme=1
-      '';        
-    };
-
-    gtk4.extraConfig = {
-      Settings = ''
-        gtk-application-prefer-dark-theme=1
-      '';
-    };
-  };
-
-  home.sessionVariables.GTK_THEME = "adwaita";
+#  gtk = {
+#    enable = true;
+#    
+#    iconTheme = {
+#      name = "adwaita";
+#      package = pkgs.adwaita-icon-theme;
+#    };
+#    
+#    theme = {
+#      name = "adwaita";
+#      package = pkgs.adwaita-qt;
+#    };
+#    
+#    gtk3.extraConfig = {
+#      Settings = ''
+#        gtk-application-prefer-dark-theme=1
+#      '';        
+#    };
+#
+#    gtk4.extraConfig = {
+#      Settings = ''
+#        gtk-application-prefer-dark-theme=1
+#      '';
+#    };
+#  };
+#
+#  home.sessionVariables.GTK_THEME = "adwaita";
   # ...
 
   

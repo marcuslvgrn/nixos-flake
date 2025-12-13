@@ -9,7 +9,7 @@
     ./hardware-configuration.nix
     ../../hosts/nixosMinimal/configuration.nix
     ../../common/gnome.nix
-    ../../common/kde.nix
+#    ../../common/kde.nix
     ../../common/ssd.nix
     ../../common/virtualbox-host.nix
     ../../services/ath11k-suspend.nix

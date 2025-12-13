@@ -2,8 +2,9 @@
 {
   nix.gc = {
     automatic = true;
-    dates = "Mon..Sun *-*-* 12:00";
-    options = "--delete-older-than 10d";
+    persistent = true;
+    dates = "20:00";
+    options = "--delete-older-than 14d";
 #    delete_generations = "+5";
   };
 
