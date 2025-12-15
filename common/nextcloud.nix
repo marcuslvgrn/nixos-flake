@@ -2,6 +2,11 @@
 
 {
 
+  networking.hosts = {
+    "127.0.0.1" = ["mlnextcloud.dynv6.net" "mlcollabora.dynv6.net"];
+    "::1" = ["mlnextcloud.dynv6.net" "mlcollabora.dynv6.net"];
+  };
+  
   services.collabora-online = {
     enable = true;
     port = 9980; # default
