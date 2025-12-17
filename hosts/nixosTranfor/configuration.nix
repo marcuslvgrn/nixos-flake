@@ -71,7 +71,7 @@ in {
     enable = true;
     storageDriver = "btrfs";
   };
-  
+
   #Packages only installed on this host
   environment.systemPackages =
     (with pkgs; [

@@ -9,7 +9,7 @@ let
 #      locationPath = "/modem/";
     };
     "mlrouter.dynv6.net" = {
-      target = "http://192.168.0.2:8080";
+      target = "http://192.168.0.2:80";
       recommendedProxySettings = true;
       recommendedTlsSettings = false;
 #      locationPath = "/router/";

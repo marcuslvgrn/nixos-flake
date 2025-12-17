@@ -2,6 +2,10 @@
 
 {
 
+  environment.systemPackages = with pkgs; [
+    corefonts
+  ];
+
   networking.hosts = {
     "127.0.0.1" = ["mlnextcloud.dynv6.net" "mlcollabora.dynv6.net"];
     "::1" = ["mlnextcloud.dynv6.net" "mlcollabora.dynv6.net"];

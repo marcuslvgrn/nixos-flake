@@ -98,6 +98,8 @@
 
 #  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
   
+  services.iperf3.enable = true;
+  
   services.pcscd.enable = true;
   programs.gnupg.agent = {
     enable = true;
