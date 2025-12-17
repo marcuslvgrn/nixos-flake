@@ -84,6 +84,8 @@
       gcc
       gnumake
       compsize
+      pcituils
+      usbutils
     ])
     ++
     (with pkgs-stable; [
