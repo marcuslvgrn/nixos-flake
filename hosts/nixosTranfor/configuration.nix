@@ -28,6 +28,7 @@ in {
   ];
 
   services = {
+    iperf3.enable = true;
     cron = {
       enable = true;
       systemCronJobs = [

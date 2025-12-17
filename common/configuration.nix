@@ -84,8 +84,9 @@
       gcc
       gnumake
       compsize
-      pcituils
+      pciutils
       usbutils
+      iperf3
     ])
     ++
     (with pkgs-stable; [
@@ -99,8 +100,6 @@
   services.emacs.defaultEditor = true;
 
 #  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
-  
-  services.iperf3.enable = true;
   
   services.pcscd.enable = true;
   programs.gnupg.agent = {
