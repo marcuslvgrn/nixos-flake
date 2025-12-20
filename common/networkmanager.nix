@@ -3,7 +3,6 @@
 {
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  # programs.nm-applet = true; # not needed in gnome
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";

@@ -45,12 +45,14 @@
       gnomeExtensions.dash-to-dock
       gnomeExtensions.hide-top-bar
       gnomeExtensions.appindicator
-      gnomeExtensions.hibernate-status-button
+      gnomeExtensions.power-off-options
       gnome-tweaks
       gnome-boxes
       linssid
       vlc
       gparted
+      dconf2nix
+      dconf-editor
     ])
     ++
     (with pkgs-stable; [

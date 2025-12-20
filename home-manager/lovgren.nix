@@ -5,40 +5,6 @@
 
   ];
 
-  programs.firefox = {
-    enable = true;
-    languagePacks = [ "sv-SE" "en-US" ];
-
-    policies = {
-      DisableFirefoxAccounts = true;
-      DisableSync = true;
-    };
-    
-    profiles.Marcus = {
-      name = "Marcus";
-      isDefault = true;
-      search = {
-        force = true;
-        default = "ddg";
-      };
-      extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
-        ublock-origin
-        bitwarden
-        istilldontcareaboutcookies
-        gnome-shell-integration
-        duckduckgo-privacy-essentials
-      ];
-      settings = {
-        "intl.locale.requested" = "sv-SE,en-US";
-        "browser.startup.page" = 3;
-        "browser.sessionstore.resume_from_crash" = true;
-        "extensions.install.requireBuiltInCerts" = false;
-        "extensions.autoDisableScopes" = 0;
-        "browser.translations.neverTranslateLanguages" = "en,en-US,en-GB";
-      };
-    };
-  };
-
 #  nixpkgs = {
 #    # You can add overlays here
 #    overlays = [

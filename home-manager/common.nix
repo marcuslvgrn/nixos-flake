@@ -2,40 +2,44 @@
 
 {
   imports = [
-
+    ./dconf.nix
   ];
 
-#  gtk = {
-#    enable = true;
-#    
-#    iconTheme = {
-#      name = "adwaita";
-#      package = pkgs.adwaita-icon-theme;
-#    };
-#    
-#    theme = {
-#      name = "adwaita";
-#      package = pkgs.adwaita-qt;
-#    };
-#    
-#    gtk3.extraConfig = {
-#      Settings = ''
-#        gtk-application-prefer-dark-theme=1
-#      '';        
-#    };
-#
-#    gtk4.extraConfig = {
-#      Settings = ''
-#        gtk-application-prefer-dark-theme=1
-#      '';
-#    };
-#  };
-#
-#  home.sessionVariables.GTK_THEME = "adwaita";
-  # ...
+  programs.firefox = {
+    enable = true;
+    languagePacks = [ "sv-SE" "en-US" ];
 
+    policies = {
+      DisableFirefoxAccounts = true;
+      DisableSync = true;
+    };
+    
+    profiles.default = {
+      name = "default";
+      isDefault = true;
+      search = {
+        force = true;
+        default = "ddg";
+      };
+      extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
+        ublock-origin
+        bitwarden
+        i-dont-care-about-cookies
+        istilldontcareaboutcookies
+        gnome-shell-integration
+        duckduckgo-privacy-essentials
+      ];
+      settings = {
+        "intl.locale.requested" = "sv-SE,en-US";
+        "browser.startup.page" = 3;
+        "browser.sessionstore.resume_from_crash" = true;
+        "extensions.install.requireBuiltInCerts" = false;
+        "extensions.autoDisableScopes" = 0;
+        "browser.translations.neverTranslateLanguages" = "en,en-US,en-GB";
+      };
+    };
+  };
   
-  # TODO: Set your username
   home = {
     username = usrcfg.username;
     homeDirectory = "/home/${usrcfg.username}";
