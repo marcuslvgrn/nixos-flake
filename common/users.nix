@@ -50,6 +50,8 @@ in {
 #  users.groups.mysql = {};
   
   home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
     #foldl' merges user definitions into one users attrset
     # // here is a merge operator
     users = (builtins.foldl' lib.recursiveUpdate {} (map mkHomeUser allUsers)) //

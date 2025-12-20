@@ -28,7 +28,7 @@
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
     #Nix user repository
     nur = {
-      url = "nur";
+      url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     #Flake utils, for example automatic machine type identification
@@ -72,6 +72,9 @@
          { hostname = "nixosImac";
            system = "x86_64-linux";
            isStable = true; }
+         { hostname = "nixosNUC";
+           system = "x86_64-linux";
+           isStable = false; }
        ];
        #A function that takes a configuration (as above) as argument
        #and returns a nixosSystem
@@ -105,7 +108,12 @@
              ./hosts/${cfg.hostname}/configuration.nix
              # Set allowUnfree globally
              {
-               nixpkgs.config.allowUnfree = true;
+               nixpkgs = {
+                 config.allowUnfree = true;
+                 overlays = [
+                   inputs.nur.overlays.default
+                 ];
+               };
              }
            ];
 
