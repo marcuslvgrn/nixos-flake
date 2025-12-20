@@ -1,19 +1,33 @@
 { inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
-let
-  # Overlay to force GTK2 for Emacs
-  overlay = self: super: {
-    emacs = super.emacs.override {
-      withGTK2 = true;
-      withGTK3 = false;
-    };
-  };
+{
+  nixpkgs.overlays = [
+    # Technitium version override
+#    (import ../../overlays/technitium-overlay.nix)
 
-  pkgsHost = import <nixpkgs> {
-    system = builtins.currentSystem;
-    overlays = [ overlay ];
-  };
-in {
+#    # Emacs GTK2 override
+#    (final: prev: {
+#      emacs = prev.emacs.override {
+#        withGTK2 = true;
+#        withGTK3 = false;
+#      };
+#    })
+  ];
+
+#let
+#  # Overlay to force GTK2 for Emacs
+#  overlay = self: super: {
+#    emacs = super.emacs.override {
+#      withGTK2 = true;
+#      withGTK3 = false;
+#    };
+#  };
+#
+#  pkgsHost = import <nixpkgs> {
+#    system = builtins.currentSystem;
+#    overlays = [ overlay ];
+#  };
+#in {
   imports = [
     ../../hosts/nixosMinimal/configuration.nix
     ../../common/virtualbox-guest.nix

@@ -44,37 +44,59 @@
          #All machines, their hostnames and machine type
          { hostname = "nixosDellXPS";
            system = "x86_64-linux";
-           isStable = false; }
+           isStable = false;
+           gnomeEnable = true;
+         }
          { hostname = "nixosX360";
            system = "x86_64-linux";
-           isStable = false; }
+           isStable = false; 
+           gnomeEnable = true;
+         }
          { hostname = "nixosVMWareMinimal";
            system = "x86_64-linux";
-           isStable = true; }
+           isStable = true; 
+           gnomeEnable = false;
+         }
          { hostname = "nixosVMWareGnome";
            system = "x86_64-linux";
-           isStable = true; }
+           isStable = true; 
+           gnomeEnable = true;
+         }
          { hostname = "nixosVBoxMinimal";
            system = "x86_64-linux";
-           isStable = true; }
+           isStable = true; 
+           gnomeEnable = false;
+         }
          { hostname = "nixosVBoxGnome";
            system = "x86_64-linux";
-           isStable = true; }
+           isStable = true; 
+           gnomeEnable = true;
+         }
          { hostname = "nixosASUS";
            system = "x86_64-linux";
-           isStable = true; }
+           isStable = true; 
+           gnomeEnable = false;
+         }
          { hostname = "nixosTranfor";
            system = "x86_64-linux";
-           isStable = true; }
+           isStable = true; 
+           gnomeEnable = false;
+         }
          { hostname = "nixosMinimal";
            system = "x86_64-linux";
-           isStable = true; }
+           isStable = true; 
+           gnomeEnable = false;
+         }
          { hostname = "nixosImac";
            system = "x86_64-linux";
-           isStable = true; }
+           isStable = true; 
+           gnomeEnable = true;
+         }
          { hostname = "nixosNUC";
            system = "x86_64-linux";
-           isStable = false; }
+           isStable = false; 
+           gnomeEnable = true;
+         }
        ];
        #A function that takes a configuration (as above) as argument
        #and returns a nixosSystem
