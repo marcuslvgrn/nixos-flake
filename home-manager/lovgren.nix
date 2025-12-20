@@ -8,6 +8,11 @@
   programs.firefox = {
     enable = true;
     languagePacks = [ "sv-SE" "en-US" ];
+
+    policies = {
+      DisableFirefoxAccounts = true;
+      DisableSync = true;
+    };
     
     profiles.Marcus = {
       name = "Marcus";
