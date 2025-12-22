@@ -36,6 +36,10 @@
       url = "github:numtide/flake-utils";
     };
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/master";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
   
   outputs = inputs@{ self, ... }:
@@ -46,110 +50,223 @@
            system = "x86_64-linux";
            isStable = false;
            gnomeEnable = true;
+           platform = "nixos";
          }
          { hostname = "nixosX360";
            system = "x86_64-linux";
            isStable = false; 
            gnomeEnable = true;
+           platform = "nixos";
          }
          { hostname = "nixosVMWareMinimal";
            system = "x86_64-linux";
            isStable = true; 
            gnomeEnable = false;
+           platform = "nixos";
          }
          { hostname = "nixosVMWareGnome";
            system = "x86_64-linux";
            isStable = true; 
            gnomeEnable = true;
+           platform = "nixos";
          }
          { hostname = "nixosVBoxMinimal";
            system = "x86_64-linux";
            isStable = true; 
            gnomeEnable = false;
+           platform = "nixos";
          }
          { hostname = "nixosVBoxGnome";
            system = "x86_64-linux";
            isStable = true; 
            gnomeEnable = true;
+           platform = "nixos";
          }
          { hostname = "nixosASUS";
            system = "x86_64-linux";
            isStable = true; 
            gnomeEnable = false;
+           platform = "nixos";
          }
          { hostname = "nixosTranfor";
            system = "x86_64-linux";
            isStable = true; 
            gnomeEnable = false;
+           platform = "nixos";
          }
          { hostname = "nixosMinimal";
            system = "x86_64-linux";
            isStable = true; 
            gnomeEnable = false;
+           platform = "nixos";
          }
          { hostname = "nixosImac";
            system = "x86_64-linux";
            isStable = true; 
            gnomeEnable = true;
+           platform = "nixos";
+         }
+         { hostname = "Marcus-iMac";
+           system = "x86_64-darwin";
+           isStable = false; 
+           gnomeEnable = false;
+           platform = "darwin";
          }
          { hostname = "nixosNUC";
            system = "x86_64-linux";
            isStable = false; 
            gnomeEnable = true;
+           platform = "nixos";
          }
        ];
-       #A function that takes a configuration (as above) as argument
-       #and returns a nixosSystem
-       mkConfig = cfg: let
-         pkgs-stable = import inputs.nixpkgs {
-           system = cfg.system;
-           config.allowUnfree = true;
-         };
-         pkgs-unstable = import inputs.nixpkgs-unstable {
-           system = cfg.system;
-           config.allowUnfree = true;
-         };
-       in {
-         name = cfg.hostname;
-         value = (
-           if cfg.isStable
-           then inputs.nixpkgs
-           else inputs.nixpkgs-unstable
-         ).lib.nixosSystem {
-           system = cfg.system;
-           modules = [
-             #nix-flatpak
-             inputs.nix-flatpak.nixosModules.nix-flatpak
-             # Enable Home Manager
-             (if cfg.isStable then
-               inputs.home-manager.nixosModules.home-manager
-              else
-                inputs.home-manager-unstable.nixosModules.home-manager
-             )
-             # Host-specific configuration
-             ./hosts/${cfg.hostname}/configuration.nix
-             # Set allowUnfree globally
-             {
-               nixpkgs = {
-                 config.allowUnfree = true;
-                 overlays = [
-                   inputs.nur.overlays.default
-                 ];
-               };
-             }
-           ];
 
-           #expose variables to loaded modules
-           specialArgs = {
-#             cfgPkgs = if cfg.isStable then pkgs-stable else pkgs-unstable;
-             #expose variables from this scope to imported modules with same name
-             inherit inputs cfg pkgs-stable pkgs-unstable;
-           };
-         };
-       };
+mkSystem = cfg:
+  let
+    # ------------------------------------------------------------
+    # Select nixpkgs
+    # ------------------------------------------------------------
+    pkgs-stable = import inputs.nixpkgs {
+      system = cfg.system;
+      config.allowUnfree = true;
+    };
+
+    pkgs-unstable = import inputs.nixpkgs-unstable {
+      system = cfg.system;
+      config.allowUnfree = true;
+    };
+
+    pkgs =
+      if cfg.isStable
+      then pkgs-stable
+      else pkgs-unstable;
+
+#    isDarwin = cfg.platform == "darwin";
+  in {
+    name = cfg.hostname;
+    value =
+      if cfg.platform == "darwin" then
+        inputs.nix-darwin.lib.darwinSystem {
+          system = cfg.system;
+          inherit pkgs;
+
+          modules = [
+            ./hosts/${cfg.hostname}/configuration.nix
+
+            (if cfg.isStable
+              then inputs.home-manager.darwinModules.home-manager
+              else inputs.home-manager-unstable.darwinModules.home-manager
+            )
+          ];
+
+          specialArgs = {
+            inherit inputs self cfg pkgs-stable pkgs-unstable;
+          };
+        }
+      else
+        pkgs.lib.nixosSystem {
+          system = cfg.system;
+
+          modules = [
+            inputs.nix-flatpak.nixosModules.nix-flatpak
+
+            (if cfg.isStable
+              then inputs.home-manager.nixosModules.home-manager
+              else inputs.home-manager-unstable.nixosModules.home-manager
+            )
+
+            ./hosts/${cfg.hostname}/configuration.nix
+
+            {
+              nixpkgs = {
+                inherit pkgs;
+                config.allowUnfree = true;
+                overlays = [ inputs.nur.overlays.default ];
+              };
+            }
+          ];
+
+          specialArgs = {
+            inherit inputs cfg pkgs-stable pkgs-unstable;
+          };
+        };
+  };
+    # ------------------------------------------------------------
+    # Split platforms
+    # ------------------------------------------------------------
+    nixosConfigs =
+      builtins.filter (c: c.platform == "nixos") configurations;
+
+    darwinConfigs =
+      builtins.filter (c: c.platform == "darwin") configurations;
+
+    # ------------------------------------------------------------
+    # NixOS generator
+    # ------------------------------------------------------------
+    mkNixosConfig = cfg:
+      let
+        pkgs-stable = import inputs.nixpkgs {
+          system = cfg.system;
+          config.allowUnfree = true;
+        };
+        pkgs-unstable = import inputs.nixpkgs-unstable {
+          system = cfg.system;
+          config.allowUnfree = true;
+        };
+      in {
+        name = cfg.hostname;
+        value = (
+          if cfg.isStable
+          then inputs.nixpkgs
+          else inputs.nixpkgs-unstable
+        ).lib.nixosSystem {
+          system = cfg.system;
+
+          modules = [
+            inputs.nix-flatpak.nixosModules.nix-flatpak
+
+#            (if cfg.isStable
+#              then inputs.home-manager.nixosModules.home-manager
+#              else inputs.home-manager-unstable.nixosModules.home-manager
+#            )
+
+            ./hosts/${cfg.hostname}/configuration.nix
+
+            {
+              nixpkgs = {
+                config.allowUnfree = true;
+                overlays = [ inputs.nur.overlays.default ];
+              };
+            }
+          ];
+
+          specialArgs = {
+            inherit inputs cfg pkgs-stable pkgs-unstable;
+          };
+        };
+      };
+
+    # ------------------------------------------------------------
+    # Darwin generator
+    # ------------------------------------------------------------
+    mkDarwinConfig = cfg: {
+      name = cfg.hostname;
+      value = inputs.nix-darwin.lib.darwinSystem {
+        system = cfg.system;
+
+        modules = [
+          ./hosts/${cfg.hostname}/configuration.nix
+          inputs.home-manager.darwinModules.home-manager
+        ];
+
+        specialArgs = {
+          inherit inputs cfg self;
+        };
+      };
+    };
      in {
        #Assemble all the system configurations, looping through the variable configurations
        #By calling the function mkConfig on each entry
-       nixosConfigurations = builtins.listToAttrs (map mkConfig configurations);
+       nixosConfigurations = builtins.listToAttrs (map mkSystem configurations);
+       darwinConfigurations = builtins.listToAttrs (map mkSystem configurations);
      };
 }
