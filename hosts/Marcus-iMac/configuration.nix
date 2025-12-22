@@ -45,7 +45,18 @@
   nix.settings.experimental-features = "nix-command flakes";
   
   # Enable alternative shell support in nix-darwin.
-  programs.zsh.enable = true;
+  programs.zsh = {
+    enable = true;
+    interactiveShellInit = ''
+      alias ll='ls -la'
+      alias gs='git status'
+      alias ga='git add'
+      alias gc='git commit'
+      alias gp='git push'
+      alias rebuild='darwin-rebuild switch --flake ~/git/nixos-flake'
+    '';
+  };
+    
   
   # Set Git commit hash for darwin-version.
   system.configurationRevision = self.rev or self.dirtyRev or null;
