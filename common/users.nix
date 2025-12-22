@@ -1,4 +1,4 @@
-{ inputs, config, cfg, lib, pkgs, pkgs-unstable, ... }:
+{ inputs, config, cfg, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 let
   userData = import ./userData.nix;
@@ -60,7 +60,7 @@ in {
                 imports = [ ../home-manager/root.nix ];
               };
             };
-    extraSpecialArgs = { inherit inputs pkgs-unstable; };
+    extraSpecialArgs = { inherit inputs pkgs pkgs-stable pkgs-unstable; };
   };
   environment.variables.EDITOR = "emacs -nw";
 
