@@ -58,7 +58,8 @@
       gs = "git status";
       ga = "git add";
       gc = "git commit";
-      gp = "git push";
+      gps = "git push";
+      gpl = "git pull";
       gd = "git diff";
       rebuild = "nixos-rebuild switch --flake ~/git/nixos-flake";
       sudo = "sudo ";

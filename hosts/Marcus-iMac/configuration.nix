@@ -52,7 +52,9 @@
       alias gs='git status'
       alias ga='git add'
       alias gc='git commit'
-      alias gp='git push'
+      alias gps='git push'
+      alias gpl='git pull'
+      alias gd='git diff'
       alias rebuild='darwin-rebuild switch --flake ~/git/nixos-flake'
     '';
   };
