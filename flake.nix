@@ -143,20 +143,17 @@
          in {
            name = cfg.hostname;
            value =
+             # Darwin host
              if cfg.platform == "darwin" then
                inputs.nix-darwin.lib.darwinSystem {
                  system = cfg.system;
-                 inherit pkgs;
-                 
                  modules = [
-                   
                    (if cfg.isStable
                     then inputs.home-manager.darwinModules.home-manager
                     else inputs.home-manager-unstable.darwinModules.home-manager
                    )
                    ./hosts/${cfg.hostname}/configuration.nix
                  ];
-
                  specialArgs = {
                    inherit inputs self cfg pkgs-stable pkgs-unstable;
                  };
