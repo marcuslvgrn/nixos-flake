@@ -56,6 +56,7 @@
       alias gpl='git pull'
       alias gd='git diff'
       alias rebuild='darwin-rebuild switch --flake ~/git/nixos-flake'
+      alias sudo='sudo '
     '';
   };
     
