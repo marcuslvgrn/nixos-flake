@@ -1,9 +1,25 @@
 { inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
+
+  services.printing = {
+    enable = true;
+    listenAddresses = [ "*:631" ];
+    allowFrom = [ "all" ];
+    browsing = true;
+    defaultShared = true;
+    openFirewall = true;
+  };
+  
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
+  
   nixpkgs.overlays = [
     # Technitium version override
-#    (import ../../overlays/technitium-overlay.nix)
+    (import ../../overlays/technitium-overlay.nix)
 
 #    # Emacs GTK2 override
 #    (final: prev: {
@@ -99,6 +115,7 @@
       mariadb
       util-linux
       ethtool
+      cups
     ])
     ++
     (with pkgs-stable; [
