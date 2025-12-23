@@ -160,7 +160,7 @@
                }
              else
                # NixOS host
-               (if cfg.isStable then inputs.nixpkgs-stable else inputs.nixpkgs-unstable).lib.nixosSystem {
+               (if cfg.isStable then inputs.nixpkgs else inputs.nixpkgs-unstable).lib.nixosSystem {
                  system = cfg.system;
                  modules = [
                    inputs.nix-flatpak.nixosModules.nix-flatpak

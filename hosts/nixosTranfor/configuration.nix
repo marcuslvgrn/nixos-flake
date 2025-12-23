@@ -46,7 +46,6 @@
 #in {
   imports = [
     ../../hosts/nixosMinimal/configuration.nix
-    ../../common/virtualbox-guest.nix
     ../../common/nextcloud.nix
     ../../common/airsonic.nix
     ../../common/nginx.nix
