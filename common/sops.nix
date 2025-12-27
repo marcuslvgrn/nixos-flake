@@ -22,6 +22,14 @@
 #      owner = "nextcloud";
 #      group = "keys";
     };
+    secrets."nextcloud-secrets" = {
+#      owner = "nextcloud";
+#      group = "keys";
+    };
+    secrets."nextcloud-whiteboard-secrets" = {
+#      owner = "nextcloud";
+#      group = "keys";
+    };
     secrets."passwords/lovgren" = {
       #make password available to users module, can then be used with hashedPasswordFile during user creation
       neededForUsers = true;

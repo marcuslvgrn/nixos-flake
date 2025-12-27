@@ -95,6 +95,13 @@ in
 
   services.nginx = {
     enable = true;
+#    recommendedGzipSettings = true;
+#    recommendedOptimisation = true;
+#    recommendedProxySettings = true;
+#    recommendedTlsSettings = true;
+#    appendHttpConfig = ''
+#      load_module modules/ngx_http_headers_more_filter_module.so;
+#    '';
     virtualHosts = {
       "_" = {
         listen = [{ addr = "0.0.0.0"; port = 80; }];

@@ -1,11 +1,22 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, pkgs-stable, pkgs-unstable, lib, ... }:
 
 {
+  #Packages only installed on this host
+  environment.systemPackages =
+    (with pkgs; [
+      chromium
+      corefonts
+    ])
+    ++
+    (with pkgs-stable; [
+      
+    ])
+    ++
+    (with pkgs-unstable; [
 
-  environment.systemPackages = with pkgs; [
-    corefonts
-  ];
+    ]);
 
+  
   networking.hosts = {
     "127.0.0.1" = ["mlnextcloud.dynv6.net" "mlcollabora.dynv6.net"];
     "::1" = ["mlnextcloud.dynv6.net" "mlcollabora.dynv6.net"];
@@ -38,6 +49,15 @@
     };
   };
 
+  services.nextcloud-whiteboard-server = {
+    enable = true;
+    secrets = [ config.sops.secrets."nextcloud-whiteboard-secrets".path ];
+    settings = {
+      NEXTCLOUD_URL = "https://mlnextcloud.dynv6.org";
+      CHROME_EXECUTABLE_PATH = "/run/current-system/sw/bin/chromium";
+    };
+  };
+  
   systemd.services.nextcloud-config-collabora = let
     inherit (config.services.nextcloud) occ;
     
@@ -76,6 +96,47 @@
   services.nginx.virtualHosts.${config.services.nextcloud.hostName} = {
     forceSSL = true;
     enableACME = true;
+#    extraConfig = ''
+#   # Remove headers injected by Nextcloud/nginx defaults
+#    more_clear_headers X-Robots-Tag;
+#    more_clear_headers X-Permitted-Cross-Domain-Policies;
+#    more_clear_headers Referrer-Policy;
+#    more_clear_headers Strict-Transport-Security;
+#
+#    # Add EXACT values expected by Nextcloud
+#    add_header X-Robots-Tag "noindex,nofollow" always;
+#    add_header X-Permitted-Cross-Domain-Policies "none" always;
+#    add_header Referrer-Policy "no-referrer" always;
+#    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+#    '';
+#    locations."~ \\.php$".extraConfig = lib.mkAfter ''
+#        more_clear_headers X-Robots-Tag;
+#        more_clear_headers X-Permitted-Cross-Domain-Policies;
+#        more_clear_headers Referrer-Policy;
+#        more_clear_headers Strict-Transport-Security;
+#        
+#        add_header X-Robots-Tag "noindex,nofollow" always;
+#        add_header X-Permitted-Cross-Domain-Policies "none" always;
+#        add_header Referrer-Policy "no-referrer" always;
+#        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+#      '';
+#  locations."/" = {
+#    extraConfig = ''
+#        proxy_set_header Host $host;
+#        proxy_set_header X-Real-IP $remote_addr;
+#        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#        proxy_set_header X-Forwarded-Proto $scheme;
+#        proxy_set_header X-Forwarded-Host $host;
+#        proxy_set_header X-Forwarded-Server $hostname;
+##        proxy_http_version 1.1;
+##       add_header Referrer-Policy "no-referrer" always;
+##      add_header X-Content-Type-Options "nosniff" always;
+##      add_header X-Download-Options "noopen" always;
+##      add_header X-Frame-Options "SAMEORIGIN" always;
+##      add_header X-Permitted-Cross-Domain-Policies "none" always;
+##      add_header X-XSS-Protection "1; mode=block" always;
+#    '';
+#    };
     locations."/whiteboard/" = {
       extraConfig = ''
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -100,6 +161,7 @@
   ##########################
   services.nextcloud = {
     enable = true;
+    secretFile = config.sops.secrets."nextcloud-secrets".path;
     package = pkgs.nextcloud32;
     extraApps = with config.services.nextcloud.package.packages.apps; {
       inherit richdocuments news contacts calendar tasks;
@@ -115,9 +177,19 @@
       host = "mlnextcloud.dynv6.net";
       dir = "/nextcloud";
     in {
+      maintenance_window_start = 22;
+      default_phone_region = "SE";
       appstoreenabled = true;
       overwriteprotocol = prot;
       overwritehost = host;
+      mail_domain = "gmail.com";
+      mail_from_address = "marcuslvgrn";
+      mail_smtphost = "smtp.gmail.com";
+      mail_smtpport = 465;
+      mail_smtpname = "marcuslvgrn@gmail.com";
+      mail_smtpsecure = "ssl";
+      mail_smtpauth = true;
+      #};
       #overwritewebroot = dir;
       #overwrite.cli.url = "${prot}://${host}${dir}/";
       #htaccess.RewriteBase = dir;
@@ -137,7 +209,11 @@
 #        }
 #      ];
     };
-   
+
+    phpOptions = {
+      "opcache.interned_strings_buffer" = "23";
+    };
+    
     # Data directory
     caching.redis = true;
     config = {
