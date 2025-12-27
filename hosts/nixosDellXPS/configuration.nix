@@ -28,6 +28,16 @@
     size = 16 * 1024;
   }];
 
+  fileSystems."/mnt/nixosTranfor" = {
+    device = "//nixosTranfor/data";
+    fsType = "cifs";
+    options = [
+      "user,users"
+      "uid=1000,gid=100"
+      "file_mode=0664,dir_mode=0775"
+    ];
+  };
+
   environment.systemPackages =
     (with pkgs; [
       fprintd
@@ -35,6 +45,7 @@
       vdpauinfo
       intel-gpu-tools
       bottles
+      cifs-utils
     ])
     ++
     (with pkgs-stable; [
