@@ -26,7 +26,7 @@
 #      owner = "nextcloud";
 #      group = "keys";
     };
-    secrets."nextcloud-whiteboard-secrets" = {
+    secrets."nextcloud-whiteboard-secret" = {
 #      owner = "nextcloud";
 #      group = "keys";
     };
@@ -48,5 +48,12 @@
     };
     secrets."vaultwarden-env" = {};
     secrets."ddclient-pass" = {};
+    templates = {
+      nextcloud-whiteboard-env = {
+        content = ''
+          JWT_SECRET_KEY=${config.sops.placeholder."nextcloud-whiteboard-secret"}
+        '';
+      };
+    };
   };
 }

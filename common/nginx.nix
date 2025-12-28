@@ -33,7 +33,7 @@ let
 #      locationPath = "/airsonic/";
     };
     "mlproxmox.dynv6.net" = {
-      target = "http://192.168.0.10:8006";
+      target = "https://192.168.0.10:8006";
       recommendedProxySettings = true;
       recommendedTlsSettings = true;
 #      locationPath = "/airsonic/";
@@ -95,25 +95,18 @@ in
 
   services.nginx = {
     enable = true;
-#    recommendedGzipSettings = true;
-#    recommendedOptimisation = true;
-#    recommendedProxySettings = true;
-#    recommendedTlsSettings = true;
-#    appendHttpConfig = ''
-#      load_module modules/ngx_http_headers_more_filter_module.so;
-#    '';
     virtualHosts = {
-      "_" = {
-        listen = [{ addr = "0.0.0.0"; port = 80; }];
-        locations = {
-          "/.well-known/acme-challenge/" = {
-            root = "/var/lib/acme/acme-challenge";
-          };
-          "/" = {
-            return = "301 https://$host$request_uri";
-          };
-        };
-      };
+#      "_" = {
+#        listen = [{ addr = "0.0.0.0"; port = 80; }];
+#        locations = {
+#          "/.well-known/acme-challenge/" = {
+#            root = "/var/lib/acme/acme-challenge";
+#          };
+#          "/" = {
+#            return = "301 https://$host$request_uri";
+#          };
+#        };
+#      };
     }
     //
     lib.mapAttrs mkVhost proxyHosts; # add all proxied HTTPS vhosts
