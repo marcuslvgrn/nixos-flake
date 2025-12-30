@@ -36,6 +36,7 @@
         "extensions.install.requireBuiltInCerts" = false;
         "extensions.autoDisableScopes" = 0;
         "browser.translations.neverTranslateLanguages" = "en,en-US,en-GB";
+        "signon.rememberSignons" = false;
       };
     };
   };
