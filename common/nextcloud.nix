@@ -47,7 +47,7 @@
     package = pkgs.nextcloud32;
     #install apps
     extraApps = with config.services.nextcloud.package.packages.apps; {
-      inherit richdocuments news contacts calendar tasks cookbook mail;
+      inherit richdocuments news contacts calendar tasks cookbook mail bookmarks memories music;
     };
     extraAppsEnable = true;
     https = true;

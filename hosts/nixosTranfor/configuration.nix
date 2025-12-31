@@ -64,15 +64,19 @@
         "0 1 * * *   root   rtcwake -m off -s 21600 >> /root/cron.log 2>&1"
       ];
     };
+#    smb-wsdd.enable = true;
     samba = {
       enable = true;
       smbd.enable = true;
+      nmbd.enable = true;
+      winbindd.enable = true;
+      nsswins = true;
       openFirewall = true;
       settings = {
         global = {
           "workgroup" = "WORKGROUP";
-          "server string" = "Tranfor";
-          "netbios name" = "Tranfor";
+          "server string" = "nixosTranfor";
+          "netbios name" = "nixosTranfor";
           "security" = "user";
           #"use sendfile" = "yes";
           #"max protocol" = "smb2";
