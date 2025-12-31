@@ -82,8 +82,14 @@
     '';
   };
 
-  programs.zsh.enable = true;
-
+  programs.zsh = {
+    enable = true;
+    initContent = ''
+      export LANG="en_US.UTF-8"
+      export LC_MESSAGES="en_US.UTF-8"
+    '';
+  };
+    
   programs.git = {
     enable = true;
     settings.user.email = "${usrcfg.email}";
