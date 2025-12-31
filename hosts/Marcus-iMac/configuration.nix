@@ -1,9 +1,9 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-
 { inputs, config, lib, cfg, pkgs, pkgs-stable, pkgs-unstable, self, ... }:
 
+let 
+  userData = import ../../common/userData.nix;
+  usrcfg = builtins.elemAt userData.users 0;
+in
 {
   imports = [
 #    ../../hosts/nixosMinimal/configuration.nix
@@ -13,6 +13,7 @@
 #    ./disk-config.nix
   ];
 
+
   environment.systemPackages =
     (with pkgs; [ 
       vim
@@ -20,6 +21,7 @@
       neofetch
       stow
       sops
+      nixfmt
     ])
     ++
     (with pkgs-stable; [
@@ -44,23 +46,6 @@
   # Necessary for using flakes on this system.
   nix.settings.experimental-features = "nix-command flakes";
   
-  # Enable alternative shell support in nix-darwin.
-  programs.zsh = {
-    enable = true;
-    interactiveShellInit = ''
-      alias ll='ls -la'
-      alias gs='git status'
-      alias ga='git add'
-      alias gc='git commit'
-      alias gps='git push'
-      alias gpl='git pull'
-      alias gd='git diff'
-      alias rebuild='darwin-rebuild switch --flake ~/git/nixos-flake'
-      alias sudo='sudo '
-    '';
-  };
-    
-  
   # Set Git commit hash for darwin-version.
   system.configurationRevision = self.rev or self.dirtyRev or null;
   
@@ -72,6 +57,25 @@
   nixpkgs.hostPlatform = "x86_64-darwin";
   users.users.lovgren.home = "/Users/lovgren";
   
-}
+  home-manager = {
+    users = {
+      lovgren = {
+        imports = [
+          ../../home-manager/common.nix
+        ];
+        home = {
+          homeDirectory = "/Users/lovgren";
+          shellAliases = {
+            rebuild = "darwin-rebuild switch --flake ~/git/nixos-flake";
+          };
+        };
+      };
+    };
+    extraSpecialArgs = {
+      inherit usrcfg pkgs-stable pkgs-unstable;
+    };
+  };
+    
+  }
 
 

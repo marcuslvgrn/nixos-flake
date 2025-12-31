@@ -28,6 +28,7 @@
         istilldontcareaboutcookies
         gnome-shell-integration
         duckduckgo-privacy-essentials
+        floccus
       ];
       settings = {
         "intl.locale.requested" = "sv-SE,en-US";
@@ -37,13 +38,18 @@
         "extensions.autoDisableScopes" = 0;
         "browser.translations.neverTranslateLanguages" = "en,en-US,en-GB";
         "signon.rememberSignons" = false;
+        "datareporting.healthreport.uploadEnabled" = false;
+        "datareporting.policy.dataSubmissionEnabled" = false;
+        "extensions.pocket.enabled" = false;
+        "toolkit.telemetry.enabled" = false;
+        "toolkit.telemetry.unified" = false;
       };
     };
   };
   
   home = {
     username = usrcfg.username;
-    homeDirectory = "/home/${usrcfg.username}";
+    homeDirectory = lib.mkDefault "/home/${usrcfg.username}";
     sessionVariables = {
       LANG = "sv_SE.UTF-8";
 #      XDG_DATA_DIRS = lib.mkMerge [
@@ -62,7 +68,7 @@
       gps = "git push";
       gpl = "git pull";
       gd = "git diff";
-      rebuild = "nixos-rebuild switch --flake ~/git/nixos-flake";
+      rebuild = lib.mkDefault "nixos-rebuild switch --flake ~/git/nixos-flake";
       sudo = "sudo ";
     };
     stateVersion = "25.05";
@@ -75,6 +81,8 @@
       export LC_MESSAGES="en_US.UTF-8"
     '';
   };
+
+  programs.zsh.enable = true;
 
   programs.git = {
     enable = true;
