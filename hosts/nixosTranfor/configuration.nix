@@ -2,21 +2,6 @@
 
 {
 
-  services.printing = {
-    enable = true;
-    listenAddresses = [ "*:631" ];
-    allowFrom = [ "all" ];
-    browsing = true;
-    defaultShared = true;
-    openFirewall = true;
-  };
-  
-  services.avahi = {
-    enable = true;
-    nssmdns4 = true;
-    openFirewall = true;
-  };
-  
   nixpkgs.overlays = [
     # Technitium version override
     (import ../../overlays/technitium-overlay.nix)
@@ -57,11 +42,25 @@
   ];
 
   services = {
+    logrotate.enable = true;
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+      openFirewall = true;
+    };
+    printing = {
+      enable = true;
+      listenAddresses = [ "*:631" ];
+      allowFrom = [ "all" ];
+      browsing = true;
+      defaultShared = true;
+      openFirewall = true;
+    };
     iperf3.enable = true;
     cron = {
       enable = true;
       systemCronJobs = [
-        "0 1 * * *   root   rtcwake -m off -s 21600 >> /root/cron.log 2>&1"
+        "0 1 * * *   root      /run/current-system/sw/bin/rtcwake -m off -s 21600 >> /root/cron.log 2>&1"
       ];
     };
 #    smb-wsdd.enable = true;
@@ -118,6 +117,7 @@
       mariadb
       util-linux
       ethtool
+      net-tools
       cups
     ])
     ++
