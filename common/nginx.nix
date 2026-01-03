@@ -14,24 +14,6 @@ let
       recommendedTlsSettings = false;
 #      locationPath = "/router/";
     };
-    "mlvaultwarden.dynv6.net" = {
-      target = "http://192.168.0.7:8222";
-      recommendedProxySettings = true;
-      recommendedTlsSettings = true;
-#      locationPath = "/bitwarden/";
-    };
-    "mltechnitium.dynv6.net" = {
-      target = "http://192.168.0.7:5380";
-      recommendedProxySettings = true;
-      recommendedTlsSettings = true;
-#      locationPath = "/pihole/";
-    };
-    "mlairsonic.dynv6.net" = {
-      target = "http://192.168.0.7:4040";
-      recommendedProxySettings = true;
-      recommendedTlsSettings = true;
-#      locationPath = "/airsonic/";
-    };
     "mlproxmox.dynv6.net" = {
       target = "https://192.168.0.10:8006";
       recommendedProxySettings = true;
@@ -78,37 +60,45 @@ let
           };
         };
       };
-in
+in with lib;
 {
-  networking.firewall.enable = false;
-
-  security.acme = {
-    acceptTerms = true;
-    defaults.email = "marcuslvgrn@gmail.com";
-    # Generate ACME certs for all hosts automatically
-    certs = lib.genAttrs (builtins.attrNames proxyHosts) (domain: {
-      webroot = "/var/lib/acme/acme-challenge";
-    });
-  };
-
-  users.users.nginx.extraGroups = [ "acme" ];
-
-  services.nginx = {
-    enable = true;
-    virtualHosts = {
-#      "_" = {
-#        listen = [{ addr = "0.0.0.0"; port = 80; }];
-#        locations = {
-#          "/.well-known/acme-challenge/" = {
-#            root = "/var/lib/acme/acme-challenge";
-#          };
-#          "/" = {
-#            return = "301 https://$host$request_uri";
-#          };
-#        };
-#      };
-    }
-    //
-    lib.mapAttrs mkVhost proxyHosts; # add all proxied HTTPS vhosts
+  config = mkIf config.services.nginx.enable {
+    networking.firewall.enable = false;
+    
+    security.acme = {
+      acceptTerms = true;
+      defaults.email = "marcuslvgrn@gmail.com";
+      # Generate ACME certs for all hosts automatically
+      certs = lib.genAttrs (builtins.attrNames proxyHosts) (domain: {
+        webroot = "/var/lib/acme/acme-challenge";
+      });
+    };
+    
+    users.users.nginx.extraGroups = [ "acme" ];
+    
+    services = {
+      ddclient.domains = [
+        "mldrupal.dynv6.net"
+        "mlgeegnomer.dynv6.net"
+        "mlmodem.dynv6.net"
+        "mlplex.dynv6.net"
+        "mlportainer.dynv6.net"
+        "mlproxmox.dynv6.net"
+        "mlrouter.dynv6.net"
+        "mlrustdesk.dynv6.net"
+        "mlsynology.dynv6.net"
+        "mlwebmin.dynv6.net"
+      ];
+      nginx = {
+        recommendedProxySettings = true;
+        recommendedTlsSettings = true;
+        recommendedOptimisation = true;
+        recommendedGzipSettings = true;
+        virtualHosts = {
+        }
+        //
+        lib.mapAttrs mkVhost proxyHosts; # add all proxied HTTPS vhosts
+      };
+    };
   };
 }

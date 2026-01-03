@@ -30,10 +30,10 @@
 #  };
 #in {
   imports = [
-    ../../hosts/nixosMinimal/configuration.nix
-    ../../common/nextcloud.nix
     ../../common/airsonic.nix
     ../../common/nginx.nix
+    ../../hosts/nixosMinimal/configuration.nix
+    ../../common/nextcloud.nix
     ../../common/vaultwarden.nix
     ../../common/technitium.nix
     ../../common/ddclient.nix
@@ -42,6 +42,27 @@
   ];
 
   services = {
+    airsonicNginx = {
+      enable = true;
+      hostName = "mlairsonic.dynv6.net";
+    };
+    vaultwardenNginx = {
+      enable = true;
+      hostName = "mlvaultwarden.dynv6.net";
+    };
+    technitiumNginx = {
+      enable = true;
+      hostName = "mltechnitium.dynv6.net";
+    };
+    nextcloudNginx = {
+      enable = true;
+      nextcloudHostName = "mlnextcloud.dynv6.net";
+      collaboraHostName = "mlcollabora.dynv6.net";
+    };
+    ddclient = {
+      enable = true;
+    };
+    nginx.enable = true;
     logrotate.enable = true;
     avahi = {
       enable = true;
