@@ -12,6 +12,7 @@ in with lib; {
     contextPath = mkOption {
       type = types.str;
       default = "/";
+#      default = "/vaultwarden/";
       description = "Context path for nginx";
     };
   };
@@ -59,11 +60,11 @@ in with lib; {
             "${cfg.contextPath}" = {
               proxyPass = "http://127.0.0.1:${toString vaultwardenCfg.ROCKET_PORT}";
             };
-            "= /notifications/anonymous-hub" = {
+            "= ${cfg.contextPath}notifications/anonymous-hub" = {
               proxyPass = "http://127.0.0.1:${toString vaultwardenCfg.ROCKET_PORT}";
               proxyWebsockets = true;
             };
-            "= /notifications/hub" = {
+            "= ${cfg.contextPath}/notifications/hub" = {
               proxyPass = "http://127.0.0.1:${toString vaultwardenCfg.ROCKET_PORT}";
               proxyWebsockets = true;
             };

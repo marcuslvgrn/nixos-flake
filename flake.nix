@@ -129,6 +129,7 @@
              system = cfg.system;
              config.allowUnfree = true;
              overlays = [
+               self.overlays.airsonic-advanced
                inputs.nur.overlays.default
              ];
            };
@@ -136,6 +137,7 @@
              system = cfg.system;
              config.allowUnfree = true;
              overlays = [
+               self.overlays.airsonic-advanced
                inputs.nur.overlays.default
              ];
            };
@@ -174,6 +176,7 @@
                      nixpkgs = {
                        config.allowUnfree = true;
                        overlays = [
+                         self.overlays.airsonic-advanced
                          inputs.nur.overlays.default
                        ];
                      };
@@ -190,6 +193,9 @@
          darwinHosts = builtins.filter (c: c.platform == "darwin") configurations;
        in
          {
+           #import overlays
+           overlays.airsonic-advanced = import ./overlays/airsonic-advanced.nix;
+
            #Assemble all the system configurations, looping through the variable configurations
            #by calling the function mkSystem on each entry. Separate nixos and darwin
            nixosConfigurations = builtins.listToAttrs (map mkSystem nixosHosts);

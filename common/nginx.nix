@@ -90,7 +90,7 @@ in with lib;
         "mlwebmin.dynv6.net"
       ];
       nginx = {
-        recommendedProxySettings = true;
+        #recommendedProxySettings = true;
         recommendedTlsSettings = true;
         recommendedOptimisation = true;
         recommendedGzipSettings = true;

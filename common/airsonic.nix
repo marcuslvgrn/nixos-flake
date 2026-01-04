@@ -5,64 +5,49 @@ let
 in with lib; {
   options.services.airsonicNginx = {
     enable = mkEnableOption "Airsonic behind Nginx with ACME";
-    #     listenAddress = mkOption {
-    #       type = types.str;
-    #       default = "0.0.0.0";
-    #       description = "IP address Airsonic listens on";
-    #     };
-    #     contextPath = mkOption {
-    #       type = types.str;
-    #       default = "/";
-    #       description = "context path for the Airsonic server";
-    #     };
-    #     jvmOptions = mkOption {
-    #       type = types.listOf types.str;
-    #       default = [ "-Dserver.use-forward-headers=true" ];
-    #       description = "Enables forward headers for nginx";
-    #     };
-    #     maxMemory = mkOption {
-    #       type = types.int;
-    #       default = 256;
-    #       description = "Allows a bit more memory for Airsonic";
-    #     };
     hostName = mkOption {
       type = types.str;
-      #        default = "mlairsonic.dynv6.net";
       description = "Public hostname for nginx";
     };
-    #      proxyAddress = mkOption {
-    #        type = types.str;
-    #        default = "127.0.0.1";
-    #        description = "Address for nginx to proxy to";
-    #      };
   };
   
   config = mkIf cfg.enable {
+    environment.systemPackages = (with pkgs; [
+      javaPackages.compiler.openjdk11
+    ]) ++ (with pkgs-stable;
+      [
+
+      ]) ++ (with pkgs-unstable;
+        [
+
+        ]);
+
     services = {
       ddclient.domains = [
         "${cfg.hostName}"
       ];
       airsonic = {
         enable = true;
-        #          listenAddress = cfg.listenAddress;
-        #          contextPath = cfg.contextPath;
-        #          jvmOptions = cfg.jvmOptions;
-        #          maxMemory = cfg.maxMemory;
         listenAddress = mkDefault "0.0.0.0";
-        contextPath = mkDefault "/";
-        jvmOptions = mkDefault [ "-Dserver.use-forward-headers=true" ];
+#        contextPath = mkDefault "/airsonic";
+#        contextPath = mkDefault "/";
         maxMemory = mkDefault 256;
+#        jvmOptions = mkDefault [
+#          "-Dserver.servlet.context-path=/airsonic"
+#        ];
+        #This is needed by airsonic-advanced
+        jre = pkgs.javaPackages.compiler.openjdk11;
       };
       nginx = {
-#        recommendedProxySettings = true;
-#        recommendedTlsSettings = true;
-#        recommendedOptimisation = true;
-#        recommendedGzipSettings = true;
         virtualHosts.${cfg.hostName} = {
           forceSSL = true;
           enableACME = true;
           locations."${airsonicCfg.contextPath}" = {
+#            extraConfig = ''
+#              proxy_set_header Host              $proxy_host;
+#            '';
             proxyPass = "http://127.0.0.1:${toString airsonicCfg.port}";
+            proxyWebsockets = true;
           };
         };
       };
