@@ -2,6 +2,10 @@
 let
   cfg = config.services.airsonicNginx;
   airsonicCfg = config.services.airsonic;
+  airsonicAdvancedWar = pkgs.fetchurl {
+    url = "https://github.com/airsonic-advanced/airsonic-advanced/releases/download/11.0.0-SNAPSHOT.20240424015024/airsonic.war";
+    hash = "sha256-fDWstS076BeXE55aOeMSSZuuYhOLLVAfjRGZRnMksz4=";
+  };
 in with lib; {
   options.services.airsonicNginx = {
     enable = mkEnableOption "Airsonic behind Nginx with ACME";
@@ -37,6 +41,7 @@ in with lib; {
 #        ];
         #This is needed by airsonic-advanced
         jre = pkgs.javaPackages.compiler.openjdk11;
+        war = airsonicAdvancedWar;
       };
       nginx = {
         virtualHosts.${cfg.hostName} = {

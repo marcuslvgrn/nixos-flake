@@ -37,6 +37,10 @@
     };
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
     nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-darwin-unstable = {
       url = "github:nix-darwin/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
@@ -122,65 +126,59 @@
 
        mkSystem = cfg:
          let
+           overlays = [
+             inputs.nur.overlays.default
+           ];
+           allowUnfree = true;
            # ------------------------------------------------------------
            # Define nixpkgs variants
            # ------------------------------------------------------------
            pkgs-stable = import inputs.nixpkgs {
              system = cfg.system;
-             config.allowUnfree = true;
-             overlays = [
-               self.overlays.airsonic-advanced
-               inputs.nur.overlays.default
-             ];
+             config.allowUnfree = allowUnfree;
+             inherit overlays;
            };
            pkgs-unstable = import inputs.nixpkgs-unstable {
              system = cfg.system;
-             config.allowUnfree = true;
-             overlays = [
-               self.overlays.airsonic-advanced
-               inputs.nur.overlays.default
-             ];
+             config.allowUnfree = allowUnfree;
+             inherit overlays;
            };
            pkgs = if cfg.isStable then pkgs-stable else pkgs-unstable;
+           inputLib =
+             if cfg.isStable then
+               if cfg.platform == "nixos" then inputs.nixpkgs.lib else inputs.nix-darwin.lib
+             else
+               #note, no unstable here...
+               if cfg.platform == "nixos" then inputs.nixpkgs-unstable.lib else inputs.nix-darwin-unstable.lib;
+           homeManagerModule =
+             #this returns the correct darwinModules or nixosModules from inputs.home-manager,
+             #like inputs.home-manager.nixosModules.home-manager, also for stable or unstable
+             if cfg.isStable then (builtins.getAttr (cfg.platform + "Modules") inputs.home-manager).home-manager
+             else (builtins.getAttr (cfg.platform + "Modules") inputs.home-manager-unstable).home-manager;
          in {
            name = cfg.hostname;
            value =
              # Darwin host
              if cfg.platform == "darwin" then
-               inputs.nix-darwin.lib.darwinSystem {
+               inputLib.darwinSystem {
                  system = cfg.system;
                  modules = [
-                   (if cfg.isStable
-                    then inputs.home-manager.darwinModules.home-manager
-                    else inputs.home-manager-unstable.darwinModules.home-manager
-                   )
+                   homeManagerModule
                    ./hosts/${cfg.hostname}/configuration.nix
                  ];
                  specialArgs = {
-                   inherit inputs self cfg pkgs-stable pkgs-unstable;
+                   inherit inputs self cfg pkgs pkgs-stable pkgs-unstable;
                  };
                }
              else
                # NixOS host
-               (if cfg.isStable then inputs.nixpkgs else inputs.nixpkgs-unstable).lib.nixosSystem {
+               inputLib.nixosSystem {
+                 inherit pkgs;
                  system = cfg.system;
                  modules = [
-                   inputs.nix-flatpak.nixosModules.nix-flatpak
+                   homeManagerModule
                    ./hosts/${cfg.hostname}/configuration.nix
-                   (
-                     if cfg.isStable
-                     then inputs.home-manager.nixosModules.home-manager
-                     else inputs.home-manager-unstable.nixosModules.home-manager
-                   )
-                   {
-                     nixpkgs = {
-                       config.allowUnfree = true;
-                       overlays = [
-                         self.overlays.airsonic-advanced
-                         inputs.nur.overlays.default
-                       ];
-                     };
-                   }
+                   inputs.nix-flatpak.nixosModules.nix-flatpak
                  ];
                  specialArgs = {
                    inherit inputs cfg pkgs-stable pkgs-unstable;
@@ -193,9 +191,6 @@
          darwinHosts = builtins.filter (c: c.platform == "darwin") configurations;
        in
          {
-           #import overlays
-           overlays.airsonic-advanced = import ./overlays/airsonic-advanced.nix;
-
            #Assemble all the system configurations, looping through the variable configurations
            #by calling the function mkSystem on each entry. Separate nixos and darwin
            nixosConfigurations = builtins.listToAttrs (map mkSystem nixosHosts);
