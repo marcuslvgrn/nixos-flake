@@ -1,25 +1,8 @@
 { config, pkgs, pkgs-stable, pkgs-unstable, lib, ... }:
 let
-  cfg = config.services.nextcloudNginx;
+  cfg = config.flakecfg.nextcloud;
   nextcloudCfg = config.services.nextcloud-dns-server;
 in with lib; {
-
-  options.services.nextcloudNginx = {
-    enable = mkEnableOption "Nextcloud behind Nginx with ACME";
-    nextcloudHostName = mkOption {
-      type = types.str;
-      description = "Public hostname for nextcloud nginx";
-    };
-    collaboraHostName = mkOption {
-      type = types.str;
-      description = "Public hostname for collabora nginx";
-    };
-    contextPath = mkOption {
-      type = types.str;
-      default = "/";
-      description = "Context path for nginx";
-    };
-  };
 
   config = mkIf cfg.enable {
 

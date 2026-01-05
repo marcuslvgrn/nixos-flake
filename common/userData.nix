@@ -1,6 +1,6 @@
 {
-  users = [
-    {
+  users = {
+    lovgren = {
       realname = "Marcus Lövgren";
       username="lovgren";
       group="users";
@@ -10,8 +10,8 @@
       uid=1000;
       normalUser=true;
       systemUser=false;
-    }
-    {
+    };
+    gerd = {
       realname = "Gerd Lövgren";
       username="gerd";
       group="users";
@@ -21,20 +21,6 @@
       uid=1001;
       normalUser=true;
       systemUser=false;
-    }
-  ];
-  systemUsers= [
-#    {
-#      username="mysql";
-#      normalUser=false;
-#      systemUser=true;
-#      extragroups=[ "keys" ];
-#    }
-#    {
-#      username="nextcloud";
-#      normalUser=false;
-#      systemUser=true;
-#      extragroups=[ "keys" ];
-#    }
-  ];
+    };
+  };
 }

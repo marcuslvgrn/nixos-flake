@@ -1,11 +1,8 @@
 { inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
-
-{
+let flakecfg = config.flakecfg;
+in with lib; {
 
   nixpkgs.overlays = [
-    # Technitium version override
-    (import ../../overlays/technitium-overlay.nix)
-
 #    # Emacs GTK2 override
 #    (final: prev: {
 #      emacs = prev.emacs.override {
@@ -41,40 +38,33 @@
     ./disk-config.nix
   ];
 
-  services = {
-    airsonicNginx = {
+  flakecfg = {
+    airsonic = {
       enable = true;
       hostName = "mlairsonic.dynv6.net";
     };
-    vaultwardenNginx = {
-      enable = true;
-      hostName = "mlvaultwarden.dynv6.net";
-    };
-    technitiumNginx = {
-      enable = true;
-      hostName = "mltechnitium.dynv6.net";
-    };
-    nextcloudNginx = {
+    ddclient.enable = true;
+    nextcloud = {
       enable = true;
       nextcloudHostName = "mlnextcloud.dynv6.net";
       collaboraHostName = "mlcollabora.dynv6.net";
     };
-    ddclient = {
-      enable = true;
-    };
     nginx.enable = true;
-    logrotate.enable = true;
+    samba.enable = true;
+    technitium = {
+      enable = true;
+      hostName = "mltechnitium.dynv6.net";
+    };
+    vaultwarden = {
+      enable = true;
+      hostName = "mlvaultwarden.dynv6.net";
+    };
+  };
+  
+  services = {
     avahi = {
       enable = true;
       nssmdns4 = true;
-      openFirewall = true;
-    };
-    printing = {
-      enable = true;
-      listenAddresses = [ "*:631" ];
-      allowFrom = [ "all" ];
-      browsing = true;
-      defaultShared = true;
       openFirewall = true;
     };
     iperf3.enable = true;
@@ -84,7 +74,15 @@
         "0 1 * * *   root      /run/current-system/sw/bin/rtcwake -m off -s 21600 >> /root/cron.log 2>&1"
       ];
     };
-#    smb-wsdd.enable = true;
+    logrotate.enable = true;
+    printing = {
+      enable = true;
+      listenAddresses = [ "*:631" ];
+      allowFrom = [ "all" ];
+      browsing = true;
+      defaultShared = true;
+      openFirewall = true;
+    };
     samba = {
       enable = true;
       smbd.enable = true;
@@ -147,7 +145,7 @@
     ])
     ++
     (with pkgs-unstable; [
-#      technitium-dns-server
+
     ]);
 #  # Ensure schema directories are visible system-wide
 #  environment.pathsToLink = [

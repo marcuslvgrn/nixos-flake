@@ -1,5 +1,6 @@
 { config, pkgs, lib, ... }:
 let
+  cfg = config.flakecfg.nginx;
   # Define all your domains and backend services here 👇
   proxyHosts = {
     "mlmodem.dynv6.net" = {
@@ -23,15 +24,15 @@ let
   };
 
   # Helper to create vhost definitions from proxyHosts
-  mkVhost = host: cfg:
+  mkVhost = host: proxyCfg:
     let
-      loc = cfg.locationPath or "/";
+      loc = proxyCfg.locationPath or "/";
     in
       {
         enableACME = true;
         forceSSL = true;
         serverName = host;
-        extraConfig = lib.optionalString (cfg.recommendedTlsSettings or false) ''
+        extraConfig = lib.optionalString (proxyCfg.recommendedTlsSettings or false) ''
           # Recommended TLS settings (copied from NixOS module)
           ssl_protocols TLSv1.2 TLSv1.3;
           ssl_prefer_server_ciphers on;
@@ -42,9 +43,9 @@ let
 
         locations = {
           "${loc}" = {
-            proxyPass = cfg.target;
+            proxyPass = proxyCfg.target;
             extraConfig = ''
-              ${lib.optionalString (cfg.recommendedProxySettings or false) ''
+              ${lib.optionalString (proxyCfg.recommendedProxySettings or false) ''
                 # Recommended proxy settings (copied from NixOS module)
                 proxy_redirect          off;
                 proxy_set_header        Host $host;
@@ -54,7 +55,7 @@ let
                 proxy_set_header        X-Forwarded-Host $host;
                 proxy_set_header        X-Forwarded-Port $server_port;
               ''}
-            ${cfg.extraConfig or ""}
+            ${proxyCfg.extraConfig or ""}
           '';
 #    # proxyWebsockets = true; # uncomment if needed
           };
@@ -62,7 +63,7 @@ let
       };
 in with lib;
 {
-  config = mkIf config.services.nginx.enable {
+  config = mkIf cfg.enable {
     networking.firewall.enable = false;
     
     security.acme = {
@@ -77,6 +78,7 @@ in with lib;
     users.users.nginx.extraGroups = [ "acme" ];
     
     services = {
+      nginx.enable = true;
       ddclient.domains = [
         "mldrupal.dynv6.net"
         "mlgeegnomer.dynv6.net"

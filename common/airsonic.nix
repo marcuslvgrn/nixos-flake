@@ -1,30 +1,24 @@
 { config, pkgs, lib, ... }:
 let
-  cfg = config.services.airsonicNginx;
+  cfg = config.flakecfg.airsonic;
   airsonicCfg = config.services.airsonic;
   airsonicAdvancedWar = pkgs.fetchurl {
     url = "https://github.com/airsonic-advanced/airsonic-advanced/releases/download/11.0.0-SNAPSHOT.20240424015024/airsonic.war";
     hash = "sha256-fDWstS076BeXE55aOeMSSZuuYhOLLVAfjRGZRnMksz4=";
   };
 in with lib; {
-  options.services.airsonicNginx = {
-    enable = mkEnableOption "Airsonic behind Nginx with ACME";
-    hostName = mkOption {
-      type = types.str;
-      description = "Public hostname for nginx";
-    };
-  };
-  
   config = mkIf cfg.enable {
     environment.systemPackages = (with pkgs; [
       javaPackages.compiler.openjdk11
-    ]) ++ (with pkgs-stable;
-      [
-
-      ]) ++ (with pkgs-unstable;
-        [
-
-        ]);
+    ])
+    ++
+    (with pkgs-stable; [
+      
+    ])
+    ++
+    (with pkgs-unstable; [
+      
+    ]);
 
     services = {
       ddclient.domains = [

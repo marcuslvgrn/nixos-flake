@@ -1,25 +1,11 @@
 { config, pkgs, lib, ... }:
 let
-  cfg = config.services.vaultwardenNginx;
+  cfg = config.flakecfg.vaultwarden;
   vaultwardenCfg = config.services.vaultwarden.config;
 in with lib; {
-  options.services.vaultwardenNginx = {
-    enable = mkEnableOption "Vaultwarden behind Nginx with ACME";
-    hostName = mkOption {
-      type = types.str;
-      description = "Public hostname for nginx";
-    };
-    contextPath = mkOption {
-      type = types.str;
-      default = "/";
-#      default = "/vaultwarden/";
-      description = "Context path for nginx";
-    };
-  };
-  
   config = mkIf cfg.enable {
     services = {
-
+      
       ddclient.domains = [
         "${cfg.hostName}"
       ];

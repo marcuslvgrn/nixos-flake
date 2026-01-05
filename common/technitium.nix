@@ -1,22 +1,9 @@
 { inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 let
-  cfg = config.services.technitiumNginx;
+  cfg = config.flakecfg.technitium;
   technitiumCfg = config.services.technitium-dns-server;
 in with lib; {
 
-  options.services.technitiumNginx = {
-    enable = mkEnableOption "Technitium behind Nginx with ACME";
-    hostName = mkOption {
-      type = types.str;
-      description = "Public hostname for nginx";
-    };
-    contextPath = mkOption {
-      type = types.str;
-      default = "/";
-      description = "Context path for nginx";
-    };
-  };
-  
   config = mkIf cfg.enable {
 
     #override the technitium service (disable the DynamicUser, it causes issues with write permissions)

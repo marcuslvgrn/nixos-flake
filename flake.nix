@@ -131,7 +131,7 @@
            ];
            allowUnfree = true;
            # ------------------------------------------------------------
-           # Define nixpkgs variants
+           # Define nixpkgs variants for stable and unstable
            # ------------------------------------------------------------
            pkgs-stable = import inputs.nixpkgs {
              system = cfg.system;
@@ -143,13 +143,15 @@
              config.allowUnfree = allowUnfree;
              inherit overlays;
            };
+           # This is the chosen nixpkg based on configuration
            pkgs = if cfg.isStable then pkgs-stable else pkgs-unstable;
+           #For choosing the correc input libs based on configuration
            inputLib =
              if cfg.isStable then
                if cfg.platform == "nixos" then inputs.nixpkgs.lib else inputs.nix-darwin.lib
              else
-               #note, no unstable here...
                if cfg.platform == "nixos" then inputs.nixpkgs-unstable.lib else inputs.nix-darwin-unstable.lib;
+           #Choose the right home manager module
            homeManagerModule =
              #this returns the correct darwinModules or nixosModules from inputs.home-manager,
              #like inputs.home-manager.nixosModules.home-manager, also for stable or unstable
@@ -195,5 +197,8 @@
            #by calling the function mkSystem on each entry. Separate nixos and darwin
            nixosConfigurations = builtins.listToAttrs (map mkSystem nixosHosts);
            darwinConfigurations = builtins.listToAttrs (map mkSystem darwinHosts);
+           extraSpecialArgs = {
+
+           };
          };
 }

@@ -1,6 +1,9 @@
 { inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
-{
-  services.ddclient = lib.mkIf config.services.ddclient.enable {
+let
+  cfg = config.flakecfg.ddclient;
+in with lib; {
+  services.ddclient = mkIf cfg.enable {
+    enable = true;
     quiet = true;
     usev6 = "";
     protocol = "dyndns2";

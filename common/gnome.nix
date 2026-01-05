@@ -13,7 +13,7 @@
   };
 
   # Exclude some packages
-  environment.gnome.excludePackages =
+  environment.gnome.excludePackages = 
     (with pkgs; [
       atomix # puzzle game
       cheese # webcam tool
@@ -25,7 +25,6 @@
       gnome-photos
       gnome-terminal
       gnome-tour
-      gnome-text-editor
       hitori # sudoku game
       iagno # go game
       tali # poker game
