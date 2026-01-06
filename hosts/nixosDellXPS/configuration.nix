@@ -16,6 +16,16 @@
     ../../services/bluetooth-suspend.nix
   ];
 
+  flakecfg = {
+    desktop = {
+      desktopManagers = {
+        gnome = {
+          enable = true;
+        };
+      };
+    };
+  };
+  
   boot.loader.grub.extraEntries = ''
     menuentry "Arch" {
       set root=(hd0,gpt1)

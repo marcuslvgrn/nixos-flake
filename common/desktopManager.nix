@@ -1,9 +1,8 @@
 { config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
-
 with lib; {
-
-  config = mkIf flakecfg.desktop.enable {
-    imports = [ ./flatpak.nix ];
+  
+  imports = [ ./flatpak.nix ];
+  config = mkIf config.flakecfg.desktop.enable {
 
     services = {
       xserver.xkb.layout = "se";

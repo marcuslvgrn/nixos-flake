@@ -13,5 +13,15 @@
     ./disk-config.nix
   ];
 
+  flakecfg = {
+    desktop = {
+      desktopManagers = {
+        gnome = {
+          enable = true;
+        };
+      };
+    };
+  };
+  
 }
 

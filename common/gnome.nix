@@ -1,12 +1,13 @@
 { config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 let cfg = config.flakecfg.desktop.desktopManagers.gnome;
 in with lib; {
+  imports = [
+    #Common desktop manager settings
+    ./desktopManager.nix
+  ];
+
   config = mkIf cfg.enable {
     flakecfg.desktop.enable = true;
-    imports = [
-      #Common desktop manager settings
-      ./desktopManager.nix
-    ];
 
     services = {
       xserver.enable = true;
