@@ -54,7 +54,7 @@
       # Build host configurations with defaults
       defaultHostCfgs = map (hostname:
         let
-          platform = if builtins.match "^darwin" (hostname) != null
+          platform = if builtins.match "darwin.*" (hostname) != null
                      then "darwin"
                      else "nixos";
           system   = if platform == "nixos" then "x86_64-linux" else "x86_64-darwin";
