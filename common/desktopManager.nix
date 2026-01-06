@@ -1,22 +1,20 @@
-{ config, lib, cfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
+{ config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
-{
-  imports = [
-    ./flatpak.nix
-  ];
+with lib; {
 
-  services = {
-    xserver.enable = true;
-    xserver.xkb.layout = "se";
-  };
-  
-  # Bluetooth
-  hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
-  # List packages installed in system profile.
-  # You can use https://search.nixos.org/ to find more packages (and options).
-  environment.systemPackages =
-    (with pkgs; [
+  config = mkIf flakecfg.desktop.enable {
+    imports = [ ./flatpak.nix ];
+
+    services = {
+      xserver.xkb.layout = "se";
+    };
+
+    # Bluetooth
+    hardware.bluetooth.enable = true;
+    hardware.bluetooth.powerOnBoot = true;
+    # List packages installed in system profile.
+    # You can use https://search.nixos.org/ to find more packages (and options).
+    environment.systemPackages = (with pkgs; [
       spotify
       bitwarden-desktop
       protonvpn-gui
@@ -31,19 +29,14 @@
       libinput
       gimp
       libreoffice
-    ])
-    ++
-    (with pkgs-stable; [
+    ]) ++ (with pkgs-stable;
+      [
 
-    ])
-    ++
-    (with pkgs-unstable; [
-      libinput
-    ]);
+      ]) ++ (with pkgs-unstable; [ libinput ]);
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  services.libinput.enable = true;
-  services.teamviewer.enable = true;
-  services.printing.enable = true;
-  
+    # Enable touchpad support (enabled default in most desktopManager).
+    services.libinput.enable = true;
+    services.teamviewer.enable = true;
+    services.printing.enable = true;
+  };
 }

@@ -1,4 +1,4 @@
-{ inputs, config, lib, pkgs, ... }:
+{ config, lib, hostCfg, ... }:
 
 {
   imports = [
@@ -9,7 +9,7 @@
 
   networking.hostName = "nixosASUS";
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  nixpkgs.hostPlatform = hostCfg.system;
 
   # Autologin a user
   services.displayManager = {

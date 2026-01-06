@@ -1,4 +1,4 @@
-{ inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
+{ config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 let flakecfg = config.flakecfg;
 in with lib; {
 
@@ -59,6 +59,7 @@ in with lib; {
       enable = true;
       hostName = "mlvaultwarden.dynv6.net";
     };
+    #userNames = mkAfter [ "gerd" ];
   };
   
   services = {

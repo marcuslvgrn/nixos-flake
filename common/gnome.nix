@@ -1,20 +1,22 @@
-{ config, lib, cfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
+{ config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
+let cfg = config.flakecfg.desktop.desktopManagers.gnome;
+in with lib; {
+  config = mkIf cfg.enable {
+    flakecfg.desktop.enable = true;
+    imports = [
+      #Common desktop manager settings
+      ./desktopManager.nix
+    ];
 
-{
-  imports = [
-    #Common desktop manager settings
-    ./desktopManager.nix
-  ];
+    services = {
+      xserver.enable = true;
+      gnome.gnome-browser-connector.enable = true;
+      desktopManager.gnome.enable = lib.mkForce true;
+      displayManager.gdm.enable = true;
+    };
 
-  services = {
-    gnome.gnome-browser-connector.enable = true;
-    desktopManager.gnome.enable = lib.mkForce true;
-    displayManager.gdm.enable = true;
-  };
-
-  # Exclude some packages
-  environment.gnome.excludePackages = 
-    (with pkgs; [
+    # Exclude some packages
+    environment.gnome.excludePackages = (with pkgs; [
       atomix # puzzle game
       cheese # webcam tool
       epiphany # web browser
@@ -29,18 +31,15 @@
       iagno # go game
       tali # poker game
       totem # video player
-    ])
-    ++
-    (with pkgs-stable; [
-      
-    ])
-    ++
-    (with pkgs-unstable; [
-      
-    ]);
-  
-  environment.systemPackages =
-    (with pkgs; [
+    ]) ++ (with pkgs-stable;
+      [
+
+      ]) ++ (with pkgs-unstable;
+        [
+
+        ]);
+
+    environment.systemPackages = (with pkgs; [
       gnomeExtensions.dash-to-dock
       gnomeExtensions.hide-top-bar
       gnomeExtensions.appindicator
@@ -54,34 +53,34 @@
       dconf-editor
     ])
     ++
-    (with pkgs-stable; [
-      
-    ])
+    (with pkgs-stable;
+      [
+        
+      ])
     ++
-    (with pkgs-unstable; [
-      
-    ]);
+    (with pkgs-unstable;
+      [
+        
+      ]);
 
-  home-manager.users.lovgren.dconf = {
-    enable = true;
-    settings."org/gnome/shell" = {
-      disable-user-extensions = false;
-      enabled-extensions =
-        (with pkgs.gnomeExtensions;
-          [ dash-to-dock.extensionUuid
-            appindicator.extensionUuid
-            hide-top-bar.extensionUuid
-            hibernate-status-button.extensionUuid
-          ])
-        ++
-        (with pkgs-stable.gnomeExtensions; [
-          
-        ])
-        ++
-        (with pkgs-unstable.gnomeExtensions; [
-          
-        ]);
+    home-manager.users.lovgren.dconf = {
+      enable = true;
+      settings."org/gnome/shell" = {
+        disable-user-extensions = false;
+        enabled-extensions = (with pkgs.gnomeExtensions; [
+          dash-to-dock.extensionUuid
+          appindicator.extensionUuid
+          hide-top-bar.extensionUuid
+          hibernate-status-button.extensionUuid
+        ]) ++ (with pkgs-stable.gnomeExtensions;
+          [
+
+          ]) ++ (with pkgs-unstable.gnomeExtensions;
+            [
+
+            ]);
+      };
     };
   };
-  
+
 }

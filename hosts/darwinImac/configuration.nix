@@ -1,4 +1,4 @@
-{ inputs, config, lib, cfg, pkgs, pkgs-stable, pkgs-unstable, self, ... }:
+{ pkgs, pkgs-stable, pkgs-unstable, self, ... }:
 
 let 
   userData = import ../../common/userData.nix;

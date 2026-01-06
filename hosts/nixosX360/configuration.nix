@@ -2,7 +2,7 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ inputs, config, lib, cfg, pkgs, ... }:
+{ config, lib, hostCfg, pkgs, ... }:
 
 {
   imports = [
@@ -40,7 +40,7 @@
   #Power management
   powerManagement.enable = true;
   services.power-profiles-daemon.enable = true;
-  services.logind = if cfg.isStable then {
+  services.logind = if hostCfg.isStable then {
 #    lidSwitch = "suspend-then-hibernate";
     lidSwitch = "hibernate";
     powerKey = "hibernate";

@@ -2,7 +2,7 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ inputs, config, lib, cfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
+{ config, lib, hostCfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
   imports = [
@@ -74,7 +74,7 @@
   powerManagement.enable = true;
   services.power-profiles-daemon.enable = true;
   #In Gnome, power key behavior is set by the settings app!
-  services.logind = if cfg.isStable then {
+  services.logind = if hostCfg.isStable then {
 #    lidSwitch = "suspend-then-hibernate";
     lidSwitch = "hibernate";
 #    powerKey = "hibernate";

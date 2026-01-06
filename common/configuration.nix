@@ -1,4 +1,4 @@
-{ config, lib, cfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
+{ config, lib, hostCfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
 let
   flakecfg = config.flakecfg;
 in with lib;
@@ -81,10 +81,16 @@ in with lib;
     #Desktop
     desktop = {
       enable = mkEnableOption "Enable desktop";
-      desktopManagers = mkOption {
-        type = types.listOf types.str;
-        default = [];
-        description = "Specifies what desktop managers to enable. Allowed values are gnome, xfce. List cannot be empty if desktop.enable";
+      desktopManagers = {
+        gnome = {
+          enable = mkEnableOption "Enable gnome";
+        };
+        xfce = {
+          enable = mkEnableOption "Enable gnome";
+        };
+        kde = {
+          enable = mkEnableOption "Enable gnome";
+        };
       };
     };
     #.enable = mkEnableOption "Enable ";
@@ -92,7 +98,7 @@ in with lib;
 
   config = {
     assertions = [
-      { assertion = !(flakecfg.desktop.enable) || flakecfg.desktop.desktopManagers != []; }
+#      { assertion = !(flakecfg.desktop.enable) || flakecfg.desktop.desktopManagers != []; }
       { assertion = !(flakecfg.airsonic.enable) || flakecfg.airsonic.hostName != ""; }
       { assertion = !(flakecfg.nextcloud.enable) || (flakecfg.nextcloud.nextcloudHostName != "" && flakecfg.nextcloud.collaboraHostName != ""); }
       { assertion = !(flakecfg.technitium.enable) || flakecfg.technitium.hostName != ""; }
@@ -137,7 +143,7 @@ in with lib;
     
     # Use latest kernel if unstable, default is pkgs.linuxPackages
     # https://search.nixos.org/options?channel=25.11&show=boot.kernelPackages&query=boot.kernelpackages
-    boot.kernelPackages = lib.mkIf (!cfg.isStable) pkgs.linuxPackages_latest;
+    boot.kernelPackages = lib.mkIf (!hostCfg.isStable) pkgs.linuxPackages_latest;
     
     # List packages installed in system profile.
     # You can use https://search.nixos.org/ to find more packages (and options).
@@ -201,7 +207,7 @@ in with lib;
     # Or disable the firewall altogether.
     # networking.firewall.enable = false;
     
-    networking.hostName = cfg.hostname;
+    networking.hostName = hostCfg.hostname;
     networking.useDHCP = lib.mkDefault true;
     
     # This option defines the first version of NixOS you have installed on this particular machine,

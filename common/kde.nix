@@ -1,21 +1,23 @@
-{ config, lib, cfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
+{ config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
+let cfg = config.flakecfg.desktop.desktopManagers.kde;
+in with lib; {
+  config = mkIf cfg.enable {
+    flakecfg.desktop.enable = true;
+    imports = [
+      #Common desktop manager settings
+      ./desktopManager.nix
+    ];
 
-{
-  imports = [
-    #Common desktop manager settings
-    ./desktopManager.nix
-  ];
+    services = {
+      desktopManager.plasma6.enable = true;
+      #   displayManager.sddm.enable = true;
+      #   displayManager.sddm.wayland.enable = true;
+    };
 
-  services = {
-    desktopManager.plasma6.enable = true;
- #   displayManager.sddm.enable = true;
- #   displayManager.sddm.wayland.enable = true;
-  };
+    programs.ssh.askPassword =
+      lib.mkForce "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
 
-  programs.ssh.askPassword = lib.mkForce "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
-  
-  environment.systemPackages =
-    (with pkgs; [
+    environment.systemPackages = (with pkgs; [
       # KDE
       kdePackages.discover # Optional: Install if you use Flatpak or fwupd firmware update sevice
       kdePackages.kcalc # Calculator
@@ -33,14 +35,12 @@
       vlc # Cross-platform media player and streaming server
       wayland-utils # Wayland utilities
       wl-clipboard # Command-line copy/paste utilities for Wayland
-    ])
-    ++
-    (with pkgs-stable; [
-      
-    ])
-    ++
-    (with pkgs-unstable; [
-      
-    ]);
-  
+    ]) ++ (with pkgs-stable;
+      [
+
+      ]) ++ (with pkgs-unstable;
+        [
+
+        ]);
+  };
 }

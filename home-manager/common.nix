@@ -1,4 +1,4 @@
-{ config, lib, cfg, usrcfg, pkgs, pkgs-stable, pkgs-unstable, inputs, ... }:
+{ config, lib, usrcfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
   imports = [

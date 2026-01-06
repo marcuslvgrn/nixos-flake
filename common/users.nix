@@ -1,4 +1,4 @@
-{ inputs, config, cfg, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
+{ inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 let
   # Import your user definitions
@@ -8,6 +8,8 @@ let
   # Shared Home Manager config
   homeBase = config.users.homeBaseDir or "/home";
   commonHomeConfig = ../home-manager/common.nix;
+
+  flakecfg = config.flakecfg;
 
   # Normal + system user builder
   mkUser = username:
@@ -44,7 +46,8 @@ let
           ++ [ commonHomeConfig ];
 
         _module.args = {
-          inherit inputs pkgs-unstable pkgs-stable usrcfg cfg;
+#          inherit inputs pkgs-unstable pkgs-stable usrcfg cfg flakecfg;
+          inherit inputs pkgs-unstable pkgs-stable usrcfg flakecfg;
         };
       };
 
