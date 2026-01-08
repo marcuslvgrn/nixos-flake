@@ -1,8 +1,9 @@
 { config, lib, ... }:
-let cfg = config.flakecfg.flatpak;
+let cfg = config.flakecfg.desktop.flatpak;
 in with lib; {
 
   services.flatpak = mkIf cfg.enable {
+    enable = true;
     remotes = [
       {
         name = "flathub";

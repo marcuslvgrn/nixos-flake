@@ -21,9 +21,6 @@ in with lib;
     ddclient = {
       enable = mkEnableOption "Enable ddclient";
     };
-    flatpak = {
-      enable = mkEnableOption "Enable flatpak";
-    };
     nextcloud = {
       enable = mkEnableOption "Enable nextcloud and nginx";
       nextcloudHostName = mkOption {
@@ -81,6 +78,9 @@ in with lib;
     #Desktop
     desktop = {
       enable = mkEnableOption "Enable desktop";
+      flatpak = {
+        enable = mkEnableOption "Enable flatpak";
+      };
       desktopManagers = {
         gnome = {
           enable = mkEnableOption "Enable gnome";

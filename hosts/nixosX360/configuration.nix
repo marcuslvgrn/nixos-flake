@@ -15,6 +15,7 @@
 
   flakecfg = {
     desktop = {
+      flatpak.enable = true;
       desktopManagers = {
         gnome = {
           enable = true;
