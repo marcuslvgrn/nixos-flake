@@ -17,8 +17,11 @@
   ];
 
   flakecfg = {
-    desktop = {
+    programs = {
+      firefox.enable = true;
       flatpak.enable = true;
+    };
+    desktop = {
       desktopManagers = {
         gnome = {
           enable = true;

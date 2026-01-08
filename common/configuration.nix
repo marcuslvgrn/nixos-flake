@@ -70,39 +70,56 @@ in with lib;
         description = "Context path for nginx";
       };
     };
-    #users
+    #Users
     userNames = mkOption {
       type = types.listOf types.str;
       default = [ "lovgren" ];
     };
     #Desktop
-    desktop = {
-      enable = mkEnableOption "Enable desktop";
+    programs = {
+      firefox = {
+        enable = mkEnableOption "Enable firefox";
+      };
       flatpak = {
         enable = mkEnableOption "Enable flatpak";
       };
+    };
+    desktop = {
+      enable = mkEnableOption "Enable desktop";
       desktopManagers = {
         gnome = {
           enable = mkEnableOption "Enable gnome";
         };
         xfce = {
-          enable = mkEnableOption "Enable gnome";
+          enable = mkEnableOption "Enable xfce";
         };
         kde = {
-          enable = mkEnableOption "Enable gnome";
+          enable = mkEnableOption "Enable kde";
         };
       };
     };
-    #.enable = mkEnableOption "Enable ";
   };
 
   config = {
     assertions = [
-#      { assertion = !(flakecfg.desktop.enable) || flakecfg.desktop.desktopManagers != []; }
-      { assertion = !(flakecfg.airsonic.enable) || flakecfg.airsonic.hostName != ""; }
-      { assertion = !(flakecfg.nextcloud.enable) || (flakecfg.nextcloud.nextcloudHostName != "" && flakecfg.nextcloud.collaboraHostName != ""); }
-      { assertion = !(flakecfg.technitium.enable) || flakecfg.technitium.hostName != ""; }
-      { assertion = !(flakecfg.vaultwarden.enable) || flakecfg.vaultwarden.hostName != ""; }
+      {
+        assertion = !(flakecfg.desktop.enable) || (flakecfg.desktop.desktopManagers.gnome.enable ||
+                                                   flakecfg.desktop.desktopManagers.kde.enable ||
+                                                   flakecfg.desktop.desktopManagers.xfce.enable);
+      }
+      {
+        assertion = !(flakecfg.programs.firefox.enable) || (flakecfg.desktop.enable);
+      }
+      {
+        assertion = !(flakecfg.programs.flatpak.enable) || (flakecfg.desktop.enable); }
+      {
+        assertion = !(flakecfg.airsonic.enable) || flakecfg.airsonic.hostName != ""; }
+      {
+        assertion = !(flakecfg.nextcloud.enable) || (flakecfg.nextcloud.nextcloudHostName != "" && flakecfg.nextcloud.collaboraHostName != ""); }
+      {
+        assertion = !(flakecfg.technitium.enable) || flakecfg.technitium.hostName != ""; }
+      {
+        assertion = !(flakecfg.vaultwarden.enable) || flakecfg.vaultwarden.hostName != ""; }
     ];
     nix.gc = {
       automatic = true;
@@ -134,7 +151,7 @@ in with lib;
       font = "Lat2-Terminus16";
       keyMap = "sv-latin1";
     };
-    
+
     # Call commands and interactive bash start
     # Commands are separated by \n
     programs.bash.interactiveShellInit = ''

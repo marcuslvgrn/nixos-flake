@@ -1,5 +1,5 @@
 { config, lib, ... }:
-let cfg = config.flakecfg.desktop.flatpak;
+let cfg = config.flakecfg.programs.flatpak;
 in with lib; {
 
   services.flatpak = mkIf cfg.enable {

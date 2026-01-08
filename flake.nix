@@ -59,14 +59,20 @@
                      else "nixos";
           system   = if platform == "nixos" then "x86_64-linux" else "x86_64-darwin";
           isStable = true;
-          gnomeEnable = false;
-        in { inherit hostname platform system isStable gnomeEnable; }
+        in { inherit hostname platform system isStable; }
       ) hostFolders;
 
       # Per-host overrides
       overrides = {
-        "nixosX360" = { isStable = false; gnomeEnable = true;};
-        "nixosDellXPS" = { isStable = false; gnomeEnable = true;};
+        "nixosNUC" = {
+          isStable = false;
+        };
+        "nixosX360" = {
+          isStable = false;
+        };
+        "nixosDellXPS" = {
+          isStable = false;
+        };
       };
       
       # Apply overrides
