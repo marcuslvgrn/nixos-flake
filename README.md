@@ -39,6 +39,26 @@ fetchFromGitHub {
   hash = "sha256-QC2UHUHvXUdvs3Q0X4o+pbFdwKQ1W+zQBmp8vIqrsAE=";
 }
 ```
+dump mariadb databases
+```sh
+sudo mariadb-dump --all-databases | gzip > mariadb-full.sql.gz
+```
+
+restore later with
+```sh
+sudo gunzip -c mariadb-full.sql.gz | sudo mysql
+```
+
+for single databases
+```sh
+sudo -u nextcloud mariadb-dump nextcloud | gzip > mariadb-nextcloud.sql.gz
+```
+
+restore later with
+```sh
+sudo -u nextcloud gunzip -c mariadb-nextcloud.sql.gz | mariadb nextcloud
+```
+
 
 ## Packages I use (or intend to use)
 - [technitium dns server](https://technitium.com/) on github https://github.com/TechnitiumSoftware/DnsServer
