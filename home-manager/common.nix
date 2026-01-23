@@ -29,6 +29,7 @@
         gnome-shell-integration
         duckduckgo-privacy-essentials
         floccus
+        proton-pass
       ];
       settings = {
         "intl.locale.requested" = "sv-SE,en-US";
