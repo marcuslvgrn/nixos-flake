@@ -18,6 +18,14 @@
     secrets."ssh/keys/id_ed25519.pub" = {};
     secrets."ssh/keys/id_ed25519" = {};
     secrets."age/keys.txt" = {};
+    secrets."passbolt-security-salt" = {
+#      owner = "passbolt";
+#      group = "keys";
+    };
+    secrets."passbolt-db-pass" = {
+#      owner = "passbolt";
+#      group = "keys";
+    };
     secrets."nextcloud-admin-pass" = {
 #      owner = "nextcloud";
 #      group = "keys";

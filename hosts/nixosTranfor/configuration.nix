@@ -34,6 +34,7 @@ in with lib; {
     ../../common/vaultwarden.nix
     ../../common/technitium.nix
     ../../common/ddclient.nix
+    ../../common/passbolt.nix
     ./hardware-configuration.nix
     ./disk-config.nix
   ];
@@ -63,6 +64,10 @@ in with lib; {
   };
   
   services = {
+    passbolt = {
+      enable = false;
+      hostName = "mlpassbolt.dynv6.net";
+    };
     avahi = {
       enable = true;
       nssmdns4 = true;

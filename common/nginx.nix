@@ -21,6 +21,12 @@ let
       recommendedTlsSettings = true;
 #      locationPath = "/airsonic/";
     };
+#    "mlpassbolt.dynv6.net" = {
+#      target = "https://192.168.0.7:444";
+#      recommendedProxySettings = true;
+#      recommendedTlsSettings = true;
+##      locationPath = "/airsonic/";
+#    };
   };
 
   # Helper to create vhost definitions from proxyHosts
