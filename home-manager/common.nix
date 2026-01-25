@@ -1,11 +1,11 @@
-{ config, lib, flakecfg, usrcfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
+{ config, lib, moduleCfg, usrcfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
   imports = [
     ./dconf.nix
   ];
 
-  programs.firefox = lib.mkIf flakecfg.programs.firefox.enable {
+  programs.firefox = lib.mkIf moduleCfg.programs.firefox.enable {
     enable = true;
     languagePacks = [ "sv-SE" "en-US" ];
 

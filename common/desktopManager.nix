@@ -2,7 +2,7 @@
 with lib; {
   
   imports = [ ./flatpak.nix ];
-  config = mkIf config.flakecfg.desktop.enable {
+  config = mkIf config.moduleCfg.desktop.enable {
 
     services = {
       xserver.xkb.layout = "se";

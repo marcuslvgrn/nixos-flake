@@ -1,7 +1,6 @@
 { inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 let
-  cfg = config.flakecfg.technitium;
-  technitiumCfg = config.services.technitium-dns-server;
+  cfg = config.moduleCfg.technitium;
 in with lib; {
 
   config = mkIf cfg.enable {

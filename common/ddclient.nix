@@ -1,6 +1,6 @@
 { inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 let
-  cfg = config.flakecfg.ddclient;
+  cfg = config.moduleCfg.ddclient;
 in with lib; {
   services.ddclient = mkIf cfg.enable {
     enable = true;

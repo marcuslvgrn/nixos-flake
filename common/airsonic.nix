@@ -1,6 +1,6 @@
 { config, pkgs, lib, ... }:
 let
-  cfg = config.flakecfg.airsonic;
+  cfg = config.moduleCfg.airsonic;
   airsonicCfg = config.services.airsonic;
   airsonicAdvancedWar = pkgs.fetchurl {
     url = "https://github.com/airsonic-advanced/airsonic-advanced/releases/download/11.0.0-SNAPSHOT.20240424015024/airsonic.war";

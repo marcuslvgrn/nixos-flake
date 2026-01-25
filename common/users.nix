@@ -9,7 +9,7 @@ let
   homeBase = config.users.homeBaseDir or "/home";
   commonHomeConfig = ../home-manager/common.nix;
 
-  flakecfg = config.flakecfg;
+  moduleCfg = config.moduleCfg;
 
   # Normal + system user builder
   mkUser = username:
@@ -46,17 +46,17 @@ let
           ++ [ commonHomeConfig ];
 
         _module.args = {
-#          inherit inputs pkgs-unstable pkgs-stable usrcfg cfg flakecfg;
-          inherit inputs pkgs-unstable pkgs-stable usrcfg flakecfg;
+#          inherit inputs pkgs-unstable pkgs-stable usrcfg cfg moduleCfg;
+          inherit inputs pkgs-unstable pkgs-stable usrcfg moduleCfg;
         };
       };
 
 in {
-  # Safety check: all users listed in flakecfg must exist in userData.nix
+  # Safety check: all users listed in moduleCfg must exist in userData.nix
 #  assertions = [
 #    {
-#      assertion = lib.all (u: usersByName ? u) (config.flakecfg.userNames or []);
-#      message = "flakecfg.userNames contains users not defined in userData.nix";
+#      assertion = lib.all (u: usersByName ? u) (config.moduleCfg.userNames or []);
+#      message = "moduleCfg.userNames contains users not defined in userData.nix";
 #    }
 #  ];
 
@@ -66,14 +66,14 @@ in {
 
   # System + normal users
   users.users = let
-    userNamesList = config.flakecfg.userNames or [];
+    userNamesList = moduleCfg.userNames or [];
   in
     lib.genAttrs userNamesList mkUser
     // { root.hashedPassword = "!"; };
 
   # Home Manager configuration
   home-manager = let
-    userNamesList = config.flakecfg.userNames or [];
+    userNamesList = moduleCfg.userNames or [];
     normalUsers = lib.filter (u: (usersByName.${u}.normalUser or false)) userNamesList;
   in
   {

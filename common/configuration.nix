@@ -1,9 +1,19 @@
 { config, lib, hostCfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
 let
-  flakecfg = config.flakecfg;
+  moduleCfg = config.moduleCfg;
 in with lib;
 {
-  options.flakecfg = {
+  imports = [
+    ../services/create-swapfile.nix
+    ./grub.nix
+    ./openssh.nix
+    ./users.nix
+    ./sops.nix
+    ./networkmanager.nix
+    ./passbolt.nix
+  ];
+
+  options.moduleCfg = {
     #Servers
     airsonic = {
       enable = mkEnableOption "Enable airsonic and nginx";
@@ -103,23 +113,23 @@ in with lib;
   config = {
     assertions = [
       {
-        assertion = !(flakecfg.desktop.enable) || (flakecfg.desktop.desktopManagers.gnome.enable ||
-                                                   flakecfg.desktop.desktopManagers.kde.enable ||
-                                                   flakecfg.desktop.desktopManagers.xfce.enable);
+        assertion = !(moduleCfg.desktop.enable) || (moduleCfg.desktop.desktopManagers.gnome.enable ||
+                                                   moduleCfg.desktop.desktopManagers.kde.enable ||
+                                                   moduleCfg.desktop.desktopManagers.xfce.enable);
       }
       {
-        assertion = !(flakecfg.programs.firefox.enable) || (flakecfg.desktop.enable);
+        assertion = !(moduleCfg.programs.firefox.enable) || (moduleCfg.desktop.enable);
       }
       {
-        assertion = !(flakecfg.programs.flatpak.enable) || (flakecfg.desktop.enable); }
+        assertion = !(moduleCfg.programs.flatpak.enable) || (moduleCfg.desktop.enable); }
       {
-        assertion = !(flakecfg.airsonic.enable) || flakecfg.airsonic.hostName != ""; }
+        assertion = !(moduleCfg.airsonic.enable) || moduleCfg.airsonic.hostName != ""; }
       {
-        assertion = !(flakecfg.nextcloud.enable) || (flakecfg.nextcloud.nextcloudHostName != "" && flakecfg.nextcloud.collaboraHostName != ""); }
+        assertion = !(moduleCfg.nextcloud.enable) || (moduleCfg.nextcloud.nextcloudHostName != "" && moduleCfg.nextcloud.collaboraHostName != ""); }
       {
-        assertion = !(flakecfg.technitium.enable) || flakecfg.technitium.hostName != ""; }
+        assertion = !(moduleCfg.technitium.enable) || moduleCfg.technitium.hostName != ""; }
       {
-        assertion = !(flakecfg.vaultwarden.enable) || flakecfg.vaultwarden.hostName != ""; }
+        assertion = !(moduleCfg.vaultwarden.enable) || moduleCfg.vaultwarden.hostName != ""; }
     ];
     nix.gc = {
       automatic = true;

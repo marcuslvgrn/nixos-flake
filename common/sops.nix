@@ -22,7 +22,7 @@
 #      owner = "passbolt";
 #      group = "keys";
     };
-    secrets."passbolt-db-pass" = {
+    secrets."passbolt-env" = {
 #      owner = "passbolt";
 #      group = "keys";
     };

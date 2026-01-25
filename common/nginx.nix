@@ -1,6 +1,6 @@
 { config, pkgs, lib, ... }:
 let
-  cfg = config.flakecfg.nginx;
+  cfg = config.moduleCfg.nginx;
   # Define all your domains and backend services here 👇
   proxyHosts = {
     "mlmodem.dynv6.net" = {

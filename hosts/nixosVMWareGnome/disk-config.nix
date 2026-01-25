@@ -28,21 +28,29 @@
             label = "ROOT";
             content = {
               type = "btrfs";
-              extraArgs = [ "-f" ]; # Override existing partition
+              extraArgs = [
+                "--force" # Override existing partition
+#                "--data single"
+#                "--metadata raid1"
+#                "/dev/disk/by-partlabel/ROOT2"
+              ]; 
               # Subvolumes must set a mountpoint in order to be mounted,
               # unless their parent is mounted
               subvolumes = {
-                # Subvolume name is different from mountpoint
+                # Subvolumes must set a mountpoint in order to be mounted,
+                # unless their parent is mounted
                 "/@" = {
+                  mountOptions = [ "compress=zstd:1" ];
                   mountpoint = "/";
                 };
                 # Subvolume name is the same as the mountpoint
                 "/@home" = {
-                  #mountOptions = [ "compress=zstd" ];
+                  mountOptions = [ "compress=zstd:1" ];
                   mountpoint = "/home";
                 };
                 # Subvolume for the swapfile
                 "/@swap" = {
+                  mountOptions = [ "compress=zstd:1" ];
                   mountpoint = "/swap";
                   swap = {
                     swapfile.size = "4G";

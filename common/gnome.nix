@@ -1,5 +1,5 @@
 { config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
-let cfg = config.flakecfg.desktop.desktopManagers.gnome;
+let cfg = config.moduleCfg.desktop.desktopManagers.gnome;
 in with lib; {
   imports = [
     #Common desktop manager settings
@@ -7,7 +7,7 @@ in with lib; {
   ];
 
   config = mkIf cfg.enable {
-    flakecfg.desktop.enable = true;
+    moduleCfg.desktop.enable = true;
 
     services = {
       xserver.enable = true;

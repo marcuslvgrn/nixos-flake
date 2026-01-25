@@ -16,7 +16,7 @@
     ../../services/bluetooth-suspend.nix
   ];
 
-  flakecfg = {
+  moduleCfg = {
     programs = {
       firefox.enable = true;
       flatpak.enable = true;

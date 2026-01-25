@@ -1,7 +1,6 @@
 { config, pkgs, pkgs-stable, pkgs-unstable, lib, ... }:
 let
-  cfg = config.flakecfg.nextcloud;
-  nextcloudCfg = config.services.nextcloud-dns-server;
+  cfg = config.moduleCfg.nextcloud;
 in with lib; {
 
   config = mkIf cfg.enable {

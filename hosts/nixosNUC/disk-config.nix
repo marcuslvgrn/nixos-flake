@@ -4,7 +4,7 @@
   imports = [
     inputs.disko.nixosModules.disko
   ];
-
+  
   disko.devices = {
     disk.disk1 = {
       device = "/dev/disk/by-id/ata-INTEL_SSDSC2CT120A3_CVMP21540489120BGN";

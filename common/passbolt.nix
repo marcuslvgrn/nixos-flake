@@ -3,8 +3,50 @@
 with lib;
 
 let
-  cfg = config.services.passbolt;
+  cfg = config.moduleCfg.passbolt;
 
+  passboltVars = {
+    PATH="/run/current-system/sw/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH";
+    HOME="${cfg.passboltHome}";
+    TMP="${cfg.passboltHome}/tmp";
+    GNUPGHOME="${cfg.passboltHome}/.gnupg";
+    PHP="${phpPackage}/bin/php";
+    APP_FULL_BASE_URL="https://${cfg.hostName}";
+    SECURITY_SALT="${cfg.securitySaltFile}";
+    DATASOURCES_DEFAULT_HOST="${cfg.database.host}";
+    DATASOURCES_DEFAULT_USERNAME="${cfg.database.user}";
+    #    DATASOURCES_DEFAULT_PASSWORD=
+    DATASOURCES_DEFAULT_DATABASE="${cfg.database.name}";
+    PASSBOLT_GPG_SERVER_KEY_PUBLIC="${cfg.gpg.publicKeyFile}";
+    PASSBOLT_GPG_SERVER_KEY_PRIVATE="${cfg.gpg.privateKeyFile}";
+    CACHE_DEFAULT_URL="file://${cfg.passboltHome}/cache";
+    #    CACHE_CAKECORE_URL="file://${cfg.passboltHome}/cache/persistent";
+    PASSBOLT_JWT_PRIVATE_KEY="${cfg.passboltHome}/jwt/jwt.key";
+    PASSBOLT_JWT_PUBLIC_KEY="${cfg.passboltHome}/jwt/jwt.pem";
+    LOG_DEBUG_URL="file://${cfg.passboltHome}/logs";
+    LOG_ERROR_URL="file://${cfg.passboltHome}/logs";
+    LOG_QUERIES_URL="file://${cfg.passboltHome}/logs";
+    PASSBOLT_ADMIN_EMAIL="${cfg.adminEmail}";
+    PASSBOLT_ADMIN_FIRST_NAME="${cfg.adminFirstName}";
+    PASSBOLT_ADMIN_LAST_NAME="${cfg.adminLastName}";
+    PASSBOLT_SSL_FORCE="true";
+    EMAIL_DEFAULT_FROM_NAME="Passbolt";
+    EMAIL_DEFAULT_FROM="${cfg.adminEmail}";
+    EMAIL_TRANSPORT_DEFAULT_HOST="smtp.gmail.com";
+    EMAIL_TRANSPORT_DEFAULT_PORT="465";
+    EMAIL_TRANSPORT_DEFAULT_USERNAME="${cfg.gmailUserName}";
+    EMAIL_TRANSPORT_DEFAULT_TLS="true";
+    APP_DEFAULT_TIMEZONE="Europe/Stockholm";
+  };
+
+  # convert attrset → "export FOO=bar" lines
+  passboltEnvExports =
+    lib.concatStringsSep "\n" (lib.mapAttrsToList (k: v: "export ${k}=${v}") passboltVars);
+  
+  # convert attrset → env-file format
+  passboltEnvList =
+    lib.mapAttrsToList (k: v: "${k}=${v}") passboltVars;
+      
   phpPackage = pkgs.php.buildEnv {
       extensions = ({ enabled, all }: enabled ++ (with all; [
         curl 
@@ -19,7 +61,13 @@ let
       ]));
   };
 
+  environment.systemPackages = with pkgs; [
+    gnupg
+  ];
+  
   #copied from installation default files
+  #eventually, use the defaults from installation instead (if no mods are needed)
+  #so far everything can be controlled using environment variables
   appPhp = ./passbolt-php/app.php;
   passboltPhp = ./passbolt-php/passbolt.php;
 
@@ -38,73 +86,53 @@ let
     vendorHash = "sha256-aGGIJ0jUu0if6R/M7D53Ekn8qQhfOwtDGVyLeP13LME=";
     composerStrictValidation = false;
 
+    #Move files that should be writable to ${cfg.passboltHome}
     postInstall = ''
       cfgDir=$out/share/php/passbolt/config
       install -m644 ${appPhp} "$cfgDir/app.php"
       install -m644 ${passboltPhp} "$cfgDir/passbolt.php"
       ${pkgs.coreutils}/bin/rm -r $out/share/php/passbolt/tmp
-      ${pkgs.coreutils}/bin/ln -s /var/lib/passbolt/tmp $out/share/php/passbolt/tmp
+      ${pkgs.coreutils}/bin/ln -s ${cfg.passboltHome}/tmp $out/share/php/passbolt/tmp
       ${pkgs.coreutils}/bin/rm -r $out/share/php/passbolt/config/jwt
-      ${pkgs.coreutils}/bin/ln -s /var/lib/passbolt/jwt $out/share/php/passbolt/config/jwt
+      ${pkgs.coreutils}/bin/ln -s ${cfg.passboltHome}/jwt $out/share/php/passbolt/config/jwt
       ${pkgs.coreutils}/bin/rm -r $out/share/php/passbolt/config/gpg
-      ${pkgs.coreutils}/bin/ln -s /var/lib/passbolt/gpg $out/share/php/passbolt/config/gpg
-#      ${pkgs.coreutils}/bin/rm -r $out/share/php/passbolt/logs
-      ${pkgs.coreutils}/bin/ln -s /var/lib/passbolt/logs $out/share/php/passbolt/logs
-#      cp $cfgDir/app.default.php $cfgDir/app.php
-#      cp $cfgDir/passbolt.default.php $cfgDir/passbolt.php
-      echo "passboltPackage installed 1"
+      ${pkgs.coreutils}/bin/ln -s ${cfg.passboltHome}/gpg $out/share/php/passbolt/config/gpg
+      ${pkgs.coreutils}/bin/ln -s ${cfg.passboltHome}/logs $out/share/php/passbolt/logs
+      echo "passboltPackage installed"
     '';      
   });
 
-#  passboltApp = pkgs.symlinkJoin {
-#    name = "passbolt-app";
-#    
-#    paths = [
-#      passboltPackage
-#    ];
-#    
-#    postBuild = ''
-#      cfgDir=$out/share/php/passbolt/config
-#
-#      cp $cfgDir/app.default.php $cfgDir/app.php
-#      cp $cfgDir/passbolt.default.php $cfgDir/passbolt.php
-#  
-#      # Replace only the two site-specific config files
-##      rm -f $cfgDir/app.php
-##      rm -f $cfgDir/app.default.php
-##      rm -f $cfgDir/passbolt.php
-##      ln -s /etc/passbolt/app.php $cfgDir/app.php
-##      ln -s /etc/passbolt/passbolt.php $cfgDir/passbolt.php
-#    '';
-#  };
-
 in {
-  options.services.passbolt = {
+  options.moduleCfg.passbolt = {
     enable = mkEnableOption "Passbolt password manager";
 
+    enableNginxACME = mkEnableOption "Enable ACME for nginx";
+    enableNginxSSL = mkEnableOption "Enable SSL for nginx";
+
+    enableDdclient = mkEnableOption "Enable ddclient registration hook";
+
+    passboltHome = mkOption {
+      type = types.str;
+      default = "/var/lib/passbolt";
+      example = "some path to the passbolt home";
+    };
+
+    envFile = mkOption {
+      type = types.str;
+      example = "some path to the file";
+    };
+    
     hostName = mkOption {
       type = types.str;
       example = "passbolt.example.com";
     };
-
+    
     database = {
       host = mkOption { type = types.str; default = "localhost"; };
       name = mkOption { type = types.str; default = "passbolt"; };
       user = mkOption { type = types.str; default = "nginx"; };
-#      passwordFile = mkOption {
-#        type = types.path;
-#        default = config.sops.secrets."passbolt-db-pass".path;
-#        description = "File containing DB password";
-#      };
     };
-
-#    gpg = {
-#      fingerprint = mkOption {
-#        type = types.str;
-#        description = "GPG server key fingerprint";
-#      };
-    #    };
-
+      
     securitySaltFile = mkOption {
       type = types.path;
       default = config.sops.secrets."passbolt-security-salt".path;
@@ -114,17 +142,17 @@ in {
     gpg = {
       fingerprintFile = mkOption {
         type = types.path;
-        default = "/var/lib/passbolt/gpg-fingerprint";
+        default = "${cfg.passboltHome}/gpg-fingerprint";
         description = "Path to file containing GPG server key fingerprint";
       };
       publicKeyFile = mkOption {
         type = types.path;
-        default = "/var/lib/passbolt/serverkey.asc";
+        default = "${cfg.passboltHome}/serverkey.asc";
         description = "Path to file containing public GPG server key";
       };
       privateKeyFile = mkOption {
         type = types.path;
-        default = "/var/lib/passbolt/serverkey_private.asc";
+        default = "${cfg.passboltHome}/serverkey_private.asc";
         description = "Path to file containing private GPG server key";
       };
     };
@@ -138,24 +166,42 @@ in {
     };
     adminEmail = mkOption {
       type = types.str;
-      default = "marcus.lovgrn@proton.me";
+      default = "admin@example.com";
     };
+    gmailUserName = mkOption {
+      type = types.str;
+      default = "user@example.com";
+    };
+
+    timeZone = mkOption {
+      type = types.str;
+      default = "Europe/Stockholm";
+    };
+    
   };
-
+  
   config = mkIf cfg.enable {
-    users.users.passbolt = {
-      isSystemUser = true;
-      group = "passbolt";
-#      home = "/var/lib/passbolt";
-#      createHome = true;
+    networking.firewall.allowedTCPPorts = [ 80 443 ];
+
+    security.acme = {
+      acceptTerms = true;
+      defaults.email = "${cfg.adminEmail}";
+      # Generate ACME certs for all hosts automatically
+      certs = {
+        "${cfg.hostName}" = {
+          webroot = "/var/lib/acme/acme-challenge";
+        };
+      };
     };
-
-    users.groups.passbolt = {};
-
+    
+    users.users.nginx.extraGroups = [ "acme" ];
+    
     services = {
-      ddclient.domains = [
-        "${cfg.hostName}"
-      ];
+      ddclient = mkIf cfg.enableDdclient {
+        domains = [
+          "${cfg.hostName}"
+        ];
+      };
 
       mysql = {
         enable = true;
@@ -175,37 +221,12 @@ in {
         
         phpPackage = phpPackage;
 
-        phpEnv = {
-          HOME = "/var/lib/passbolt";
-          TMP="/var/lib/passbolt/tmp";
-          GNUPGHOME = "/var/lib/passbolt/.gnupg";
-          PHP="${phpPackage}/bin/php";
-          APP_FULL_BASE_URL = "https://${cfg.hostName}";
-          SECURITY_SALT="${cfg.securitySaltFile}";
-          DATASOURCES_DEFAULT_HOST = "${cfg.database.host}";
-          DATASOURCES_DEFAULT_USERNAME = "${cfg.database.user}";
-          DATASOURCES_DEFAULT_DATABASE = "${cfg.database.name}";
-          PASSBOLT_GPG_SERVER_KEY_PUBLIC = "${cfg.gpg.publicKeyFile}";
-          PASSBOLT_GPG_SERVER_KEY_PRIVATE = "${cfg.gpg.privateKeyFile}";
-          CACHE_DEFAULT_URL="file:///var/lib/passbolt/cache";
-          CACHE_CACKECORE_URL="file:///var/lib/passbolt/cache/persistent";
-          PASSBOLT_JWT_PRIVATE_KEY="/var/lib/passbolt/jwt/private.key";
-          PASSBOLT_JWT_PUBLIC_KEY="/var/lib/passbolt/jwt/public.key";
-          LOG_DEBUG_URL="file:///var/lib/passbolt/logs";
-          LOG_ERROR_URL="file:///var/lib/passbolt/logs";
-          LOG_QUERIES_URL="file:///var/lib/passbolt/logs";
-          PASSBOLT_ADMIN_EMAIL="marcus.lovgren@proton.me";
-          PASSBOLT_ADMIN_FIRST_NAME="Marcus";
-          PASSBOLT_ADMIN_LAST_NAME="Lovgren";
-          PASSBOLT_SSL_FORCE="true";
-          EMAIL_DEFAULT_FROM_NAME="Passbolt";
-          EMAIL_DEFAULT_FROM="marcus.lovgren@proton.me";
-          EMAIL_TRANSPORT_DEFAULT_HOST="smtp.gmail.com";
-          EMAIL_TRANSPORT_DEFAULT_PORT="465";
-          EMAIL_TRANSPORT_DEFAULT_USERNAME="marcuslvgrn@gmail.com";
-          EMAIL_TRANSPORT_DEFAULT_TLS="true";
-          APP_DEFAULT_TIMEZONE="Europe/Stockholm";
-        };
+#        #do not remove environment variables
+#        phpOptions = ''
+#          clear_env = no
+#        '';
+#
+        phpEnv = passboltVars;
         
         settings = {
           "listen.owner" = "nginx";
@@ -215,26 +236,30 @@ in {
           "pm.min_spare_servers" = "1";
           "pm.max_spare_servers" = "3";
           "pm.start_servers" = "2";
-#          "clear-env" = "no";
         };
       };
-
+      
       nginx.enable = true;
 
       nginx.virtualHosts.${cfg.hostName} = {
-        enableACME = true;
-        forceSSL = true;
-                
+        enableACME = cfg.enableNginxACME;
+        forceSSL = cfg.enableNginxSSL;
+        #For debugging
+#        addSSL = true;
+#        sslCertificate = "${cfg.passboltHome}/certs/fullchain.pem";
+#        sslCertificateKey = "${cfg.passboltHome}/certs/key.pem";
+        #
+              
         root = "${passboltPackage}/share/php/passbolt/webroot";
         extraConfig = ''
-          proxy_set_header Host $host;
-          proxy_set_header X-Forwarded-Host $host;
-          proxy_set_header X-Forwarded-Proto https;
-          proxy_set_header X-Forwarded-Port 443;
+#          proxy_set_header Host $host;
+#          proxy_set_header X-Forwarded-Host $host;
+#          proxy_set_header X-Forwarded-Proto https;
+#          proxy_set_header X-Forwarded-Port 443;
+          index = "index.php";
         '';
         
         locations."/" = {
-          index = "index.php";
           tryFiles = "$uri $uri/ /index.php?$args";
         };
         locations."~ \\.php\$" = {
@@ -254,24 +279,24 @@ in {
     };
     
     systemd.tmpfiles.rules = [
-      "d /var/lib/passbolt 0750 nginx nginx -"
-      "d /var/lib/passbolt/cache 0750 nginx nginx -"
-      "d /var/lib/passbolt/logs 0750 nginx nginx -"
-      "d /var/lib/passbolt/tmp 0750 nginx nginx -"
-      "d /var/lib/passbolt/.gnupg 0700 nginx nginx -"
-      "d /var/lib/passbolt/jwt 0500 nginx nginx -"
-      "f /var/lib/passbolt/jwt/jwt.key 0600 nginx nginx -"
-      "f /var/lib/passbolt/jwt/jwt.pem 0600 nginx nginx -"
-      "d /var/lib/passbolt/gpg 0700 nginx nginx -"
-      "d /var/lib/passbolt/tmp 0750 nginx nginx -"
-      "d /var/lib/passbolt/tmp/avatars 0750 nginx nginx -"
-      "d /var/lib/passbolt/tmp/avatars/empty 0750 nginx nginx -"
-      "d /var/lib/passbolt/tmp/cache 0750 nginx nginx -"
-      "d /var/lib/passbolt/tmp/cache/database 0750 nginx nginx -"
-      "d /var/lib/passbolt/tmp/cache/database/empty 0750 nginx nginx -"
-      "d /var/lib/passbolt/tmp/selenium 0750 nginx nginx -"
-      "d /var/lib/passbolt/tmp/selenium/empty 0750 nginx nginx -"
-      "d /var/lib/passbolt/tmp/empty 0750 nginx nginx -"
+      "d ${cfg.passboltHome} 0750 nginx nginx -"
+      "d ${cfg.passboltHome}/cache 0750 nginx nginx -"
+      "d ${cfg.passboltHome}/logs 0750 nginx nginx -"
+      "d ${cfg.passboltHome}/tmp 0750 nginx nginx -"
+      "d ${cfg.passboltHome}/.gnupg 0700 nginx nginx -"
+      "d ${cfg.passboltHome}/jwt 0500 nginx nginx -"
+      "f ${cfg.passboltHome}/jwt/jwt.key 0600 nginx nginx -"
+      "f ${cfg.passboltHome}/jwt/jwt.pem 0600 nginx nginx -"
+      "d ${cfg.passboltHome}/gpg 0700 nginx nginx -"
+      "d ${cfg.passboltHome}/tmp 0750 nginx nginx -"
+      "d ${cfg.passboltHome}/tmp/avatars 0750 nginx nginx -"
+      "d ${cfg.passboltHome}/tmp/avatars/empty 0750 nginx nginx -"
+      "d ${cfg.passboltHome}/tmp/cache 0750 nginx nginx -"
+      "d ${cfg.passboltHome}/tmp/cache/database 0750 nginx nginx -"
+      "d ${cfg.passboltHome}/tmp/cache/database/empty 0750 nginx nginx -"
+      "d ${cfg.passboltHome}/tmp/selenium 0750 nginx nginx -"
+      "d ${cfg.passboltHome}/tmp/selenium/empty 0750 nginx nginx -"
+      "d ${cfg.passboltHome}/tmp/empty 0750 nginx nginx -"
     ];
 
     systemd.services.passbolt-gpg-init = {
@@ -285,11 +310,10 @@ in {
         Type = "oneshot";
         User = "nginx";
         Group = "nginx";
-        Environment = [
-          "HOME=/var/lib/passbolt"
-          "GNUPGHOME=/var/lib/passbolt/.gnupg"
-          "PATH=/run/current-system/sw/bin"
+        EnvironmentFile = [
+          config.sops.secrets."passbolt-env".path
         ];
+        Environment = lib.mapAttrsToList (k: v: "${k}=${v}") passboltVars;
         ExecStart = pkgs.writeShellScript "passbolt-gpg-init" ''
           set -euo pipefail
     
@@ -308,7 +332,7 @@ in {
 Key-Type: RSA
 Key-Length: 4096
 Name-Real: Passbolt Server
-Name-Email: passbolt@${cfg.hostName}
+Name-Email: ${cfg.adminEmail}
 Expire-Date: 0
 %no-protection
 %commit
@@ -351,39 +375,11 @@ EOF
         User = "nginx";
         Group = "nginx";
         WorkingDirectory = passboltPackage;
-        EnvironmentFile = cfg.gpg.fingerprintFile;
-        Environment = [
-          "HOME=/var/lib/passbolt"
-          "TMP=/var/lib/passbolt/tmp"
-          "GNUPGHOME=/var/lib/passbolt/.gnupg"
-          "PHP=${phpPackage}/bin/php"
-          "APP_FULL_BASE_URL=https://${cfg.hostName}"
-          "SECURITY_SALT=${cfg.securitySaltFile}"
-          "DATASOURCES_DEFAULT_HOST=${cfg.database.host}"
-          "DATASOURCES_DEFAULT_USERNAME=${cfg.database.user}"
-#          "DATASOURCES_DEFAULT_PASSWORD="
-          "DATASOURCES_DEFAULT_DATABASE=${cfg.database.name}"
-          "PASSBOLT_GPG_SERVER_KEY_PUBLIC=${cfg.gpg.publicKeyFile}"
-          "PASSBOLT_GPG_SERVER_KEY_PRIVATE=${cfg.gpg.privateKeyFile}"
-          "CACHE_DEFAULT_URL=file:///var/lib/passbolt/cache"
-          "CACHE_CACKECORE_URL=file:///var/lib/passbolt/cache/persistent"
-          "PASSBOLT_JWT_PRIVATE_KEY=/var/lib/passbolt/jwt/private.key"
-          "PASSBOLT_JWT_PUBLIC_KEY=/var/lib/passbolt/jwt/public.key"
-          "LOG_DEBUG_URL=file:///var/lib/passbolt/logs"
-          "LOG_ERROR_URL=file:///var/lib/passbolt/logs"
-          "LOG_QUERIES_URL=file:///var/lib/passbolt/logs"
-          "PASSBOLT_ADMIN_EMAIL=marcus.lovgren@proton.me"
-          "PASSBOLT_ADMIN_FIRST_NAME=Marcus"
-          "PASSBOLT_ADMIN_LAST_NAME=Lovgren"
-          "PASSBOLT_SSL_FORCE=true"
-          "EMAIL_DEFAULT_FROM_NAME=Passbolt"
-          "EMAIL_DEFAULT_FROM=marcus.lovgren@proton.me"
-          "EMAIL_TRANSPORT_DEFAULT_HOST=smtp.gmail.com"
-          "EMAIL_TRANSPORT_DEFAULT_PORT=465"
-          "EMAIL_TRANSPORT_DEFAULT_USERNAME=marcuslvgrn@gmail.com"
-          "EMAIL_TRANSPORT_DEFAULT_TLS=true"
-          "APP_DEFAULT_TIMEZONE=Europe/Stockholm"
+        EnvironmentFile = [
+          cfg.gpg.fingerprintFile
+          config.sops.secrets."passbolt-env".path
         ];
+        Environment = passboltEnvList;
       };
 
       script = ''
@@ -395,26 +391,27 @@ EOF
         $CAKE passbolt --help
         echo "==> Checking installation state"
     
+        # 2️⃣ Create JWT keys if missing or empty
+        $CAKE passbolt create_jwt_keys --force
+        if [ ! -s "${cfg.passboltHome}/jwt/jwt.key" ]; then
+          echo "==> Creating JWT keys"
+          $CAKE passbolt create_jwt_keys --force
+        else
+          echo "==> JWT keys already exist"
+        fi
+
         # 1️⃣ Install if autoload.php does not exist
 #        if [ ! -f "${passboltPackage}/share/php/passbolt/vendor/autoload.php" ]; then
           echo "==> Installing Passbolt (no admin)"
 #          $CAKE passbolt install --no-admin
           printf "%s\n%s\n%s\n" \
-          "marcus.lovgren@proton.me" \
+          "${cfg.adminEmail}" \
           "Admin" \
           "User" \
           | $CAKE passbolt install --force
 #        else
 #          echo "==> Passbolt already installed"
 #        fi
-
-        # 2️⃣ Create JWT keys if missing or empty
-        if [ ! -s "/var/lib/passbolt/jwt/private.key" ]; then
-          echo "==> Creating JWT keys"
-          $CAKE passbolt create_jwt_keys --force
-        else
-          echo "==> JWT keys already exist"
-        fi
 
         echo "==> Running database migrations"
         $CAKE passbolt migrate
@@ -434,10 +431,12 @@ EOF
           echo "==> Admin user already exists"
         fi
 
-#        ACTIVE=$($CAKE passbolt users_index | grep 'marcus.lovgren@proton.me' | ${pkgs.gawk}/bin/awk '{print $12}') 
+        $CAKE passbolt users_index
+
+        #        ACTIVE=$($CAKE passbolt users_index | grep "${cfg.adminEmail}" | ${pkgs.gawk}/bin/awk '{print $12}') 
 #        if [ "$ACTIVE" = "no" ]; then
 #           echo "Admin user inactive"
-#           $CAKE passbolt recover_user --username 'marcus.lovgren@proton.me'
+#           $CAKE passbolt recover_user --username "${cfg.adminEmail}"
 #        fi
       '';
 ##        ExecStart = ''
@@ -451,29 +450,7 @@ EOF
 
     environment.systemPackages = [
       (pkgs.writeShellScriptBin "passbolt-cake" ''
-          export HOME=/var/lib/passbolt
-          export TMP=/var/lib/passbolt/tmp
-          export GNUPGHOME=/var/lib/passbolt/.gnupg
-          export PHP=${phpPackage}/bin/php
-          export APP_FULL_BASE_URL=https://${cfg.hostName}
-          export SECURITY_SALT=${cfg.securitySaltFile}
-          export DATASOURCES_DEFAULT_HOST=${cfg.database.host}
-          export DATASOURCES_DEFAULT_USERNAME=${cfg.database.user}
-          export DATASOURCES_DEFAULT_PASSWORD=
-          export DATASOURCES_DEFAULT_DATABASE=${cfg.database.name}
-          export PASSBOLT_GPG_SERVER_KEY_PUBLIC=${cfg.gpg.publicKeyFile}
-          export PASSBOLT_GPG_SERVER_KEY_PRIVATE=${cfg.gpg.privateKeyFile}
-          export CACHE_DEFAULT_URL=file:///var/lib/passbolt/cache
-          export CACHE_CACKECORE_URL=file:///var/lib/passbolt/cache/persistent
-          export PASSBOLT_JWT_PRIVATE_KEY=/var/lib/passbolt/jwt/private.key
-          export PASSBOLT_JWT_PUBLIC_KEY=/var/lib/passbolt/jwt/public.key
-          export LOG_DEBUG_URL=file:///var/lib/passbolt/logs
-          export LOG_ERROR_URL=file:///var/lib/passbolt/logs
-          export LOG_QUERIES_URL=file:///var/lib/passbolt/logs
-          export PASSBOLT_ADMIN_EMAIL=marcus.lovgren@proton.me
-          export PASSBOLT_ADMIN_FIRST_NAME=Marcus
-          export PASSBOLT_ADMIN_LAST_NAME=Lovgren
-          export PASSBOLT_SSL_FORCE=true
+          ${passboltEnvExports}
         exec ${phpPackage}/bin/php \
           ${passboltPackage}/share/php/passbolt/bin/cake.php passbolt "$@"
       '')

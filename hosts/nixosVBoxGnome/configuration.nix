@@ -13,7 +13,7 @@
     ./disk-config.nix
   ];
 
-  flakecfg = {
+  moduleCfg = {
     desktop = {
       desktopManagers = {
         gnome = {

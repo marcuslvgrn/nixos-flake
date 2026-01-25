@@ -1,6 +1,6 @@
 { config, pkgs, lib, ... }:
 let
-  cfg = config.flakecfg.vaultwarden;
+  cfg = config.moduleCfg.vaultwarden;
   vaultwardenCfg = config.services.vaultwarden.config;
 in with lib; {
   config = mkIf cfg.enable {

@@ -1,5 +1,5 @@
 { config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
-let flakecfg = config.flakecfg;
+let moduleCfg = config.moduleCfg;
 in with lib; {
 
   nixpkgs.overlays = [
@@ -39,7 +39,7 @@ in with lib; {
     ./disk-config.nix
   ];
 
-  flakecfg = {
+  moduleCfg = {
     airsonic = {
       enable = true;
       hostName = "mlairsonic.dynv6.net";
@@ -51,6 +51,10 @@ in with lib; {
       collaboraHostName = "mlcollabora.dynv6.net";
     };
     nginx.enable = true;
+    passbolt = {
+      enable = false;
+      hostName = "mlpassbolt.dynv6.net";
+    };
     samba.enable = true;
     technitium = {
       enable = true;
@@ -64,10 +68,6 @@ in with lib; {
   };
   
   services = {
-    passbolt = {
-      enable = false;
-      hostName = "mlpassbolt.dynv6.net";
-    };
     avahi = {
       enable = true;
       nssmdns4 = true;

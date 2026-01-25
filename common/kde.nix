@@ -1,8 +1,8 @@
 { config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
-let cfg = config.flakecfg.desktop.desktopManagers.kde;
+let cfg = config.moduleCfg.desktop.desktopManagers.kde;
 in with lib; {
   config = mkIf cfg.enable {
-    flakecfg.desktop.enable = true;
+    moduleCfg.desktop.enable = true;
     imports = [
       #Common desktop manager settings
       ./desktopManager.nix
