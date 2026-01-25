@@ -1,13 +1,36 @@
 { config, pkgs, lib, ... }:
 let
-  cfg = config.moduleCfg.airsonic;
-  airsonicCfg = config.services.airsonic;
+  cfg = config.airsonic;
+  serviceCfg = config.services.airsonic;
   airsonicAdvancedWar = pkgs.fetchurl {
     url = "https://github.com/airsonic-advanced/airsonic-advanced/releases/download/11.0.0-SNAPSHOT.20240424015024/airsonic.war";
     hash = "sha256-fDWstS076BeXE55aOeMSSZuuYhOLLVAfjRGZRnMksz4=";
   };
 in with lib; {
-  config = mkIf cfg.enable {
+
+  options = {
+    airsonic = {
+#      enable = mkEnableOption "Enable airsonic advanced and configure nginx";
+      hostName = mkOption {
+        type = types.str;
+        description = "Hostname for airsonic nginx";
+      };
+#      contextPath = mkOption {
+#        type = types.str;
+#        default = "/";
+#        #      default = "/airsonic/";
+#        description = "Context path for nginx";
+#      };
+    };
+  };
+
+  config = mkIf serviceCfg.enable {
+    assertions = [
+      {
+        assertion = cfg.hostName != "";
+      }
+    ];
+    
     environment.systemPackages = (with pkgs; [
       javaPackages.compiler.openjdk11
     ])
@@ -25,7 +48,6 @@ in with lib; {
         "${cfg.hostName}"
       ];
       airsonic = {
-        enable = true;
         listenAddress = mkDefault "0.0.0.0";
 #        contextPath = mkDefault "/airsonic";
 #        contextPath = mkDefault "/";
@@ -41,11 +63,11 @@ in with lib; {
         virtualHosts.${cfg.hostName} = {
           forceSSL = true;
           enableACME = true;
-          locations."${airsonicCfg.contextPath}" = {
+          locations."${serviceCfg.contextPath}" = {
 #            extraConfig = ''
 #              proxy_set_header Host              $proxy_host;
 #            '';
-            proxyPass = "http://127.0.0.1:${toString airsonicCfg.port}";
+            proxyPass = "http://127.0.0.1:${toString serviceCfg.port}";
             proxyWebsockets = true;
           };
         };

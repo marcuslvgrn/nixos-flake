@@ -2,10 +2,19 @@
 
 {
   imports = [
-    ../../hosts/nixosMinimal/configuration.nix
-    ../../common/xfce.nix
+    ../../common/configuration.nix
     ./disk-config.nix
   ];
+
+  config = {
+    desktop = {
+      desktopManagers = {
+        xfce = {
+          enable = true;
+        };
+      };
+    };
+  };
 
   networking.hostName = "nixosASUS";
 

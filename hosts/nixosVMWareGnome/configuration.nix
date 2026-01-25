@@ -4,29 +4,21 @@ let
 in with lib;
 {
   imports = [
-    ../../hosts/nixosMinimal/configuration.nix
-    ../../common/gnome.nix
+    ../../common/configuration.nix
     ../../common/vmware-guest.nix
 #    ./hardware-configuration.nix
     ./disk-config.nix
   ];
 
-  moduleCfg = {
+
+  config = {
     passbolt = {
       enable = true;
-      enableDdclient = true;
-      enableNginxACME = true;
-      enableNginxSSL = true;
-
-      envFile = config.sops.secrets."passbolt-env".path;
-      
       hostName = "mlpassbolt.dynv6.net";
       adminEmail = "marcus.lovgren@proton.me";
+      adminFirstName = "Marcus";
+      adminLastName = "Lövgren";
       gmailUserName = "marcuslvgrn@gmail.com";
-    };
-    programs = {
-      firefox.enable = true;
-      flatpak.enable = true;
     };
     desktop = {
       desktopManagers = {

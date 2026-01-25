@@ -7,17 +7,12 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../hosts/nixosMinimal/configuration.nix
-    ../../common/gnome.nix
+    ../../common/configuration.nix
     ../../common/virtualbox-host.nix
     ../../common/ssd.nix
   ];
 
-  moduleCfg = {
-    programs = {
-      firefox.enable = true;
-      flatpak.enable = true;
-    };
+  config = {
     desktop = {
       desktopManagers = {
         gnome = {

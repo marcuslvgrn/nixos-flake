@@ -1,9 +1,8 @@
 { inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 let
-  cfg = config.moduleCfg.ddclient;
+  serviceCfg = config.services.ddclient;
 in with lib; {
-  services.ddclient = mkIf cfg.enable {
-    enable = true;
+  services.ddclient = mkIf serviceCfg.enable {
     quiet = true;
     usev6 = "";
     protocol = "dyndns2";
@@ -12,4 +11,9 @@ in with lib; {
     username = "none";
     interval = "30min";
   };
+  assertions = [
+    {
+      assertion = serviceCfg.domains != [];
+    }
+  ];
 }

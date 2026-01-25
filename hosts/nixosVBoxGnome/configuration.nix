@@ -6,14 +6,13 @@
 
 {
   imports = [
-    ../../hosts/nixosMinimal/configuration.nix
-    ../../common/gnome.nix
+    ../../common/configuration.nix
     ../../common/virtualbox-guest.nix
     ./hardware-configuration.nix
     ./disk-config.nix
   ];
 
-  moduleCfg = {
+  config = {
     desktop = {
       desktopManagers = {
         gnome = {

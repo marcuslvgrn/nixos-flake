@@ -1,85 +1,32 @@
 { config, lib, hostCfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
 let
-  moduleCfg = config.moduleCfg;
+  moduleCfg = config;
 in with lib;
 {
   imports = [
-    ../services/create-swapfile.nix
+    ./acme.nix
+    ./airsonic.nix
+    ./ddclient.nix
+    ./desktopManager.nix
+    ./flatpak.nix
+    ./gnome.nix
     ./grub.nix
-    ./openssh.nix
-    ./users.nix
-    ./sops.nix
+    ./kde.nix
+    ./nextcloud.nix
     ./networkmanager.nix
+    ./nginx.nix
+    ./openssh.nix
     ./passbolt.nix
+    ./technitium.nix
+    ./users.nix
+    ./samba.nix
+    ./sops.nix
+    ./vaultwarden.nix
+    ./xfce.nix
+    ../services/create-swapfile.nix
   ];
 
-  options.moduleCfg = {
-    #Servers
-    airsonic = {
-      enable = mkEnableOption "Enable airsonic and nginx";
-      hostName = mkOption {
-        type = types.str;
-        description = "Hostname for nginx";
-      };
-      contextPath = mkOption {
-        type = types.str;
-        default = "/";
-        #      default = "/airsonic/";
-        description = "Context path for nginx";
-      };
-    };
-    ddclient = {
-      enable = mkEnableOption "Enable ddclient";
-    };
-    nextcloud = {
-      enable = mkEnableOption "Enable nextcloud and nginx";
-      nextcloudHostName = mkOption {
-        type = types.str;
-        description = "Public hostname for nextcloud nginx";
-      };
-      collaboraHostName = mkOption {
-        type = types.str;
-        description = "Public hostname for collabora nginx";
-      };
-      contextPath = mkOption {
-        type = types.str;
-        default = "/";
-        #      default = "/nextcloud/";
-        description = "Context path for nginx";
-      };
-    };
-    nginx = {
-      enable = mkEnableOption "Enable nginx";
-    };
-    samba = {
-      enable = mkEnableOption "Enable samba";
-    };
-    technitium = {
-      enable = mkEnableOption "Technitium behind Nginx with ACME";
-      hostName = mkOption {
-        type = types.str;
-        description = "Public hostname for nginx";
-      };
-      contextPath = mkOption {
-        type = types.str;
-        default = "/";
-        #default = "/technitium/";
-        description = "Context path for nginx";
-      };
-    };
-    vaultwarden = {
-      enable = mkEnableOption "Enable vaultwarden and nginx";
-      hostName = mkOption {
-        type = types.str;
-        description = "Hostname for nginx";
-      };
-      contextPath = mkOption {
-        type = types.str;
-        default = "/";
-        #      default = "/vaultwarden/";
-        description = "Context path for nginx";
-      };
-    };
+  options = {
     #Users
     userNames = mkOption {
       type = types.listOf types.str;
@@ -87,12 +34,7 @@ in with lib;
     };
     #Desktop
     programs = {
-      firefox = {
-        enable = mkEnableOption "Enable firefox";
-      };
-      flatpak = {
-        enable = mkEnableOption "Enable flatpak";
-      };
+
     };
     desktop = {
       enable = mkEnableOption "Enable desktop";
@@ -113,23 +55,15 @@ in with lib;
   config = {
     assertions = [
       {
-        assertion = !(moduleCfg.desktop.enable) || (moduleCfg.desktop.desktopManagers.gnome.enable ||
-                                                   moduleCfg.desktop.desktopManagers.kde.enable ||
-                                                   moduleCfg.desktop.desktopManagers.xfce.enable);
+        assertion = !(config.desktop.enable) || (config.desktop.desktopManagers.gnome.enable ||
+                                                   config.desktop.desktopManagers.kde.enable ||
+                                                   config.desktop.desktopManagers.xfce.enable);
       }
       {
-        assertion = !(moduleCfg.programs.firefox.enable) || (moduleCfg.desktop.enable);
+        assertion = !(config.programs.firefox.enable) || (config.desktop.enable);
       }
       {
-        assertion = !(moduleCfg.programs.flatpak.enable) || (moduleCfg.desktop.enable); }
-      {
-        assertion = !(moduleCfg.airsonic.enable) || moduleCfg.airsonic.hostName != ""; }
-      {
-        assertion = !(moduleCfg.nextcloud.enable) || (moduleCfg.nextcloud.nextcloudHostName != "" && moduleCfg.nextcloud.collaboraHostName != ""); }
-      {
-        assertion = !(moduleCfg.technitium.enable) || moduleCfg.technitium.hostName != ""; }
-      {
-        assertion = !(moduleCfg.vaultwarden.enable) || moduleCfg.vaultwarden.hostName != ""; }
+        assertion = !(config.services.flatpak.enable) || (config.desktop.enable); }
     ];
     nix.gc = {
       automatic = true;

@@ -5,7 +5,7 @@
       username="lovgren";
       group="users";
       extragroups=[ "wheel" "networkmanager" "rtc"];
-      email="marcuslvgrn@gmail.com";
+      email="marcus.lovgren@proton.me";
       gituser="marcuslvgrn";
       uid=1000;
       normalUser=true;

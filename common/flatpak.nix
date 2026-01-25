@@ -1,9 +1,10 @@
 { config, lib, ... }:
-let cfg = config.moduleCfg.programs.flatpak;
+let
+  cfg = config.programs.flatpak;
+  serviceCfg = config.services.flatpak;
 in with lib; {
 
-  services.flatpak = mkIf cfg.enable {
-    enable = true;
+  services.flatpak = mkIf serviceCfg.enable {
     remotes = [
       {
         name = "flathub";

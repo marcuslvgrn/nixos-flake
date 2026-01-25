@@ -1,12 +1,8 @@
 { config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
-let cfg = config.moduleCfg.desktop.desktopManagers.kde;
+let cfg = config.desktop.desktopManagers.kde;
 in with lib; {
   config = mkIf cfg.enable {
-    moduleCfg.desktop.enable = true;
-    imports = [
-      #Common desktop manager settings
-      ./desktopManager.nix
-    ];
+    desktop.enable = true;
 
     services = {
       desktopManager.plasma6.enable = true;

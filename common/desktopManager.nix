@@ -1,8 +1,7 @@
 { config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 with lib; {
   
-  imports = [ ./flatpak.nix ];
-  config = mkIf config.moduleCfg.desktop.enable {
+  config = mkIf config.desktop.enable {
 
     services = {
       xserver.xkb.layout = "se";

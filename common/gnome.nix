@@ -1,18 +1,19 @@
 { config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
-let cfg = config.moduleCfg.desktop.desktopManagers.gnome;
+let cfg = config.desktop.desktopManagers.gnome;
 in with lib; {
   imports = [
-    #Common desktop manager settings
-    ./desktopManager.nix
+
   ];
 
   config = mkIf cfg.enable {
-    moduleCfg.desktop.enable = true;
+    desktop.enable = true;
+    services.flatpak.enable = true;
+    programs.firefox.enable = true;
 
     services = {
       xserver.enable = true;
       gnome.gnome-browser-connector.enable = true;
-      desktopManager.gnome.enable = lib.mkForce true;
+      desktopManager.gnome.enable = true;
       displayManager.gdm.enable = true;
     };
 

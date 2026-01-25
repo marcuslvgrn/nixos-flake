@@ -8,18 +8,13 @@
   imports = [
     ./hardware-configuration.nix
     ./disk-config.nix
-    ../../hosts/nixosMinimal/configuration.nix
-    ../../common/gnome.nix
+    ../../common/configuration.nix
     ../../common/ssd.nix
     ../../common/virtualbox-host.nix
 #    ../../services/bluetooth-suspend.nix
   ];
 
-  moduleCfg = {
-    programs = {
-      firefox.enable = true;
-      flatpak.enable = true;
-    };
+  config = {
     desktop = {
       desktopManagers = {
         gnome = {

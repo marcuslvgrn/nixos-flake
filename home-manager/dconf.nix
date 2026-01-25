@@ -1,10 +1,10 @@
 # Generated via dconf2nix: https://github.com/gvolpe/dconf2nix
 #dconf dump / > /home/lovgren/dconf.dump && dconf2nix -i /home/lovgren/dconf.dump -o /home/lovgren/dconf.nix
-{ config, lib, moduleCfg, ... }:
+{ config, lib, gnomeCfg, ... }:
 with lib.hm.gvariant;
-let cfg = moduleCfg.desktop.desktopManagers.gnome;
+let cfg = config.desktop.desktopManagers.gnome;
 in with lib; {
-  dconf.settings = mkIf cfg.enable {
+  dconf.settings = mkIf gnomeCfg.enable {
     "org/gnome/desktop/input-sources" = {
       sources = [ (mkTuple [ "xkb" "se" ]) ];
       xkb-options = [];

@@ -27,52 +27,48 @@ in with lib; {
 #  };
 #in {
   imports = [
-    ../../common/airsonic.nix
-    ../../common/nginx.nix
-    ../../hosts/nixosMinimal/configuration.nix
-    ../../common/nextcloud.nix
-    ../../common/vaultwarden.nix
-    ../../common/technitium.nix
-    ../../common/ddclient.nix
-    ../../common/passbolt.nix
+    ../../common/configuration.nix
     ./hardware-configuration.nix
     ./disk-config.nix
   ];
 
-  moduleCfg = {
+  services = {
+    airsonic.enable = true;
+    ddclient.enable = true;
+    nextcloud.enable = true;
+    samba.enable = true;
+    technitium-dns-server.enable = true;
+    vaultwarden.enable = true;
+  };
+
+  config = {
     airsonic = {
-      enable = true;
       hostName = "mlairsonic.dynv6.net";
     };
-    ddclient.enable = true;
     nextcloud = {
-      enable = true;
       nextcloudHostName = "mlnextcloud.dynv6.net";
       collaboraHostName = "mlcollabora.dynv6.net";
     };
+    #enables proxy to external hosts
     nginx.enable = true;
     passbolt = {
       enable = false;
       hostName = "mlpassbolt.dynv6.net";
+      adminFirstName = "Marcus";
+      adminLastName = "Lövgren";
+      adminEmail = "marcus.lovgren@proton.me";
+      gmailUserName = "marcuslvgrn@gmail.com";
     };
-    samba.enable = true;
     technitium = {
-      enable = true;
       hostName = "mltechnitium.dynv6.net";
     };
     vaultwarden = {
-      enable = true;
       hostName = "mlvaultwarden.dynv6.net";
     };
     #userNames = mkAfter [ "gerd" ];
   };
   
   services = {
-    avahi = {
-      enable = true;
-      nssmdns4 = true;
-      openFirewall = true;
-    };
     iperf3.enable = true;
     cron = {
       enable = true;
@@ -88,40 +84,6 @@ in with lib; {
       browsing = true;
       defaultShared = true;
       openFirewall = true;
-    };
-    samba = {
-      enable = true;
-      smbd.enable = true;
-      nmbd.enable = true;
-      winbindd.enable = true;
-      nsswins = true;
-      openFirewall = true;
-      settings = {
-        global = {
-          "workgroup" = "WORKGROUP";
-          "server string" = "nixosTranfor";
-          "netbios name" = "nixosTranfor";
-          "security" = "user";
-          #"use sendfile" = "yes";
-          #"max protocol" = "smb2";
-          # note: localhost is the ipv6 localhost ::1
-          "hosts allow" = "192.168.0. 127.0.0.1 localhost";
-          "hosts deny" = "0.0.0.0/0";
-          "guest account" = "lovgren";
-          "map to guest" = "bad user";
-          "create mask" = "0664";
-          "directory mask" = "0775";
-          "browseable" = "yes";
-          "read only" = "no";
-          "guest ok" = "yes";
-          "public" = "yes";
-          #        "force user" = "username";
-          "force group" = "users";
-        };
-        "data" = {
-          "path" = "/mnt/data";
-        };
-      };
     };
   };
   

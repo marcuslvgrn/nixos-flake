@@ -6,14 +6,13 @@
 
 {
   imports = [
-    ../../hosts/nixosMinimal/configuration.nix
-    ../../common/gnome.nix
+    ../../common/configuration.nix
     ../../common/ssd.nix
     ./hardware-configuration.nix
     ./disk-config.nix
   ];
 
-  moduleCfg = {
+  config = {
     desktop = {
       desktopManagers = {
         gnome = {
@@ -21,6 +20,7 @@
         };
       };
     };
+    userNames = lib.mkAfter [ "gerd" ];
   };
   
 #  boot.loader.grub.extraEntries = ''

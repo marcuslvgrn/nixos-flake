@@ -1,13 +1,8 @@
 { config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
-let cfg = config.moduleCfg.desktop.desktopManagers.xfce;
+let cfg = config.desktop.desktopManagers.xfce;
 in with lib; {
   config = mkIf cfg.enable {
-    moduleCfg.desktop.enable = true;
-    imports = [
-      #Common desktop manager settings
-      ./desktopManager.nix
-    ];
-
+    desktop.enable = true;
     programs.nm-applet.enable = true;
 
     services.xserver = {

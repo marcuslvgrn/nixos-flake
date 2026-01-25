@@ -1,6 +1,7 @@
 { config, pkgs, lib, ... }:
 let
-  cfg = config.moduleCfg.nginx;
+  cfg = config.nginx;
+  serviceCfg = config.services.nginx;
   # Define all your domains and backend services here 👇
   proxyHosts = {
     "mlmodem.dynv6.net" = {
@@ -69,22 +70,23 @@ let
       };
 in with lib;
 {
-  config = mkIf cfg.enable {
-    networking.firewall.enable = false;
+  options = {
+    nginx = {
+      enable = mkEnableOption "Enable nginx for external servers";
+    };
+  };
     
+  config = mkIf cfg.enable {
+    networking.firewall.allowedTCPPorts = [ 80 443 ];
+
     security.acme = {
-      acceptTerms = true;
-      defaults.email = "marcuslvgrn@gmail.com";
       # Generate ACME certs for all hosts automatically
       certs = lib.genAttrs (builtins.attrNames proxyHosts) (domain: {
-        webroot = "/var/lib/acme/acme-challenge";
+#        webroot = "/var/lib/acme/acme-challenge";
       });
     };
     
-    users.users.nginx.extraGroups = [ "acme" ];
-    
     services = {
-      nginx.enable = true;
       ddclient.domains = [
         "mldrupal.dynv6.net"
         "mlgeegnomer.dynv6.net"
@@ -98,6 +100,7 @@ in with lib;
         "mlwebmin.dynv6.net"
       ];
       nginx = {
+        enable = true;
         #recommendedProxySettings = true;
         recommendedTlsSettings = true;
         recommendedOptimisation = true;

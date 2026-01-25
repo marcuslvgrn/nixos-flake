@@ -1,9 +1,35 @@
 { config, pkgs, pkgs-stable, pkgs-unstable, lib, ... }:
 let
-  cfg = config.moduleCfg.nextcloud;
+  cfg = config.nextcloud;
+  serviceCfg = config.services.nextcloud;
 in with lib; {
 
-  config = mkIf cfg.enable {
+  options = {
+    nextcloud = {
+#      enable = mkEnableOption "Enable nextcloud and nginx";
+      nextcloudHostName = mkOption {
+        type = types.str;
+        description = "Public hostname for nextcloud nginx";
+      };
+      collaboraHostName = mkOption {
+        type = types.str;
+        description = "Public hostname for collabora nginx";
+      };
+      contextPath = mkOption {
+        type = types.str;
+        default = "/";
+        #      default = "/nextcloud/";
+        description = "Context path for nginx";
+      };
+    };
+  };
+  
+  config = mkIf serviceCfg.enable {
+    assertions = [
+      {
+        assertion = (cfg.nextcloudHostName != "" && cfg.collaboraHostName != "");
+      }
+    ];
 
     #Nextcloud dependencies
     environment.systemPackages = (with pkgs; [
@@ -59,7 +85,7 @@ in with lib; {
 
       #enable and configure service
       nextcloud = {
-        enable = true;
+#        enable = true;
         #mail_smtppassword
         secretFile = config.sops.secrets."nextcloud-secrets".path;
         #choose package

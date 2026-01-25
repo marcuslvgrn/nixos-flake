@@ -1,9 +1,29 @@
 { config, pkgs, lib, ... }:
 let
-  cfg = config.moduleCfg.vaultwarden;
-  vaultwardenCfg = config.services.vaultwarden.config;
+  cfg = config.vaultwarden;
+  serviceCfg = config.services.vaultwarden;
 in with lib; {
-  config = mkIf cfg.enable {
+  options = {
+    vaultwarden = {
+      hostName = mkOption {
+        type = types.str;
+        description = "Hostname for nginx";
+      };
+      contextPath = mkOption {
+        type = types.str;
+        default = "/";
+        #      default = "/vaultwarden/";
+        description = "Context path for nginx";
+      };
+    };
+
+  };
+  config = mkIf serviceCfg.enable {
+    assertions = [
+      {
+        assertion = cfg.hostName != "";
+      }
+    ];
     services = {
       
       ddclient.domains = [
@@ -11,7 +31,6 @@ in with lib; {
       ];
       
       vaultwarden = {
-        enable = true;
         #does not setup ACME correctly
         configureNginx = false;
         #running sqlite for now
@@ -27,7 +46,6 @@ in with lib; {
           SIGNUPS_ALLOWED = false;
           
           ROCKET_ADDRESS = "0.0.0.0";
-          ROCKET_PORT = 8222;
           ROCKET_LOG = "critical";
           
           SMTP_HOST = "smtp.gmail.com";
@@ -44,14 +62,14 @@ in with lib; {
           enableACME = true;
           locations = {
             "${cfg.contextPath}" = {
-              proxyPass = "http://127.0.0.1:${toString vaultwardenCfg.ROCKET_PORT}";
+              proxyPass = "http://127.0.0.1:${toString serviceCfg.config.ROCKET_PORT}";
             };
             "= ${cfg.contextPath}notifications/anonymous-hub" = {
-              proxyPass = "http://127.0.0.1:${toString vaultwardenCfg.ROCKET_PORT}";
+              proxyPass = "http://127.0.0.1:${toString serviceCfg.config.ROCKET_PORT}";
               proxyWebsockets = true;
             };
             "= ${cfg.contextPath}/notifications/hub" = {
-              proxyPass = "http://127.0.0.1:${toString vaultwardenCfg.ROCKET_PORT}";
+              proxyPass = "http://127.0.0.1:${toString serviceCfg.config.ROCKET_PORT}";
               proxyWebsockets = true;
             };
           };

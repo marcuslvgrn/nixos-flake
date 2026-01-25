@@ -18,12 +18,9 @@ in
 with lib;
 {
   imports = [
-    #    ../../hosts/nixosMinimal/configuration.nix
-    #    ../../common/gnome.nix
-    #    ../../common/ssd.nix
-    #    ./hardware-configuration.nix
-    #    ./disk-config.nix
+
   ];
+
   config = {
 
     environment.systemPackages =

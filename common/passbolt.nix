@@ -3,7 +3,8 @@
 with lib;
 
 let
-  cfg = config.moduleCfg.passbolt;
+  cfg = config.passbolt;
+  serviceCfg = config.services.passbolt;
 
   passboltVars = {
     PATH="/run/current-system/sw/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH";
@@ -103,13 +104,24 @@ let
   });
 
 in {
-  options.moduleCfg.passbolt = {
+  options.passbolt = {
     enable = mkEnableOption "Passbolt password manager";
 
-    enableNginxACME = mkEnableOption "Enable ACME for nginx";
-    enableNginxSSL = mkEnableOption "Enable SSL for nginx";
-
-    enableDdclient = mkEnableOption "Enable ddclient registration hook";
+    enableNginxACME = mkOption {
+      type = types.bool;
+      default = true;
+      example = "enable ACME for nginx";
+    };
+    enableNginxSSL = mkOption {
+      type = types.bool;
+      default = true;
+      example = "enable SSL for nginx";
+    };
+    enableDdclient = mkOption {
+      type = types.bool;
+      default = true;
+      example = "Enable ddclient registration hook";
+    };
 
     passboltHome = mkOption {
       type = types.str;
@@ -117,11 +129,6 @@ in {
       example = "some path to the passbolt home";
     };
 
-    envFile = mkOption {
-      type = types.str;
-      example = "some path to the file";
-    };
-    
     hostName = mkOption {
       type = types.str;
       example = "passbolt.example.com";
@@ -158,11 +165,11 @@ in {
     };
     adminFirstName = mkOption {
       type = types.str;
-      default = "Marcus";
+      default = "Your admin first name";
     };
     adminLastName = mkOption {
       type = types.str;
-      default = "Lövgren";
+      default = "Your admin last name";
     };
     adminEmail = mkOption {
       type = types.str;
@@ -172,29 +179,22 @@ in {
       type = types.str;
       default = "user@example.com";
     };
-
     timeZone = mkOption {
       type = types.str;
       default = "Europe/Stockholm";
     };
-    
   };
   
   config = mkIf cfg.enable {
+    #open firewall
     networking.firewall.allowedTCPPorts = [ 80 443 ];
 
-    security.acme = {
-      acceptTerms = true;
-      defaults.email = "${cfg.adminEmail}";
-      # Generate ACME certs for all hosts automatically
-      certs = {
-        "${cfg.hostName}" = {
-          webroot = "/var/lib/acme/acme-challenge";
-        };
+    # Generate ACME certs for host automatically
+    security.acme.certs = {
+      "${cfg.hostName}" = {
+        email = "${cfg.adminEmail}";
       };
     };
-    
-    users.users.nginx.extraGroups = [ "acme" ];
     
     services = {
       ddclient = mkIf cfg.enableDdclient {

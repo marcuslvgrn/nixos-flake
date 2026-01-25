@@ -1,12 +1,11 @@
-{ config, lib, moduleCfg, usrcfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
+{ config, lib, usrCfg, gnomeCfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
   imports = [
     ./dconf.nix
   ];
 
-  programs.firefox = lib.mkIf moduleCfg.programs.firefox.enable {
-    enable = true;
+  programs.firefox = lib.mkIf config.programs.firefox.enable {
     languagePacks = [ "sv-SE" "en-US" ];
 
     policies = {
@@ -49,8 +48,8 @@
   };
   
   home = {
-    username = usrcfg.username;
-    homeDirectory = lib.mkDefault "/home/${usrcfg.username}";
+    username = usrCfg.username;
+    homeDirectory = lib.mkDefault "/home/${usrCfg.username}";
     sessionVariables = {
       LANG = "sv_SE.UTF-8";
 #      XDG_DATA_DIRS = lib.mkMerge [
@@ -93,8 +92,8 @@
     
   programs.git = {
     enable = true;
-    settings.user.email = "${usrcfg.email}";
-    settings.user.name = "${usrcfg.gituser}";
+    settings.user.email = "${usrCfg.email}";
+    settings.user.name = "${usrCfg.gituser}";
   };
 
   programs.home-manager.enable = true;

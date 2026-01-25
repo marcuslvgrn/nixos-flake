@@ -1,9 +1,30 @@
 { inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
 let
-  cfg = config.moduleCfg.technitium;
+  cfg = config.technitium;
+  serviceCfg = config.services.technitium-dns-server;
 in with lib; {
+  
+  options = {
+    technitium = {
+      hostName = mkOption {
+        type = types.str;
+        description = "Public hostname for nginx";
+      };
+      contextPath = mkOption {
+        type = types.str;
+        default = "/";
+        #default = "/technitium/";
+        description = "Context path for nginx";
+      };
+    };
+  };
 
-  config = mkIf cfg.enable {
+  config = mkIf serviceCfg.enable {
+    assertions = [
+      {
+        assertion = cfg.hostName != "";
+      }
+    ];
 
     #override the technitium service (disable the DynamicUser, it causes issues with write permissions)
     systemd.services.technitium-dns-server = {
@@ -37,7 +58,6 @@ in with lib; {
       ];
       
       technitium-dns-server = {
-        enable = true;
         openFirewall = true;
         package = pkgs-unstable.technitium-dns-server;
       };

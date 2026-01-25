@@ -9,8 +9,6 @@ let
   homeBase = config.users.homeBaseDir or "/home";
   commonHomeConfig = ../home-manager/common.nix;
 
-  moduleCfg = config.moduleCfg;
-
   # Normal + system user builder
   mkUser = username:
     let usrcfg = usersByName.${username} or {}; in
@@ -36,27 +34,27 @@ let
   # Home Manager per-user builder
   mkHomeUser = username:
     let
-      usrcfg = usersByName.${username} or {};
+      usrCfg = usersByName.${username} or {};
       userConfigPath = ../home-manager + "/${username}.nix";
+      gnomeCfg = config.desktop.desktopManagers.gnome;
     in
-      lib.mkIf (usrcfg.normalUser or false) {
+      lib.mkIf (usrCfg.normalUser or false) {
         imports =
           lib.optional (builtins.pathExists userConfigPath)
             userConfigPath
           ++ [ commonHomeConfig ];
 
         _module.args = {
-#          inherit inputs pkgs-unstable pkgs-stable usrcfg cfg moduleCfg;
-          inherit inputs pkgs-unstable pkgs-stable usrcfg moduleCfg;
+          inherit inputs pkgs-unstable pkgs-stable usrCfg gnomeCfg;
         };
       };
 
 in {
-  # Safety check: all users listed in moduleCfg must exist in userData.nix
+  # Safety check: all users listed in config must exist in userData.nix
 #  assertions = [
 #    {
-#      assertion = lib.all (u: usersByName ? u) (config.moduleCfg.userNames or []);
-#      message = "moduleCfg.userNames contains users not defined in userData.nix";
+#      assertion = lib.all (u: usersByName ? u) (config.userNames or []);
+#      message = "config.userNames contains users not defined in userData.nix";
 #    }
 #  ];
 
@@ -66,14 +64,14 @@ in {
 
   # System + normal users
   users.users = let
-    userNamesList = moduleCfg.userNames or [];
+    userNamesList = config.userNames or [];
   in
     lib.genAttrs userNamesList mkUser
     // { root.hashedPassword = "!"; };
 
   # Home Manager configuration
   home-manager = let
-    userNamesList = moduleCfg.userNames or [];
+    userNamesList = config.userNames or [];
     normalUsers = lib.filter (u: (usersByName.${u}.normalUser or false)) userNamesList;
   in
   {
