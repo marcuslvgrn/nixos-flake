@@ -46,6 +46,7 @@ in with lib; {
           SIGNUPS_ALLOWED = false;
           
           ROCKET_ADDRESS = "0.0.0.0";
+          ROCKET_PORT = 8222;
           ROCKET_LOG = "critical";
           
           SMTP_HOST = "smtp.gmail.com";
