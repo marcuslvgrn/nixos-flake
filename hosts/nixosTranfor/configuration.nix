@@ -19,7 +19,7 @@ in {
       collaboraHostName = "mlcollabora.dynv6.net";
     };
     #enables proxy to external hosts
-    nginx.enable = true;
+    nginxExternal.enable = true;
     passbolt = {
       enable = false;
       hostName = "mlpassbolt.dynv6.net";

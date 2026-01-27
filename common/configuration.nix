@@ -100,7 +100,7 @@ in with lib;
         pinentry-curses
         #
         emacs
-        nixfmt-classic
+        nixfmt
         nixd
         traceroute
         dig

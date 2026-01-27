@@ -67,6 +67,8 @@ in with lib; {
       # Setup Nextcloud
       ##########################
 
+      nginx.enable = true;
+
       # nginx
       nginx.virtualHosts.${config.services.nextcloud.hostName} = {
         forceSSL = true;

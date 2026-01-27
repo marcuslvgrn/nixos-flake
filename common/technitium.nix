@@ -65,6 +65,7 @@ in with lib; {
         package = pkgs-unstable.technitium-dns-server;
       };
       nginx = {
+        enable = true;
         virtualHosts.${cfg.hostName} = {
           forceSSL = true;
           enableACME = true;

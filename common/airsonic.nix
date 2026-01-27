@@ -10,7 +10,6 @@ in with lib; {
 
   options = {
     airsonic = {
-#      enable = mkEnableOption "Enable airsonic advanced and configure nginx";
       hostName = mkOption {
         type = types.str;
         description = "Hostname for airsonic nginx";
@@ -60,6 +59,7 @@ in with lib; {
         war = airsonicAdvancedWar;
       };
       nginx = {
+        enable = true;
         virtualHosts.${cfg.hostName} = {
           forceSSL = true;
           enableACME = true;

@@ -1,6 +1,6 @@
 { config, pkgs, lib, ... }:
 let
-  cfg = config.nginx;
+  cfg = config.nginxExternal;
   serviceCfg = config.services.nginx;
   # Define all your domains and backend services here 👇
   proxyHosts = {
@@ -71,7 +71,7 @@ let
 in with lib;
 {
   options = {
-    nginx = {
+    nginxExternal = {
       enable = mkEnableOption "Enable nginx for external servers";
     };
   };

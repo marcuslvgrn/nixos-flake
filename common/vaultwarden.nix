@@ -58,6 +58,7 @@ in with lib; {
         };
       };
       nginx = {
+        enable = true;
         virtualHosts.${cfg.hostName} = {
           forceSSL = true;
           enableACME = true;

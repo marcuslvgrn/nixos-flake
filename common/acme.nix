@@ -5,5 +5,7 @@
     defaults.email = "marcus.lovgren@proton.me";
     defaults.webroot = "/var/lib/acme/acme-challenge";
   };
-  users.users.nginx.extraGroups = lib.mkIf config.services.nginx.enable [ "acme" ];
+  users = lib.mkIf config.services.nginx.enable {
+    users.nginx.extraGroups = [ "acme" ];
+  };
 }
