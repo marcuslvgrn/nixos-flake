@@ -6,11 +6,13 @@ in with lib;
   imports = [
     ./acme.nix
     ./airsonic.nix
+    ./cups.nix
     ./ddclient.nix
     ./desktopManager.nix
     ./flatpak.nix
     ./gnome.nix
     ./grub.nix
+    ./iperf.nix
     ./kde.nix
     ./nextcloud.nix
     ./networkmanager.nix
@@ -22,6 +24,7 @@ in with lib;
     ./samba.nix
     ./sops.nix
     ./vaultwarden.nix
+    ./wakeOnLan.nix
     ./xfce.nix
     ../services/create-swapfile.nix
   ];
@@ -36,35 +39,9 @@ in with lib;
     programs = {
 
     };
-    desktop = {
-      enable = mkEnableOption "Enable desktop";
-      desktopManagers = {
-        gnome = {
-          enable = mkEnableOption "Enable gnome";
-        };
-        xfce = {
-          enable = mkEnableOption "Enable xfce";
-        };
-        kde = {
-          enable = mkEnableOption "Enable kde";
-        };
-      };
-    };
   };
 
   config = {
-    assertions = [
-      {
-        assertion = !(config.desktop.enable) || (config.desktop.desktopManagers.gnome.enable ||
-                                                   config.desktop.desktopManagers.kde.enable ||
-                                                   config.desktop.desktopManagers.xfce.enable);
-      }
-      {
-        assertion = !(config.programs.firefox.enable) || (config.desktop.enable);
-      }
-      {
-        assertion = !(config.services.flatpak.enable) || (config.desktop.enable); }
-    ];
     nix.gc = {
       automatic = true;
       persistent = true;
@@ -169,6 +146,7 @@ in with lib;
     # networking.firewall.enable = false;
     
     networking.hostName = hostCfg.hostname;
+    nixpkgs.hostPlatform = hostCfg.system;
     networking.useDHCP = lib.mkDefault true;
     
     # This option defines the first version of NixOS you have installed on this particular machine,

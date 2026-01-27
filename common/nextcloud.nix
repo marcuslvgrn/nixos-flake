@@ -6,7 +6,6 @@ in with lib; {
 
   options = {
     nextcloud = {
-#      enable = mkEnableOption "Enable nextcloud and nginx";
       nextcloudHostName = mkOption {
         type = types.str;
         description = "Public hostname for nextcloud nginx";
@@ -31,6 +30,8 @@ in with lib; {
       }
     ];
 
+    networking.firewall.allowedTCPPorts = [ 80 443 9980 ]; #nginx + collabora
+      
     #Nextcloud dependencies
     environment.systemPackages = (with pkgs; [
       chromium # dependency for whiteboard
@@ -85,7 +86,6 @@ in with lib; {
 
       #enable and configure service
       nextcloud = {
-#        enable = true;
         #mail_smtppassword
         secretFile = config.sops.secrets."nextcloud-secrets".path;
         #choose package
@@ -148,7 +148,7 @@ in with lib; {
         forceSSL = true;
         locations."/" = {
           proxyPass =
-            "http://[::1]:${toString config.services.collabora-online.port}";
+            "http://127.0.0.1:${toString config.services.collabora-online.port}";
           proxyWebsockets = true; # collabora uses websockets
         };
       };
@@ -163,10 +163,11 @@ in with lib; {
             termination = true;
           };
 
-          # Listen on loopback interface only, and accept requests from ::1
+          # Listen on loopback interface only, and accept requests from localhost
           net = {
             listen = "loopback";
-            post_allow.host = [ "::1" ];
+            proto = "IPv4";
+            post_allow.host = [ "127.0.0.1" ];
           };
 
           # Restrict loading documents from WOPI Host
@@ -196,16 +197,15 @@ in with lib; {
     #for correct allow list
     networking.hosts = {
       "127.0.0.1" = [ "${cfg.nextcloudHostName}" "${cfg.collaboraHostName}" ];
-      "::1" = [ "${cfg.nextcloudHostName}" "${cfg.collaboraHostName}" ];
     };
     #setup whiteboard correctly in nextcloud
     systemd.services.nextcloud-config-collabora = let
       inherit (config.services.nextcloud) occ;
 
       wopi_url =
-        "http://[::1]:${toString config.services.collabora-online.port}";
+        "http://127.0.0.1:${toString config.services.collabora-online.port}";
       public_wopi_url = "https://${cfg.collaboraHostName}";
-      wopi_allowlist = lib.concatStringsSep "," [ "127.0.0.1" "::1" ];
+      wopi_allowlist = lib.concatStringsSep "," [ "127.0.0.1" ];
     in {
       wantedBy = [ "multi-user.target" ];
       after = [ "nextcloud-setup.service" "coolwsd.service" ];

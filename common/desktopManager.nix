@@ -1,7 +1,9 @@
 { config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
-with lib; {
-  
-  config = mkIf config.desktop.enable {
+with lib; 
+let
+
+in {
+  config = mkIf config.services.xserver.enable {
 
     services = {
       xserver.xkb.layout = "se";
@@ -13,6 +15,7 @@ with lib; {
     # List packages installed in system profile.
     # You can use https://search.nixos.org/ to find more packages (and options).
     environment.systemPackages = (with pkgs; [
+      cups
       spotify
       bitwarden-desktop
       protonvpn-gui
@@ -22,8 +25,6 @@ with lib; {
       nextcloud-client
       bluez
       bluez-tools
-      usbutils
-      pciutils
       libinput
       gimp
       libreoffice
@@ -35,6 +36,5 @@ with lib; {
     # Enable touchpad support (enabled default in most desktopManager).
     services.libinput.enable = true;
     services.teamviewer.enable = true;
-    services.printing.enable = true;
   };
 }

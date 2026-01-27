@@ -1,14 +1,14 @@
 { config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
-let cfg = config.desktop.desktopManagers.xfce;
+let
+
 in with lib; {
-  config = mkIf cfg.enable {
-    desktop.enable = true;
+  config = mkIf config.services.xserver.desktopManager.xfce.enable {
+
     programs.nm-applet.enable = true;
 
     services.xserver = {
       enable = true;
-      desktopManager.xfce.enable = true;
-      displayManager.lightdm.enable = true;
+      displayManager.gdm.enable = true;
     };
 
     environment.systemPackages = (with pkgs; [ linssid vlc gparted ])

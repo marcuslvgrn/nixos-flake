@@ -1,6 +1,8 @@
 { config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
-let moduleCfg = config.moduleCfg;
-in with lib; {
+with lib;
+let
+  
+in {
 
   imports = [
     ../../common/configuration.nix
@@ -32,7 +34,6 @@ in with lib; {
     vaultwarden = {
       hostName = "mlvaultwarden.dynv6.net";
     };
-    #userNames = mkAfter [ "gerd" ];
   
     nixpkgs.overlays = [
       #    # Emacs GTK2 override
@@ -58,30 +59,23 @@ in with lib; {
     #    overlays = [ overlay ];
     #  };
     #in {
+
     services = {
       airsonic.enable = true;
-      ddclient.enable = true;
-      nextcloud.enable = true;
-      samba.enable = true;
-      technitium-dns-server.enable = true;
-      vaultwarden.enable = true;
-
-      iperf3.enable = true;
       cron = {
         enable = true;
         systemCronJobs = [
           "0 1 * * *   root      /run/current-system/sw/bin/rtcwake -m off -s 21600 >> /root/cron.log 2>&1"
         ];
       };
+      ddclient.enable = true;
+      iperf3.enable = true;
       logrotate.enable = true;
-      printing = {
-        enable = true;
-        listenAddresses = [ "*:631" ];
-        allowFrom = [ "all" ];
-        browsing = true;
-        defaultShared = true;
-        openFirewall = true;
-      };
+      nextcloud.enable = true;
+      printing.enable = true;
+      samba.enable = true;
+      technitium-dns-server.enable = true;
+      vaultwarden.enable = true;
     };
     
     virtualisation.docker = {

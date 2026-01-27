@@ -45,24 +45,16 @@
   # networking.interfaces.wlp2s0.useDHCP = lib.mkDefault true;
   networking.useDHCP = lib.mkForce false;
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
   networking = {
-    interfaces = {
-      eno1 = {
-        wakeOnLan.enable = true;
-      };
-    };
-    firewall = {
-      allowedUDPPorts = [ 9 ];
-    };
-    nameservers = [ "192.168.0.7" ];
     interfaces.eno1 = {
+      wakeOnLan.enable = true;
       ipv4.addresses = [{
         address = "192.168.0.7";
         prefixLength = 24;
       }];
     };
+    nameservers = [ "192.168.0.7" ];
     defaultGateway = {
       address = "192.168.0.1";
       interface = "eno1";
@@ -70,5 +62,6 @@
     search = [
       "local"
     ];
+    enableIPv6 = false;
   };
 }

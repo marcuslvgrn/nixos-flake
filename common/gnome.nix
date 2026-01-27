@@ -1,19 +1,18 @@
 { config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
-let cfg = config.desktop.desktopManagers.gnome;
+let
+  
 in with lib; {
   imports = [
 
   ];
 
-  config = mkIf cfg.enable {
-    desktop.enable = true;
+  config = mkIf config.services.desktopManager.gnome.enable {
     services.flatpak.enable = true;
     programs.firefox.enable = true;
 
     services = {
       xserver.enable = true;
       gnome.gnome-browser-connector.enable = true;
-      desktopManager.gnome.enable = true;
       displayManager.gdm.enable = true;
     };
 

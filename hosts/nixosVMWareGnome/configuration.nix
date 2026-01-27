@@ -20,13 +20,7 @@ in with lib;
       adminLastName = "Lövgren";
       gmailUserName = "marcuslvgrn@gmail.com";
     };
-    desktop = {
-      desktopManagers = {
-        gnome = {
-          enable = true;
-        };
-      };
-    };
+    services.desktopManager.gnome.enable = true;
   };
   
 }

@@ -12,14 +12,8 @@
     ./disk-config.nix
   ];
 
+  services.desktopManager.gnome.enable = true;
   config = {
-    desktop = {
-      desktopManagers = {
-        gnome = {
-          enable = true;
-        };
-      };
-    };
     userNames = lib.mkAfter [ "gerd" ];
   };
   

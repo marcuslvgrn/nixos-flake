@@ -11,16 +11,6 @@
     ./hardware-configuration.nix
     ./disk-config.nix
   ];
-
-  config = {
-    desktop = {
-      desktopManagers = {
-        gnome = {
-          enable = true;
-        };
-      };
-    };
-  };
-  
+  services.desktopManager.gnome.enable = true;
 }
 

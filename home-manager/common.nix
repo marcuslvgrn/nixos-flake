@@ -1,11 +1,14 @@
-{ config, lib, usrCfg, gnomeCfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
+{ config, lib, userConfig, pkgs, pkgs-stable, pkgs-unstable, nixosConfig, ... }:
 
 {
   imports = [
     ./dconf.nix
   ];
 
-  programs.firefox = lib.mkIf config.programs.firefox.enable {
+  programs.firefox = lib.mkIf nixosConfig.programs.firefox.enable {
+    #Let home-manager manage firefox, but only when installed in nixos
+    enable = true;
+    
     languagePacks = [ "sv-SE" "en-US" ];
 
     policies = {
@@ -48,8 +51,8 @@
   };
   
   home = {
-    username = usrCfg.username;
-    homeDirectory = lib.mkDefault "/home/${usrCfg.username}";
+    username = userConfig.username;
+    homeDirectory = lib.mkDefault "/home/${userConfig.username}";
     sessionVariables = {
       LANG = "sv_SE.UTF-8";
 #      XDG_DATA_DIRS = lib.mkMerge [
@@ -92,8 +95,8 @@
     
   programs.git = {
     enable = true;
-    settings.user.email = "${usrCfg.email}";
-    settings.user.name = "${usrCfg.gituser}";
+    settings.user.email = "${userConfig.email}";
+    settings.user.name = "${userConfig.gituser}";
   };
 
   programs.home-manager.enable = true;

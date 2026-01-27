@@ -7,24 +7,13 @@
   ];
 
   config = {
-    desktop = {
-      desktopManagers = {
-        xfce = {
-          enable = true;
-        };
-      };
-    };
-  };
-
-  networking.hostName = "nixosASUS";
-
-  nixpkgs.hostPlatform = hostCfg.system;
-
-  # Autologin a user
-  services.displayManager = {
+    services.xserver.desktopManager.xfce.enable = true;
+ 
+    # Autologin a user
+    services.displayManager = {
     autoLogin.enable = true;
     autoLogin.user = "lovgren";
+    };
   };
-  
 }
 

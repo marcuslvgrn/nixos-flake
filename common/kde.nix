@@ -1,13 +1,12 @@
 { config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
-let cfg = config.desktop.desktopManagers.kde;
+let
+  
 in with lib; {
-  config = mkIf cfg.enable {
-    desktop.enable = true;
+  config = mkIf config.services.desktopManager.plasma6.enable {
 
     services = {
-      desktopManager.plasma6.enable = true;
-      #   displayManager.sddm.enable = true;
-      #   displayManager.sddm.wayland.enable = true;
+      xserver.enable = true;
+      displayManager.gdm.enable = true;
     };
 
     programs.ssh.askPassword =

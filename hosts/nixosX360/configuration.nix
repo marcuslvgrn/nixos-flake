@@ -12,15 +12,7 @@
     ../../common/ssd.nix
   ];
 
-  config = {
-    desktop = {
-      desktopManagers = {
-        gnome = {
-          enable = true;
-        };
-      };
-    };
-  };
+  services.desktopManager.gnome.enable = true;
   
 #  boot.loader.grub.extraEntries = ''
 #    menuentry "Arch" {

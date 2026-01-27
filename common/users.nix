@@ -34,18 +34,17 @@ let
   # Home Manager per-user builder
   mkHomeUser = username:
     let
-      usrCfg = usersByName.${username} or {};
+      userConfig = usersByName.${username} or {};
       userConfigPath = ../home-manager + "/${username}.nix";
-      gnomeCfg = config.desktop.desktopManagers.gnome;
     in
-      lib.mkIf (usrCfg.normalUser or false) {
+      lib.mkIf (userConfig.normalUser or false) {
         imports =
           lib.optional (builtins.pathExists userConfigPath)
             userConfigPath
           ++ [ commonHomeConfig ];
 
         _module.args = {
-          inherit inputs pkgs-unstable pkgs-stable usrCfg gnomeCfg;
+          inherit userConfig;
         };
       };
 
@@ -81,6 +80,9 @@ in {
     users = lib.genAttrs normalUsers mkHomeUser
       // { root.imports = [ ../home-manager/root.nix ]; };
 
-    extraSpecialArgs = { inherit inputs pkgs pkgs-stable pkgs-unstable; };
+    extraSpecialArgs = {
+      inherit inputs pkgs pkgs-stable pkgs-unstable;
+      nixosConfig = config;
+    };
   };
 }
