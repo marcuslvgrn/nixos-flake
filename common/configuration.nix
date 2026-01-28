@@ -128,7 +128,7 @@ in with lib;
       ]);
     
     services.emacs.defaultEditor = true;
-    
+    services.printing.enable = true;
     services.pcscd.enable = true;
     programs.gnupg.agent = {
       enable = true;

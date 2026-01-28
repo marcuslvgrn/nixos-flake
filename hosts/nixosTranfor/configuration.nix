@@ -72,7 +72,6 @@ in {
       iperf3.enable = true;
       logrotate.enable = true;
       nextcloud.enable = true;
-      printing.enable = true;
       samba.enable = true;
       technitium-dns-server.enable = true;
       vaultwarden.enable = true;
