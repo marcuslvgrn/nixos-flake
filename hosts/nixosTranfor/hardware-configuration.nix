@@ -43,10 +43,9 @@
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   # networking.interfaces.enp3s0f2.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp2s0.useDHCP = lib.mkDefault true;
-  networking.useDHCP = lib.mkForce false;
 
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
   networking = {
+    useDHCP = lib.mkForce false;
     interfaces.eno1 = {
       wakeOnLan.enable = true;
       ipv4.addresses = [{
@@ -62,6 +61,5 @@
     search = [
       "local"
     ];
-    enableIPv6 = false;
   };
 }

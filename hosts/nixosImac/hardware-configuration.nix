@@ -8,29 +8,29 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-partlabel/ROOT";
-      fsType = "btrfs";
-      options = [ "subvol=@" ];
-    };
-
-  fileSystems."/home" =
-    { device = "/dev/disk/by-partlabel/ROOT";
-      fsType = "btrfs";
-      options = [ "subvol=@home" ];
-    };
-
-  fileSystems."/swap" =
-    { device = "/dev/disk/by-partlabel/ROOT";
-      fsType = "btrfs";
-      options = [ "subvol=@swap" ];
-    };
-
-  fileSystems."/efi" =
-    { device = "/dev/disk/by-partlabel/ESP";
-      fsType = "vfat";
-      options = [ "fmask=0022" "dmask=0022" ];
-    };
+#  fileSystems."/" =
+#    { device = "/dev/disk/by-partlabel/ROOT";
+#      fsType = "btrfs";
+#      options = [ "subvol=@" ];
+#    };
+#
+#  fileSystems."/home" =
+#    { device = "/dev/disk/by-partlabel/ROOT";
+#      fsType = "btrfs";
+#      options = [ "subvol=@home" ];
+#    };
+#
+#  fileSystems."/swap" =
+#    { device = "/dev/disk/by-partlabel/ROOT";
+#      fsType = "btrfs";
+#      options = [ "subvol=@swap" ];
+#    };
+#
+#  fileSystems."/efi" =
+#    { device = "/dev/disk/by-partlabel/ESP";
+#      fsType = "vfat";
+#      options = [ "fmask=0022" "dmask=0022" ];
+#    };
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
@@ -40,5 +40,4 @@
   # networking.interfaces.enp56s0u1u3.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp1s0.useDHCP = lib.mkDefault true;
 
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

@@ -145,10 +145,13 @@ in with lib;
     # Or disable the firewall altogether.
     # networking.firewall.enable = false;
     
-    networking.hostName = hostCfg.hostname;
     nixpkgs.hostPlatform = hostCfg.system;
-    networking.useDHCP = lib.mkDefault true;
-    
+    networking = {
+      hostName = hostCfg.hostname;
+      useDHCP = lib.mkDefault true;
+      enableIPv6 = false;
+    };
+
     # This option defines the first version of NixOS you have installed on this particular machine,
     # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
     #
