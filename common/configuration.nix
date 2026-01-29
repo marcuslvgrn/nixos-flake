@@ -33,15 +33,11 @@ in with lib;
     #Users
     userNames = mkOption {
       type = types.listOf types.str;
-      default = [ "lovgren" ];
-    };
-    #Desktop
-    programs = {
-
     };
   };
 
   config = {
+    userNames = mkAfter [ "lovgren" ];
     nix.gc = {
       automatic = true;
       persistent = true;

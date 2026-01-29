@@ -3,7 +3,7 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 { inputs, config, lib, hostCfg, pkgs, ... }:
-
+with lib;
 {
   imports = [
     ../../common/configuration.nix
@@ -12,10 +12,10 @@
     ./disk-config.nix
   ];
 
-  services.desktopManager.gnome.enable = true;
   config = {
-    userNames = lib.mkAfter [ "gerd" ];
-  };
+
+    services.desktopManager.gnome.enable = true;
+    userNames = mkAfter [ "gerd" ];
   
 #  boot.loader.grub.extraEntries = ''
 #    menuentry "Arch" {
@@ -46,12 +46,13 @@
   #Power management
   powerManagement.enable = true;
   services.power-profiles-daemon.enable = true;
-  services.logind = if hostCfg.isStable then {
-#    lidSwitch = "suspend-then-hibernate";
-    lidSwitch = "hibernate";
-    powerKey = "hibernate";
-    powerKeyLongPress = "poweroff";
-  } else {
+#  services.logind = if hostCfg.isStable then {
+##    lidSwitch = "suspend-then-hibernate";
+#    lidSwitch = "hibernate";
+#    powerKey = "hibernate";
+#    powerKeyLongPress = "poweroff";
+#  } else {
+  services.logind = {
 #    settings.Login.HandleLidSwitch = "suspend-then-hibernate";
     settings.Login.HandleLidSwitch = "hibernate";
     settings.Login.HandlePowerKey = "hibernate";
@@ -84,5 +85,6 @@
 #      vpl-gpu-rt
 #    ];
 #  };
+  };
 }
 

@@ -162,8 +162,5 @@
       #by calling the function mkSystem on each entry. Separate nixos and darwin
       nixosConfigurations = builtins.listToAttrs (map mkSystem nixosHosts);
       darwinConfigurations = builtins.listToAttrs (map mkSystem darwinHosts);
-      extraSpecialArgs = {
-
-      };
     };
 }
