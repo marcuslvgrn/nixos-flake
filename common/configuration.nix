@@ -51,7 +51,9 @@ in with lib;
       max-free = ${toString (1024 * 1024 * 1024)}
     '';
 
-    nix.settings.auto-optimise-store = true;
+    #nix.settings.auto-optimise-store = true; # optimize store on every build
+    nix.optimise.automatic = true;
+    nix.optimise.dates = [ "21:00" ]; # Optional; allows customizing optimisation schedule
     
     # Enable the Flakes feature and the accompanying new nix command-line tool
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
