@@ -153,7 +153,7 @@
                   inputs.nix-flatpak.nixosModules.nix-flatpak
                 ];
                 specialArgs = {
-                  inherit inputs hostCfg pkgs-stable pkgs-unstable;
+                  inherit inputs hostCfg pkgs-stable pkgs-unstable inputLib;
                 };
               };
         };

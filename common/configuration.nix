@@ -19,6 +19,7 @@ in with lib;
     ./nginx.nix
     ./openssh.nix
     ./passbolt.nix
+    ./pxe.nix
     ./technitium.nix
     ./users.nix
     ./samba.nix
