@@ -7,10 +7,9 @@
 {
   imports = [
     ../../common/configuration.nix
-    ../../common/vmware-guest.nix
     ./hardware-configuration.nix
     ./disk-config.nix
   ];
-
+  virtualisation.vmware.guest.enable = true;
 }
 

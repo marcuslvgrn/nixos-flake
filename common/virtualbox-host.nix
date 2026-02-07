@@ -11,12 +11,16 @@
     ])
     ++
     (with pkgs-unstable; [
-    
+      
     ]);
+  
+  #virtualisation.virtualbox.host = lib.mkIf config.virtualisation.virtualbox.host.enable {
+  #  enableExtensionPack = true;
+  #};
 
-  #Enable virtualbox
-  virtualisation.virtualbox.host.enable = true;
   #Host extensions (USB forwarding) - causes frequent rebuilds
-  #virtualisation.virtualbox.host.enableExtensionPack = true;
-  users.extraGroups.vboxusers.members = [ "lovgren" ];
+  users.extraGroups.vboxusers = lib.mkIf config.virtualisation.virtualbox.host.enable {
+    members = [ "lovgren" ];
+  };
 }
+    

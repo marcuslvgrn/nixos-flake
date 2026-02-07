@@ -5,7 +5,6 @@ in with lib;
 {
   imports = [
     ../../common/configuration.nix
-    ../../common/vmware-guest.nix
 #    ./hardware-configuration.nix
     ./disk-config.nix
   ];
@@ -21,6 +20,7 @@ in with lib;
       gmailUserName = "marcuslvgrn@gmail.com";
     };
     services.desktopManager.gnome.enable = true;
+    virtualisation.vmware.guest.enable = true;
   };
   
 }

@@ -9,13 +9,13 @@
     ./hardware-configuration.nix
     ./disk-config.nix
     ../../common/configuration.nix
-    ../../common/ssd.nix
-    ../../common/virtualbox-host.nix
 #    ../../services/bluetooth-suspend.nix
   ];
 
   services.desktopManager.gnome.enable = true;
-
+  virtualisation.virtualbox.host.enable = true;
+  config.ssd.enable = true;
+  
 #  boot.loader.grub.extraEntries = ''
 #    menuentry "Arch" {
 #      set root=(hd0,gpt1)

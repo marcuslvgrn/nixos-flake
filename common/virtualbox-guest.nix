@@ -1,8 +1,9 @@
 { config, lib, pkgs, ... }:
 
 {
-
+  
   #virtualbox guest
-  virtualisation.virtualbox.guest.enable = true;
-
+  #value = lib.mkIf config.virtualisation.virtualbox.guest.enable {
+  #  
+  #};
 }

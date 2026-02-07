@@ -7,12 +7,13 @@ with lib;
 {
   imports = [
     ../../common/configuration.nix
-    ../../common/ssd.nix
     ./hardware-configuration.nix
     ./disk-config.nix
   ];
 
   config = {
+
+    ssd.enable = true;
 
     services.desktopManager.gnome.enable = true;
     userNames = mkAfter [ "gerd" ];

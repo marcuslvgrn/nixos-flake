@@ -1,6 +1,6 @@
 { config, lib, hostCfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
 let
-  moduleCfg = config;
+
 in with lib;
 {
   imports = [
@@ -14,17 +14,21 @@ in with lib;
     ./grub.nix
     ./iperf.nix
     ./kde.nix
-    ./nextcloud.nix
     ./networkmanager.nix
+    ./nextcloud.nix
     ./nginx.nix
     ./openssh.nix
     ./passbolt.nix
     ./pxe.nix
-    ./technitium.nix
-    ./users.nix
     ./samba.nix
     ./sops.nix
+    ./ssd.nix
+    ./technitium.nix
+    ./users.nix
     ./vaultwarden.nix
+    ./virtualbox-guest.nix
+    ./virtualbox-host.nix
+    ./vmware-guest.nix
     ./wakeOnLan.nix
     ./xfce.nix
     ../services/create-swapfile.nix
@@ -39,25 +43,27 @@ in with lib;
 
   config = {
     userNames = mkAfter [ "lovgren" ];
-    nix.gc = {
-      automatic = true;
-      persistent = true;
-      dates = "20:00";
-      options = "--delete-older-than 14d";
-      #    delete_generations = "+5";
-    };
+    nix = {
+      gc = {
+        automatic = true;
+        persistent = true;
+        dates = "20:00";
+        options = "--delete-older-than 14d";
+        #    delete_generations = "+5";
+      };
     
-    nix.extraOptions = ''
-      min-free = ${toString (100 * 1024 * 1024)}
-      max-free = ${toString (1024 * 1024 * 1024)}
-    '';
+      extraOptions = ''
+        min-free = ${toString (100 * 1024 * 1024)}
+        max-free = ${toString (1024 * 1024 * 1024)}
+      '';
 
-    #nix.settings.auto-optimise-store = true; # optimize store on every build
-    nix.optimise.automatic = true;
-    nix.optimise.dates = [ "21:00" ]; # Optional; allows customizing optimisation schedule
-    
-    # Enable the Flakes feature and the accompanying new nix command-line tool
-    nix.settings.experimental-features = [ "nix-command" "flakes" ];
+      #nix.settings.auto-optimise-store = true; # optimize store on every build
+      optimise.automatic = true;
+      optimise.dates = [ "21:00" ]; # Optional; allows customizing optimisation schedule
+      
+      # Enable the Flakes feature and the accompanying new nix command-line tool
+      settings.experimental-features = [ "nix-command" "flakes" ];
+    };
     
     # Set your time zone.
     time.timeZone = "Europe/Stockholm";
@@ -72,12 +78,6 @@ in with lib;
       keyMap = "sv-latin1";
     };
 
-    # Call commands and interactive bash start
-    # Commands are separated by \n
-    programs.bash.interactiveShellInit = ''
-     neofetch
-    '';
-    
     # Use latest kernel if unstable, default is pkgs.linuxPackages
     # https://search.nixos.org/options?channel=25.11&show=boot.kernelPackages&query=boot.kernelpackages
     boot.kernelPackages = lib.mkIf (!hostCfg.isStable) pkgs.linuxPackages_latest;
@@ -86,7 +86,7 @@ in with lib;
     # You can use https://search.nixos.org/ to find more packages (and options).
     environment.systemPackages =
       (with pkgs; [
-        vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+        vim
         wget
         efibootmgr
         neofetch
@@ -126,13 +126,23 @@ in with lib;
         
       ]);
     
-    services.emacs.defaultEditor = true;
-    services.printing.enable = true;
-    services.pcscd.enable = true;
-    programs.gnupg.agent = {
-      enable = true;
-      #    pinentryFlavor = "curses";
-      enableSSHSupport = true;
+    services = {
+      emacs.defaultEditor = true;
+      printing.enable = true;
+      pcscd.enable = true;
+    };
+    programs = {
+      # Call commands and interactive bash start
+      # Commands are separated by \n
+      bash.interactiveShellInit = ''
+        neofetch
+      '';
+    
+      gnupg.agent = {
+        enable = true;
+        #    pinentryFlavor = "curses";
+        enableSSHSupport = true;
+      };
     };
     
     hardware.enableRedistributableFirmware = true;

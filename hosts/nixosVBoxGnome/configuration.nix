@@ -7,10 +7,10 @@
 {
   imports = [
     ../../common/configuration.nix
-    ../../common/virtualbox-guest.nix
     ./hardware-configuration.nix
     ./disk-config.nix
   ];
   services.desktopManager.gnome.enable = true;
+  virtualisation.virtualbox.guest.enable = true;
 }
 

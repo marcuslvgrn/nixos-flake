@@ -8,11 +8,11 @@
   imports = [
     ./hardware-configuration.nix
     ../../common/configuration.nix
-    ../../common/virtualbox-host.nix
-    ../../common/ssd.nix
   ];
 
   services.desktopManager.gnome.enable = true;
+  virtualisation.virtualbox.host.enable = true;
+  config.ssd.enable = true;
   
 #  boot.loader.grub.extraEntries = ''
 #    menuentry "Arch" {

@@ -1,6 +1,12 @@
 { config, lib, pkgs, inputs, ... }:
-
+with lib;
 {
-  #Enable SSD trim
-  services.fstrim.enable = lib.mkDefault true;
+  options = {
+    ssdEnable = mkEnableOption "enable SSD settings";
+  };
+  
+  config = lib.mkIf config.ssdEnable {
+    #Enable SSD trim
+    services.fstrim.enable = true;
+  };
 }
