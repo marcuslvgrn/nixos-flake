@@ -21,7 +21,7 @@ in {
     #enables proxy to external hosts
     nginxExternal.enable = true;
     passbolt = {
-      enable = false;
+#      enable = true;
       hostName = "mlpassbolt.dynv6.net";
       adminFirstName = "Marcus";
       adminLastName = "Lövgren";

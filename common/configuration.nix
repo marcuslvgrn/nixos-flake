@@ -138,6 +138,10 @@ in with lib;
       emacs.defaultEditor = true;
       printing.enable = true;
       pcscd.enable = true;
+      timesyncd = {
+        enable = true;
+        servers = [ "ntp.lth.se" ];
+      };
     };
     programs = {
       # Call commands and interactive bash start
