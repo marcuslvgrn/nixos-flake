@@ -13,7 +13,8 @@ let
   usersByName = userData.users;
   commonHomeConfig = ../../home-manager/common.nix;
   #TODO, use mkHomeUser
-  usrcfg = usersByName."lovgren";
+  userConfig = usersByName."lovgren";
+  nixosConfig = config;
 in
 with lib;
 {
@@ -21,7 +22,13 @@ with lib;
 
   ];
 
+  options = {
+    programs.firefox.enable = mkEnableOption "Enable firefox";
+  };
+
   config = {
+
+    programs.firefox.enable = true;
 
     environment.systemPackages =
       (with pkgs; [
@@ -79,7 +86,7 @@ with lib;
         };
       };
       extraSpecialArgs = {
-        inherit usrcfg pkgs-stable pkgs-unstable;
+        inherit usrcfg pkgs-stable pkgs-unstable nixosConfig userConfig;
       };
     };
   };
