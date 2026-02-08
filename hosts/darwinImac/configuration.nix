@@ -42,7 +42,7 @@ with lib;
     homebrew = {
       enable = true;
       taps = [ ];
-      brews = [ "cowsay" ];
+      brews = [ "cowsay" "sleepwatcher" "blueutil" ];
       casks = [ ];
     };
 
