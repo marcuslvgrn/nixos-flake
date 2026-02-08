@@ -1,8 +1,9 @@
-{ config, lib, userConfig, pkgs, pkgs-stable, pkgs-unstable, nixosConfig, ... }:
+{ config, lib, inputs, nixosConfig, userConfig, pkgs, pkgs-stable, pkgs-unstable, ... }:
 
 {
   imports = [
     ./dconf.nix
+    inputs.nixvim.homeModules.nixvim
   ];
 
   programs.firefox = lib.mkIf nixosConfig.programs.firefox.enable {
@@ -99,6 +100,121 @@
     settings.user.name = "${userConfig.gituser}";
   };
 
+  programs.nixvim = {
+    enable = true;
+    vimAlias = true;
+    viAlias = true;
+    globals.mapleader = " ";
+    
+    colorschemes.catppuccin.enable = true;
+    plugins = {
+#      myOption = {
+#test.enable = true;
+#
+#      };
+#      oil.enable = true;
+      gitsigns = {
+        enable = true;
+        settings = {
+          current_line_blame = true;
+          current_line_blame_opts = {
+            delay = 0;
+            virt_text_opts = "eol";
+          };
+        };
+      };
+      "indent_blankline" = {
+        enable = true;
+        settings = {
+          indent = { char = " "; tab_char = " "; };
+        };
+      };
+      lazygit = {
+        enable = true;
+        settings = {
+          floating_window_winblend = 0;
+          floating_window_scaling_factor = 0.9;
+        };
+      };
+      lsp = {
+        enable = true;
+      	servers = { 
+          lua_ls.enable = true;
+          nixd.enable = true;
+      	};
+      };
+      lualine.enable = true;
+#      luasnip.enable = true;
+      ripgrep.enable = true;
+      telescope = {
+        enable = true;
+      };
+      nvim-tree.enable = true;
+      treesitter.enable = true;
+      web-devicons.enable = true;
+    };
+    extraPlugins = [
+      
+    ];
+    opts = {
+      number = true;
+      relativenumber = true;
+      cursorline = true;
+      shiftwidth = 2;
+      tabstop = 2;
+      softtabstop = 2;
+      expandtab = true;
+      autoindent = true;
+      smartindent = true;
+      guifont = "FiraCodeNerdFontMono-Regular";
+    };
+    keymaps = [
+    {
+      mode = "n";
+      key = "<leader>w";
+      action = ":w<CR>";
+      options.silent = false;
+    }
+    {
+      mode = "n";
+      key = "<leader>q";
+      action = ":q<CR>";
+      options.silent = false;
+    }
+    {
+      mode = "n";
+      key = "<leader>ff";
+      action = "<cmd>Telescope find_files<CR>";
+      options.silent = true;
+    }
+    {
+      mode = "n";
+      key = "<leader>fb";
+      action = "<cmd>Telescope buffers<CR>";
+      options.silent = false;
+    }
+    {
+      mode = "n";
+      key = "<leader>nt";
+      action = "<cmd>NvimTreeToggle<CR>";
+      options.silent = false;
+    }
+    ];
+  };
+  
+#  programs.neovim = {
+#    enable = true;
+#    viAlias = true;
+#    vimAlias = true;
+#    extraLuaConfig = ''
+#      vim.opt.autoindent = true
+#    '';
+#    plugins = with pkgs.vimPlugins; [
+#      nvim-treesitter
+#      nvim-lspconfig
+#    ];
+#  };
+  
   programs.home-manager.enable = true;
 
 }

@@ -86,7 +86,6 @@ in with lib;
     # You can use https://search.nixos.org/ to find more packages (and options).
     environment.systemPackages =
       (with pkgs; [
-        vim
         wget
         efibootmgr
         neofetch
@@ -125,6 +124,11 @@ in with lib;
       (with pkgs-unstable; [
         
       ]);
+
+    fonts.packages = with pkgs; [
+      nerd-fonts.fira-code
+      nerd-fonts.droid-sans-mono
+    ];
     
     services = {
       emacs.defaultEditor = true;
@@ -143,6 +147,7 @@ in with lib;
         #    pinentryFlavor = "curses";
         enableSSHSupport = true;
       };
+
     };
     
     hardware.enableRedistributableFirmware = true;
