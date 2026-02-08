@@ -125,10 +125,14 @@ in with lib;
         
       ]);
 
-    fonts.packages = with pkgs; [
-      nerd-fonts.fira-code
-      nerd-fonts.droid-sans-mono
-    ];
+    fonts = {
+      packages = with pkgs; [
+        nerd-fonts.jetbrains-mono
+      ];
+      fontconfig = {
+        enable = true;
+      };
+    };
     
     services = {
       emacs.defaultEditor = true;

@@ -1,6 +1,6 @@
 {
   description = "Marcus nix config";
-  
+
   inputs = {
     #Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
@@ -49,21 +49,29 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
   };
-  
-  outputs = inputs@{ self, ... }:
+
+  outputs =
+    inputs@{ self, ... }:
     let
       # Auto-detect host folders
       hostFolders = builtins.attrNames (builtins.readDir ./hosts);
 
       # Build host configurations with defaults
-      defaultHostCfgs = map (hostname:
+      defaultHostCfgs = map (
+        hostname:
         let
-          platform = if builtins.match "darwin.*" (hostname) != null
-                     then "darwin"
-                     else "nixos";
-          system   = if platform == "nixos" then "x86_64-linux" else "x86_64-darwin";
+          platform = if builtins.match "darwin.*" (hostname) != null then "darwin" else "nixos";
+          system = if platform == "nixos" then "x86_64-linux" else "x86_64-darwin";
           isStable = true;
-        in { inherit hostname platform system isStable; }
+        in
+        {
+          inherit
+            hostname
+            platform
+            system
+            isStable
+            ;
+        }
       ) hostFolders;
 
       # Per-host overrides
@@ -78,27 +86,30 @@
           isStable = false;
         };
       };
-      
+
       # Apply overrides
-      overriddenHostCfgs = map (perHostDefaultCfg:
+      overriddenHostCfgs = map (
+        perHostDefaultCfg:
         let
           #make a list of overrides from the attributes specified in the overrides set
           #only with a newer nix that takes three arguments, I should update nix (use unstable)
-#          perHostOverrides = builtins.getAttr perHostDefaultCfg.hostname overrides {};
+          #          perHostOverrides = builtins.getAttr perHostDefaultCfg.hostname overrides {};
           perHostOverrides =
-            if builtins.hasAttr perHostDefaultCfg.hostname overrides
-            then builtins.getAttr perHostDefaultCfg.hostname overrides
-            else {};
+            if builtins.hasAttr perHostDefaultCfg.hostname overrides then
+              builtins.getAttr perHostDefaultCfg.hostname overrides
+            else
+              { };
         in
-          #merge the defaultConfigs and hostOverrides
-          perHostDefaultCfg // perHostOverrides
+        #merge the defaultConfigs and hostOverrides
+        perHostDefaultCfg // perHostOverrides
       ) defaultHostCfgs;
 
       # Split by platform
       nixosHosts = builtins.filter (c: c.platform == "nixos") overriddenHostCfgs;
       darwinHosts = builtins.filter (c: c.platform == "darwin") overriddenHostCfgs;
 
-      mkSystem = hostCfg:
+      mkSystem =
+        hostCfg:
         let
           overlays = [
             inputs.nur.overlays.default
@@ -123,15 +134,20 @@
           inputLib =
             if hostCfg.isStable then
               if hostCfg.platform == "nixos" then inputs.nixpkgs.lib else inputs.nix-darwin.lib
+            else if hostCfg.platform == "nixos" then
+              inputs.nixpkgs-unstable.lib
             else
-              if hostCfg.platform == "nixos" then inputs.nixpkgs-unstable.lib else inputs.nix-darwin-unstable.lib;
+              inputs.nix-darwin-unstable.lib;
           #Choose the right home manager module
           homeManagerModule =
             #this returns the correct darwinModules or nixosModules from inputs.home-manager,
             #like inputs.home-manager.nixosModules.home-manager, also for stable or unstable
-            if hostCfg.isStable then (builtins.getAttr (hostCfg.platform + "Modules") inputs.home-manager).home-manager
-            else (builtins.getAttr (hostCfg.platform + "Modules") inputs.home-manager-unstable).home-manager;
-        in {
+            if hostCfg.isStable then
+              (builtins.getAttr (hostCfg.platform + "Modules") inputs.home-manager).home-manager
+            else
+              (builtins.getAttr (hostCfg.platform + "Modules") inputs.home-manager-unstable).home-manager;
+        in
+        {
           name = hostCfg.hostname;
           value =
             # Darwin host
@@ -143,7 +159,14 @@
                   ./hosts/${hostCfg.hostname}/configuration.nix
                 ];
                 specialArgs = {
-                  inherit inputs self hostCfg pkgs pkgs-stable pkgs-unstable;
+                  inherit
+                    inputs
+                    self
+                    hostCfg
+                    pkgs
+                    pkgs-stable
+                    pkgs-unstable
+                    ;
                 };
               }
             else
@@ -157,11 +180,18 @@
                   inputs.nix-flatpak.nixosModules.nix-flatpak
                 ];
                 specialArgs = {
-                  inherit inputs hostCfg pkgs-stable pkgs-unstable inputLib;
+                  inherit
+                    inputs
+                    hostCfg
+                    pkgs-stable
+                    pkgs-unstable
+                    inputLib
+                    ;
                 };
               };
         };
-    in {
+    in
+    {
       #Assemble all the system configurations, looping through the variable configurations
       #by calling the function mkSystem on each entry. Separate nixos and darwin
       nixosConfigurations = builtins.listToAttrs (map mkSystem nixosHosts);

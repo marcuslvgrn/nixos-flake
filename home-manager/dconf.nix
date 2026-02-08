@@ -33,6 +33,11 @@ in with lib; {
       power-button-action = "hibernate";
     };
 
+    "org/gnome/Console" = {
+      use-system-font = false;
+      custom-font = "JetBrainsMono Nerd Font 12";
+    };
+
     "org/gnome/shell" = {
       disable-user-extensions = false;
       enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "appindicatorsupport@rgcjonas.gmail.com" "hidetopbar@mathieu.bidon.ca" "hibernate-status@dromi" ];
