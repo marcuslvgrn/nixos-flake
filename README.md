@@ -82,3 +82,15 @@ sudo -u nextcloud gunzip -c mariadb-nextcloud.sql.gz | mariadb nextcloud
 - gpl = git pull
 - gps = git push
 - rebuild = rebuild flake
+
+## neovim shortcuts
+- gf = go to file referenced by code
+- ctrl+o = go back to previous buffer
+- ctrl+i = go forward to next buffer
+- lead+ff = telescope find_files
+- lead+fb = telescope buffers
+- ctrl+w h = move to left window
+- ctrl+w l = move to right window
+- ctrl+w j = move to window below
+- ctrl+w k = move to window above
+- ctrl+w w = cycle through windows
