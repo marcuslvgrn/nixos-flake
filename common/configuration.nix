@@ -42,7 +42,8 @@ in with lib;
   };
 
   config = {
-
+    # For when nixos-rebuild with --target-host
+    #    nix.settings.require-sigs = false;
     security.sudo = {
       enable = true;
       extraConfig = ''
