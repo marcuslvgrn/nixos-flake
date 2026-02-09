@@ -42,6 +42,14 @@ in with lib;
   };
 
   config = {
+
+    security.sudo = {
+      enable = true;
+      extraConfig = ''
+        Defaults env_keep += "SSH_AUTH_SOCK"
+      '';
+    };
+    
     userNames = mkAfter [ "lovgren" ];
     nix = {
       gc = {
