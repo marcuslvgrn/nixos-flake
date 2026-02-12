@@ -1,15 +1,23 @@
-{ config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
+{
+#  config,
+  lib,
+  pkgs,
+#  pkgs-stable,
+#  pkgs-unstable,
+  ...
+}:
 with lib;
 let
-  
-in {
+
+in
+{
 
   imports = [
     ../../common/configuration.nix
     ./hardware-configuration.nix
     ./disk-config.nix
   ];
-  
+
   config = {
     airsonic = {
       hostName = "mlairsonic.dynv6.net";
@@ -21,7 +29,7 @@ in {
     #enables proxy to external hosts
     nginxExternal.enable = true;
     passbolt = {
-#      enable = true;
+      #      enable = true;
       hostName = "mlpassbolt.dynv6.net";
       adminFirstName = "Marcus";
       adminLastName = "Lövgren";
@@ -34,7 +42,7 @@ in {
     vaultwarden = {
       hostName = "mlvaultwarden.dynv6.net";
     };
-  
+
     nixpkgs.overlays = [
       #    # Emacs GTK2 override
       #    (final: prev: {
@@ -44,7 +52,7 @@ in {
       #      };
       #    })
     ];
-    
+
     #let
     #  # Overlay to force GTK2 for Emacs
     #  overlay = self: super: {
@@ -77,12 +85,12 @@ in {
       technitium-dns-server.enable = true;
       vaultwarden.enable = true;
     };
-    
+
     virtualisation.docker = {
       enable = true;
       storageDriver = "btrfs";
     };
-    
+
     #Packages only installed on this host
     environment.systemPackages =
       (with pkgs; [
@@ -98,33 +106,28 @@ in {
         net-tools
         cups
       ])
-      ++
-      (with pkgs-stable; [
-        
-      ])
-      ++
-      (with pkgs-unstable; [
-        
-      ]);
+#      ++ (with pkgs-stable; [])
+#      ++ (with pkgs-unstable; [])
+      ;
   };
-#  # Ensure schema directories are visible system-wide
-#  environment.pathsToLink = [
-#    "/share/glib-2.0/schemas"
-#  ];
-#  environment.etc."glib-2.0/schemas".source = "${pkgs.gsettings-desktop-schemas}/share/glib-2.0/schemas";
-#
-#  environment.sessionVariables = {
-#    XDG_DATA_DIRS = "/run/current-system/sw/share";
-#    GSETTINGS_SCHEMA_DIR = "/run/current-system/sw/share/glib-2.0/schemas";
-#  };
-#
-#  # Automatically compile schemas at build time
-#  system.activationScripts.glibCompileSchemas = {
-#    text = ''
-#      if [ -d "/run/current-system/sw/share/glib-2.0/schemas" ]; then
-#        echo "Compiling GLib schemas..."
-#        ${pkgs.glib.dev}/bin/glib-compile-schemas /run/current-system/sw/share/glib-2.0/schemas
-#      fi
-#    '';
-#  };
+  #  # Ensure schema directories are visible system-wide
+  #  environment.pathsToLink = [
+  #    "/share/glib-2.0/schemas"
+  #  ];
+  #  environment.etc."glib-2.0/schemas".source = "${pkgs.gsettings-desktop-schemas}/share/glib-2.0/schemas";
+  #
+  #  environment.sessionVariables = {
+  #    XDG_DATA_DIRS = "/run/current-system/sw/share";
+  #    GSETTINGS_SCHEMA_DIR = "/run/current-system/sw/share/glib-2.0/schemas";
+  #  };
+  #
+  #  # Automatically compile schemas at build time
+  #  system.activationScripts.glibCompileSchemas = {
+  #    text = ''
+  #      if [ -d "/run/current-system/sw/share/glib-2.0/schemas" ]; then
+  #        echo "Compiling GLib schemas..."
+  #        ${pkgs.glib.dev}/bin/glib-compile-schemas /run/current-system/sw/share/glib-2.0/schemas
+  #      fi
+  #    '';
+  #  };
 }

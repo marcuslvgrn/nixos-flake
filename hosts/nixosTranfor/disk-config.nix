@@ -1,10 +1,15 @@
-{ pkgs, lib, inputs, ... }:
+{
+#  pkgs,
+#  lib,
+  inputs,
+  ...
+}:
 {
   #load the module
   imports = [
     inputs.disko.nixosModules.disko
   ];
-  
+
   disko.devices = {
     #for multi disk btrfs, declare secondary drives first
     disk.disk1 = {

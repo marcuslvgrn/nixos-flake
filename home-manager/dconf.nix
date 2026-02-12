@@ -1,14 +1,26 @@
 # Generated via dconf2nix: https://github.com/gvolpe/dconf2nix
 #dconf dump / > /home/lovgren/dconf.dump && dconf2nix -i /home/lovgren/dconf.dump -o /home/lovgren/dconf.nix
-{ config, lib, nixosConfig, ... }:
+{
+#  config,
+  lib,
+  nixosConfig,
+  ...
+}:
 with lib.hm.gvariant;
 let
-  
-in with lib; {
+
+in
+with lib;
+{
   dconf.settings = mkIf nixosConfig.services.desktopManager.gnome.enable {
     "org/gnome/desktop/input-sources" = {
-      sources = [ (mkTuple [ "xkb" "se" ]) ];
-      xkb-options = [];
+      sources = [
+        (mkTuple [
+          "xkb"
+          "se"
+        ])
+      ];
+      xkb-options = [ ];
     };
 
     "org/gnome/desktop/interface" = {
@@ -40,8 +52,20 @@ in with lib; {
 
     "org/gnome/shell" = {
       disable-user-extensions = false;
-      enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "appindicatorsupport@rgcjonas.gmail.com" "hidetopbar@mathieu.bidon.ca" "hibernate-status@dromi" ];
-      favorite-apps = [ "org.gnome.Calendar.desktop" "org.gnome.Nautilus.desktop" "org.gnome.Console.desktop" "firefox.desktop" "emacs.desktop" "org.gnome.Settings.desktop" ];
+      enabled-extensions = [
+        "dash-to-dock@micxgx.gmail.com"
+        "appindicatorsupport@rgcjonas.gmail.com"
+        "hidetopbar@mathieu.bidon.ca"
+        "hibernate-status@dromi"
+      ];
+      favorite-apps = [
+        "org.gnome.Calendar.desktop"
+        "org.gnome.Nautilus.desktop"
+        "org.gnome.Console.desktop"
+        "firefox.desktop"
+        "emacs.desktop"
+        "org.gnome.Settings.desktop"
+      ];
     };
   };
 }

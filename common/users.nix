@@ -1,7 +1,15 @@
-{ inputs, config, lib, pkgs, pkgs-stable, pkgs-unstable, ... }:
+{
+  inputs,
+  config,
+  lib,
+  pkgs,
+  pkgs-stable,
+  pkgs-unstable,
+  ...
+}:
 
 let
-  # Import your user definitions
+  # Import user definitions
   userData = import ./userData.nix;
   usersByName = userData.users;
 
@@ -10,79 +18,86 @@ let
   commonHomeConfig = ../home-manager/common.nix;
 
   # Normal + system user builder
-  mkUser = username:
-    let usrcfg = usersByName.${username} or {}; in
+  mkUser =
+    username:
+    let
+      usrcfg = usersByName.${username} or { };
+    in
     {
       group = usrcfg.group or "nogroup";
       isNormalUser = usrcfg.normalUser or false;
       isSystemUser = usrcfg.systemUser or false;
 
-      home = lib.mkIf (usrcfg.normalUser or false)
-        "${homeBase}/${username}";
+      home = lib.mkIf (usrcfg.normalUser or false) "${homeBase}/${username}";
 
-      extraGroups = usrcfg.extragroups or [];
+      extraGroups = usrcfg.extragroups or [ ];
       description = usrcfg.realname or "";
-      shell = lib.mkIf (usrcfg.normalUser or false)
-        pkgs.bashInteractive;
+      shell = lib.mkIf (usrcfg.normalUser or false) pkgs.bashInteractive;
 
-      hashedPasswordFile = lib.mkIf (usrcfg.normalUser or false)
-        config.sops.secrets."passwords/${username}".path;
+      hashedPasswordFile = lib.mkIf (usrcfg.normalUser or false
+      ) config.sops.secrets."passwords/${username}".path;
 
       uid = usrcfg.uid or null;
     };
 
   # Home Manager per-user builder
-  mkHomeUser = username:
+  mkHomeUser =
+    username:
     let
-      userConfig = usersByName.${username} or {};
+      userConfig = usersByName.${username} or { };
       userConfigPath = ../home-manager + "/${username}.nix";
     in
-      lib.mkIf (userConfig.normalUser or false) {
-        imports =
-          lib.optional (builtins.pathExists userConfigPath)
-            userConfigPath
-          ++ [ commonHomeConfig ];
+    lib.mkIf (userConfig.normalUser or false) {
+      imports = lib.optional (builtins.pathExists userConfigPath) userConfigPath ++ [ commonHomeConfig ];
 
-        _module.args = {
-          inherit userConfig;
-        };
+      _module.args = {
+        inherit userConfig;
       };
+    };
 
-in {
+in
+{
   # Safety check: all users listed in config must exist in userData.nix
-#  assertions = [
-#    {
-#      assertion = lib.all (u: usersByName ? u) (config.userNames or []);
-#      message = "config.userNames contains users not defined in userData.nix";
-#    }
-#  ];
+  #  assertions = [
+  #    {
+  #      assertion = lib.all (u: usersByName ? u) (config.userNames or []);
+  #      message = "config.userNames contains users not defined in userData.nix";
+  #    }
+  #  ];
 
   environment.variables.EDITOR = "emacs -nw";
 
   users.mutableUsers = false;
 
   # System + normal users
-  users.users = let
-    userNamesList = config.userNames or [];
-  in
-    lib.genAttrs userNamesList mkUser
-    // { root.hashedPassword = "!"; };
+  users.users =
+    let
+      userNamesList = config.userNames or [ ];
+    in
+    lib.genAttrs userNamesList mkUser // { root.hashedPassword = "!"; };
 
   # Home Manager configuration
-  home-manager = let
-    userNamesList = config.userNames or [];
-    normalUsers = lib.filter (u: (usersByName.${u}.normalUser or false)) userNamesList;
-  in
-  {
-    useGlobalPkgs = true;
-    useUserPackages = true;
+  home-manager =
+    let
+      userNamesList = config.userNames or [ ];
+      normalUsers = lib.filter (u: (usersByName.${u}.normalUser or false)) userNamesList;
+    in
+    {
+      useGlobalPkgs = true;
+      useUserPackages = true;
 
-    users = lib.genAttrs normalUsers mkHomeUser
-      // { root.imports = [ ../home-manager/root.nix ]; };
+      users = lib.genAttrs normalUsers mkHomeUser // {
+        root.imports = [ ../home-manager/root.nix ];
+      };
 
-    extraSpecialArgs = {
-      inherit inputs pkgs pkgs-stable pkgs-unstable;
-      nixosConfig = config;
+      extraSpecialArgs = {
+        inherit
+          inputs
+          pkgs
+          pkgs-stable
+          pkgs-unstable
+          ;
+        nixosConfig = config;
+      };
     };
-  };
 }

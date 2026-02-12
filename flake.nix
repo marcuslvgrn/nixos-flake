@@ -60,7 +60,7 @@
       defaultHostCfgs = map (
         hostname:
         let
-          platform = if builtins.match "darwin.*" (hostname) != null then "darwin" else "nixos";
+          platform = if builtins.match "darwin.*" hostname != null then "darwin" else "nixos";
           system = if platform == "nixos" then "x86_64-linux" else "x86_64-darwin";
           isStable = true;
         in
@@ -155,7 +155,11 @@
               inputLib.darwinSystem {
                 system = hostCfg.system;
                 modules = [
+                  #load default.nix in the modules directory, will import all modules
+                  ./modules
+                  #load the correct home-manager module depending on configuration
                   homeManagerModule
+                  #host specific configuration
                   ./hosts/${hostCfg.hostname}/configuration.nix
                 ];
                 specialArgs = {
@@ -175,9 +179,12 @@
                 inherit pkgs;
                 system = hostCfg.system;
                 modules = [
+                  #load default.nix in the modules directory, will import all modules
+                  ./modules
+                  #load the correct home-manager module depending on configuration
                   homeManagerModule
+                  #host specific configuration
                   ./hosts/${hostCfg.hostname}/configuration.nix
-                  inputs.nix-flatpak.nixosModules.nix-flatpak
                 ];
                 specialArgs = {
                   inherit

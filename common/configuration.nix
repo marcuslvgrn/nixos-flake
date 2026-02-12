@@ -1,36 +1,19 @@
-{ config, lib, hostCfg, pkgs, pkgs-stable, pkgs-unstable, ... }:
+{
+  config,
+  lib,
+  hostCfg,
+  pkgs,
+#  pkgs-stable,
+#  pkgs-unstable,
+  ...
+}:
 let
 
-in with lib;
+in
+with lib;
 {
   imports = [
-    ./acme.nix
-    ./airsonic.nix
-    ./cups.nix
-    ./ddclient.nix
-    ./desktopManager.nix
-    ./flatpak.nix
-    ./gnome.nix
-    ./grub.nix
-    ./iperf.nix
-    ./kde.nix
-    ./networkmanager.nix
-    ./nextcloud.nix
-    ./nginx.nix
-    ./openssh.nix
-    ./passbolt.nix
-    ./pxe.nix
-    ./samba.nix
-    ./sops.nix
-    ./ssd.nix
-    ./technitium.nix
     ./users.nix
-    ./vaultwarden.nix
-    ./virtualbox-guest.nix
-    ./virtualbox-host.nix
-    ./vmware-guest.nix
-    ./wakeOnLan.nix
-    ./xfce.nix
     ../services/create-swapfile.nix
   ];
 
@@ -50,7 +33,7 @@ in with lib;
         Defaults env_keep += "SSH_AUTH_SOCK"
       '';
     };
-    
+
     userNames = mkAfter [ "lovgren" ];
     nix = {
       gc = {
@@ -60,7 +43,7 @@ in with lib;
         options = "--delete-older-than 14d";
         #    delete_generations = "+5";
       };
-    
+
       extraOptions = ''
         min-free = ${toString (100 * 1024 * 1024)}
         max-free = ${toString (1024 * 1024 * 1024)}
@@ -69,14 +52,17 @@ in with lib;
       #nix.settings.auto-optimise-store = true; # optimize store on every build
       optimise.automatic = true;
       optimise.dates = [ "21:00" ]; # Optional; allows customizing optimisation schedule
-      
+
       # Enable the Flakes feature and the accompanying new nix command-line tool
-      settings.experimental-features = [ "nix-command" "flakes" ];
+      settings.experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
     };
-    
+
     # Set your time zone.
     time.timeZone = "Europe/Stockholm";
-    
+
     # Select internationalisation properties.
     i18n = {
       defaultLocale = "sv_SE.UTF-8";
@@ -90,11 +76,12 @@ in with lib;
     # Use latest kernel if unstable, default is pkgs.linuxPackages
     # https://search.nixos.org/options?channel=25.11&show=boot.kernelPackages&query=boot.kernelpackages
     boot.kernelPackages = lib.mkIf (!hostCfg.isStable) pkgs.linuxPackages_latest;
-    
+
     # List packages installed in system profile.
     # You can use https://search.nixos.org/ to find more packages (and options).
-    environment.systemPackages =
-      (with pkgs; [
+    environment.systemPackages = (
+      with pkgs;
+      [
         wget
         efibootmgr
         neofetch
@@ -113,26 +100,24 @@ in with lib;
         dig
         btrfs-progs
         stow # handle dotfiles in home directory
-        ssh-to-age #for sops-nix
+        ssh-to-age # for sops-nix
         mkpasswd
         gptfdisk
-        nix-tree #show nix disk usage
+        nix-tree # show nix disk usage
         gcc
         gnumake
         compsize
         pciutils
         usbutils
-        iperf3 #measure network performance
-        nurl #generate fetcher based on url
-      ])
-      ++
-      (with pkgs-stable; [
-        
-      ])
-      ++
-      (with pkgs-unstable; [
-        
-      ]);
+        iperf3 # measure network performance
+        nurl # generate fetcher based on url
+      ]
+    )
+    #      ++
+    #      (with pkgs-stable; [])
+    #      ++
+    #      (with pkgs-unstable; [])
+    ;
 
     fonts = {
       packages = with pkgs; [
@@ -142,7 +127,7 @@ in with lib;
         enable = true;
       };
     };
-    
+
     services = {
       emacs.defaultEditor = true;
       printing.enable = true;
@@ -158,7 +143,7 @@ in with lib;
       bash.interactiveShellInit = ''
         neofetch
       '';
-    
+
       gnupg.agent = {
         enable = true;
         #    pinentryFlavor = "curses";
@@ -166,21 +151,22 @@ in with lib;
       };
 
     };
-    
+
     hardware.enableRedistributableFirmware = true;
     hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-    
+
     # Open ports in the firewall.
     # networking.firewall.allowedTCPPorts = [ ... ];
     # networking.firewall.allowedUDPPorts = [ ... ];
     # Or disable the firewall altogether.
     # networking.firewall.enable = false;
-    
+
     nixpkgs.hostPlatform = hostCfg.system;
     networking = {
       hostName = hostCfg.hostname;
       useDHCP = lib.mkDefault true;
       enableIPv6 = false;
+      networkmanager.enable = true;
     };
 
     # This option defines the first version of NixOS you have installed on this particular machine,

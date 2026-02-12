@@ -1,10 +1,14 @@
-{ pkgs, inputs, ... }:
+{
+  #  pkgs,
+  #  inputs,
+  ...
+}:
 {
 
   imports = [
 
   ];
-  
+
   home = {
     stateVersion = "25.05";
     sessionVariables = {
@@ -14,4 +18,3 @@
   };
 
 }
-

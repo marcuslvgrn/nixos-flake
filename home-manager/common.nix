@@ -1,11 +1,11 @@
 {
-  config,
+#  config,
   lib,
   inputs,
   nixosConfig,
   userConfig,
-  pkgs,
-  pkgs-stable,
+#  pkgs,
+#  pkgs-stable,
   pkgs-unstable,
   ...
 }:
@@ -283,13 +283,13 @@
         action = "<cmd>lua local pos = vim.api.nvim_win_get_cursor(0); vim.cmd('%!nixfmt'); vim.api.nvim_win_set_cursor(0, pos)<CR>";
         options.desc = "Format current buffer";
       }
-      {
-        mode = "i";
-        key = "<Tab>";
-        action = "v:lua.require('cmp').visible() and require('cmp').confirm({select = true}) or require('luasnip').expand_or_jumpable() and '<Plug>luasnip-expand-or-jump' or '<Tab>'";
-        options.expr = true;
-        options.silent = true;
-      }
+#      {
+#        mode = "i";
+#        key = "<Tab>";
+#        action = "v:lua.require('cmp').visible() and require('cmp').confirm({select = true}) or require('luasnip').expand_or_jumpable() and '<Plug>luasnip-expand-or-jump' or '<Tab>'";
+#        options.expr = true;
+#        options.silent = true;
+#      }
       {
         mode = "s";
         key = "<Tab>";
