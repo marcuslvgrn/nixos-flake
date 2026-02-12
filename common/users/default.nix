@@ -15,7 +15,7 @@ let
 
   # Shared Home Manager config
   homeBase = config.users.homeBaseDir or "/home";
-  commonHomeConfig = ../home-manager/common.nix;
+  commonHomeConfig = ../../home-manager;
 
   # Normal + system user builder
   mkUser =
@@ -45,7 +45,7 @@ let
     username:
     let
       userConfig = usersByName.${username} or { };
-      userConfigPath = ../home-manager + "/${username}.nix";
+      userConfigPath = ../../home-manager/users + "/${username}.nix";
     in
     lib.mkIf (userConfig.normalUser or false) {
       imports = lib.optional (builtins.pathExists userConfigPath) userConfigPath ++ [ commonHomeConfig ];
@@ -87,7 +87,7 @@ in
       useUserPackages = true;
 
       users = lib.genAttrs normalUsers mkHomeUser // {
-        root.imports = [ ../home-manager/root.nix ];
+        root.imports = [ ../../home-manager/users/root.nix ];
       };
 
       extraSpecialArgs = {

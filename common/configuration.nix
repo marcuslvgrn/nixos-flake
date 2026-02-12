@@ -13,7 +13,7 @@ in
 with lib;
 {
   imports = [
-    ./users.nix
+    ./users
     ../services/create-swapfile.nix
   ];
 
