@@ -1,5 +1,5 @@
 {
-  inputs,
+  #inputs,
   config,
   lib,
   pkgs,
@@ -9,9 +9,8 @@
   ...
 }:
 let
-  userData = import ../../common/userData.nix;
+  userData = import ../../common/users/userData.nix;
   usersByName = userData.users;
-  commonHomeConfig = ../../home-manager/common.nix;
   #TODO, use mkHomeUser
   userConfig = usersByName."lovgren";
   nixosConfig = config;
@@ -39,12 +38,9 @@ with lib;
         sops
         nixfmt
       ])
-      ++ (with pkgs-stable; [
-
-      ])
-      ++ (with pkgs-unstable; [
-
-      ]);
+#      ++ (with pkgs-stable; [])
+#      ++ (with pkgs-unstable; [])
+      ;
 
     homebrew = {
       enable = true;
@@ -75,7 +71,7 @@ with lib;
       users = {
         lovgren = {
           imports = [
-            ../../home-manager/common.nix
+            ../../home-manager
           ];
           home = {
             homeDirectory = "/Users/lovgren";
