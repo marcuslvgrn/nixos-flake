@@ -1,7 +1,7 @@
 {
-# config,
+  # config,
   lib,
-# pkgs,
+  # pkgs,
   ...
 }:
 
@@ -21,13 +21,19 @@
   fileSystems."/" = {
     device = "/dev/disk/by-partlabel/NIXOSROOT";
     fsType = "btrfs";
-    options = [ "subvol=@" ];
+    options = [
+      "subvol=@"
+      "compress=zstd:1"
+    ];
   };
 
   fileSystems."/home" = {
     device = "/dev/disk/by-partlabel/NIXOSROOT";
     fsType = "btrfs";
-    options = [ "subvol=@home" ];
+    options = [
+      "subvol=@home"
+      "compress=zstd:1"
+    ];
   };
 
   fileSystems."/efi" = {

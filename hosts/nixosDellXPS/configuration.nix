@@ -3,19 +3,19 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 {
-#  config,
-#  lib,
+  #  config,
+  #  lib,
   hostCfg,
   pkgs,
-#  pkgs-stable,
-#  pkgs-unstable,
+  #  pkgs-stable,
+  #  pkgs-unstable,
   ...
 }:
 
 {
   imports = [
     ./hardware-configuration.nix
-    ../../common/configuration.nix
+    #    ../../common/configuration.nix
     ../../services/ath11k-suspend.nix
     ../../services/bluetooth-suspend.nix
   ];
@@ -50,18 +50,20 @@
       ];
     };
 
-    environment.systemPackages =
-      (with pkgs; [
+    environment.systemPackages = (
+      with pkgs;
+      [
         fprintd
         libva-utils
         vdpauinfo
         intel-gpu-tools
         bottles
         cifs-utils
-      ])
-#      ++ (with pkgs-stable; [])
-#      ++ (with pkgs-unstable; [])
-      ;
+      ]
+    )
+    #      ++ (with pkgs-stable; [])
+    #      ++ (with pkgs-unstable; [])
+    ;
 
     services.fprintd.enable = true;
     services.fprintd.tod.enable = true;
@@ -118,16 +120,18 @@
     };
     hardware.graphics = {
       enable = true;
-      extraPackages =
-        (with pkgs; [
+      extraPackages = (
+        with pkgs;
+        [
           intel-media-driver
           intel-vaapi-driver
           libvdpau-va-gl
           vpl-gpu-rt
-        ])
-#        ++ (with pkgs-stable; [])
-#        ++ (with pkgs-unstable; [])
-        ;
+        ]
+      )
+      #        ++ (with pkgs-stable; [])
+      #        ++ (with pkgs-unstable; [])
+      ;
     };
   };
 }
