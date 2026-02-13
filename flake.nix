@@ -155,8 +155,6 @@
               inputLib.darwinSystem {
                 system = hostCfg.system;
                 modules = [
-                  #load default.nix in the modules directory, will import all modules
-                  #./modules
                   #load the correct home-manager module depending on configuration
                   homeManagerModule
                   #host specific configuration
@@ -165,7 +163,6 @@
                 specialArgs = {
                   inherit
                     inputs
-                    self
                     hostCfg
                     pkgs
                     pkgs-stable
@@ -183,6 +180,8 @@
                   ./modules
                   #load the correct home-manager module depending on configuration
                   homeManagerModule
+                  #common configuration
+                  ./common/configuration.nix
                   #host specific configuration
                   ./hosts/${hostCfg.hostname}/configuration.nix
                 ];

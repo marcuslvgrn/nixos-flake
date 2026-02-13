@@ -1,1 +1,1 @@
-../../modules/default.nix
+../../common/moduleLoader/default.nix

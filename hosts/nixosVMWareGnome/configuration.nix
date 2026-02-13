@@ -1,15 +1,15 @@
-{ config, lib, pkgs, inputs, ... }:
-let
-  cfg = config.moduleCfg;
-in with lib;
+{
+  #  config,
+  #  lib,
+  #  pkgs,
+  # inputs,
+  ...
+}:
+#with lib;
 {
   imports = [
-    ../../common/configuration.nix
-#    ./hardware-configuration.nix
-    ./disk-config.nix
+    #./hardware-configuration.nix
   ];
-
-
   config = {
     passbolt = {
       enable = true;
@@ -19,9 +19,8 @@ in with lib;
       adminLastName = "Lövgren";
       gmailUserName = "marcuslvgrn@gmail.com";
     };
+    diskoConfig.enable = true;
     services.desktopManager.gnome.enable = true;
     virtualisation.vmware.guest.enable = true;
   };
-  
 }
-

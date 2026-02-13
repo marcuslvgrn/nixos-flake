@@ -3,8 +3,8 @@
   lib,
   hostCfg,
   pkgs,
-#  pkgs-stable,
-#  pkgs-unstable,
+  #  pkgs-stable,
+  #  pkgs-unstable,
   ...
 }:
 let
@@ -152,8 +152,21 @@ with lib;
 
     };
 
-    hardware.enableRedistributableFirmware = true;
+    hardware.enableRedistributableFirmware = lib.mkDefault true;
     hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+    boot.initrd.availableKernelModules = lib.mkDefault [
+      "ata_piix"
+      "mptspi"
+      "uhci_hcd"
+      "ehci_pci"
+      "ahci"
+      "sd_mod"
+      "sr_mod"
+      "nvme"
+    ];
+    boot.initrd.kernelModules = lib.mkDefault [ ];
+    boot.kernelModules = lib.mkDefault [ ];
+    boot.extraModulePackages = lib.mkDefault [ ];
 
     # Open ports in the firewall.
     # networking.firewall.allowedTCPPorts = [ ... ];
