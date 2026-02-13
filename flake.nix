@@ -156,7 +156,7 @@
                 system = hostCfg.system;
                 modules = [
                   #load default.nix in the modules directory, will import all modules
-                  ./modules
+                  #./modules
                   #load the correct home-manager module depending on configuration
                   homeManagerModule
                   #host specific configuration

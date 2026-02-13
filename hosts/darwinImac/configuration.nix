@@ -1,5 +1,5 @@
 {
-  #inputs,
+  inputs,
   config,
   lib,
   pkgs,
@@ -82,7 +82,7 @@ with lib;
         };
       };
       extraSpecialArgs = {
-        inherit usrcfg pkgs-stable pkgs-unstable nixosConfig userConfig;
+        inherit usrcfg pkgs-stable pkgs-unstable nixosConfig userConfig inputs;
       };
     };
   };
