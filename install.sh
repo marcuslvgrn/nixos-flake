@@ -34,7 +34,7 @@ $(sudo cp /run/secrets/ssh/keys/id_ed25519 "$temp/home/lovgren/.ssh/")
 $(sudo cp /run/secrets/ssh/keys/id_ed25519.pub "$temp/home/lovgren/.ssh/")
 
 #git repos
-install -d m755 "$temp/home/lovgren/git"
+install -d -m755 "$temp/home/lovgren/git"
 cp -r /home/lovgren/git/* "$temp/home/lovgren/git/"
 
 # Install NixOS to the host system with our secrets
