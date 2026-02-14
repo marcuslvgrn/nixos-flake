@@ -163,6 +163,7 @@
                 specialArgs = {
                   inherit
                     inputs
+                    self
                     hostCfg
                     pkgs
                     pkgs-stable

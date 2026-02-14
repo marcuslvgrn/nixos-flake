@@ -22,7 +22,8 @@
       viAlias = true;
       globals.mapleader = " ";
 
-      colorschemes.catppuccin.enable = true;
+      opts.termguicolors = true;
+      colorschemes.catppuccin.enable = lib.mkDefault true;
       plugins = {
         #      oil.enable = true;
         #      conform_nvim = {

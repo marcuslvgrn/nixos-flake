@@ -49,6 +49,15 @@ with lib;
       casks = [ ];
     };
 
+    fonts = {
+      packages = with pkgs; [
+        nerd-fonts.jetbrains-mono
+      ];
+#      fontconfig = {
+#        enable = true;
+#      };
+    };
+
     system.primaryUser = "lovgren";
 
     nix.settings.cores = 4;
@@ -73,6 +82,30 @@ with lib;
           imports = [
             ../../home-manager
           ];
+          programs.nixvim = {
+            colorschemes = {
+              catppuccin.enable = false;
+              catppuccin.settings.flavour = "mocha";
+              catppuccin.settings.transparent_background = false;
+            };
+            opts = {
+              background = "dark";
+            };
+            extraConfig = ''
+    -- Enable truecolor
+    vim.opt.termguicolors = true
+    vim.opt.background = "dark"
+
+    -- Force background everywhere
+     vim.defer_fn(function()
+      local hl = vim.api.nvim_set_hl
+      hl(0, "Normal", { bg = "#1e1e2e" })
+      hl(0, "NormalFloat", { bg = "#1e1e2e" })
+      hl(0, "EndOfBuffer", { bg = "#1e1e2e" })
+    end, 50)
+            '';
+          };
+          
           home = {
             homeDirectory = "/Users/lovgren";
             shellAliases = {
