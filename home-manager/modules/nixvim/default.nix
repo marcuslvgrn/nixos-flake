@@ -4,7 +4,7 @@
   inputs,
   #  nixosConfig,
   #  userConfig,
-  #  pkgs,
+  pkgs,
   #  pkgs-stable,
   #  pkgs-unstable,
   ...
@@ -25,6 +25,10 @@
       opts.termguicolors = true;
       colorschemes.catppuccin.enable = lib.mkDefault true;
       plugins = {
+        cmp-buffer.enable = true;
+        cmp-path.enable = true;
+        cmp_luasnip.enable = true;
+        cmp-nvim-lsp.enable = true;
         #      oil.enable = true;
         #      conform_nvim = {
         #        enable = true;
@@ -73,16 +77,34 @@
           };
         };
         lualine.enable = true;
-        lua_snip.enable = true;
-        nvim_cmp = {
+        luasnip = {
+          enable = true;
+          fromVscode = [
+            {
+              paths = "${pkgs.vimPlugins.friendly-snippets}";
+            }
+          ];
+        };
+        cmp = {
           enable = true;
 
-          snippet_support = true; # allows LuaSnip snippets
-          sources = {
-            lsp = true; # completions from LSP
-            buffer = true; # completions from buffer text
-            path = true; # completions from file paths
-            luasnip = true; # snippet completions
+          settings = {
+            snippet = {
+              expand = "function(args) require('luasnip').lsp_expand(args.body) end";
+            };
+
+            completion = {
+              autocomplete = [
+                "InsertEnter"
+                "TextChanged"
+              ];
+            };
+
+            sources = [
+              { name = "nvim_lsp"; }
+              { name = "luasnip"; } # ← THIS makes snippets appear
+              { name = "buffer"; }
+            ];
           };
         };
         ripgrep.enable = true;
@@ -171,6 +193,12 @@
         }
         {
           mode = "n";
+          key = "<leader>lg";
+          action = "<cmd>Telescope live_grep<CR>";
+          options.silent = false;
+        }
+        {
+          mode = "n";
           key = "<leader>nt";
           action = "<cmd>Neotree toggle<CR>";
           options.silent = false;
@@ -187,7 +215,27 @@
           action = "<cmd>lua local pos = vim.api.nvim_win_get_cursor(0); vim.cmd('%!nixfmt'); vim.api.nvim_win_set_cursor(0, pos)<CR>";
           options.desc = "Format current buffer";
         }
-        #      {
+        {
+          mode = "i";
+          key = "<C-k>";
+          action = "<cmd>lua require('luasnip').expand()<CR>";
+        }
+        {
+          mode = [
+            "i"
+            "s"
+          ];
+          key = "<C-l>";
+          action = "<cmd>lua require('luasnip').jump(1)<CR>";
+        }
+        {
+          mode = [
+            "i"
+            "s"
+          ];
+          key = "<C-h>";
+          action = "<cmd>lua require('luasnip').jump(-1)<CR>";
+        } # {
         #        mode = "i";
         #        key = "<Tab>";
         #        action = "v:lua.require('cmp').visible() and require('cmp').confirm({select = true}) or require('luasnip').expand_or_jumpable() and '<Plug>luasnip-expand-or-jump' or '<Tab>'";

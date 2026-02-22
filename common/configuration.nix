@@ -111,6 +111,7 @@ with lib;
         usbutils
         iperf3 # measure network performance
         nurl # generate fetcher based on url
+        ripgrep
       ]
     )
     #      ++
