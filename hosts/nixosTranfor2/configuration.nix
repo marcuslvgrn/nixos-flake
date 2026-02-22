@@ -13,9 +13,9 @@ in
 {
 
   imports = [
-    ../../common/configuration.nix
+    #    ../../common/configuration.nix
     ./hardware-configuration.nix
-    ./disk-config.nix
+    #./disk-config.nix
   ];
 
   config = {
