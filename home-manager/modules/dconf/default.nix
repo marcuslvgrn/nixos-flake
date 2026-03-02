@@ -63,7 +63,9 @@ with lib;
         "org.gnome.Nautilus.desktop"
         "org.gnome.Console.desktop"
         "firefox.desktop"
+        "spotify.desktop"
         "emacs.desktop"
+        "proton.vpn.app.gtk.desktop"
         "org.gnome.Settings.desktop"
       ];
     };
