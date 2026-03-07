@@ -37,6 +37,7 @@ with lib;
         stow
         sops
         nixfmt
+        iperf3
       ])
 #      ++ (with pkgs-stable; [])
 #      ++ (with pkgs-unstable; [])
