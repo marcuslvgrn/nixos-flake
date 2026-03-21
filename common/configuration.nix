@@ -49,9 +49,9 @@ with lib;
         max-free = ${toString (1024 * 1024 * 1024)}
       '';
 
-      #nix.settings.auto-optimise-store = true; # optimize store on every build
-      optimise.automatic = true;
-      optimise.dates = [ "21:00" ]; # Optional; allows customizing optimisation schedule
+      settings.auto-optimise-store = true; # optimize store on every build
+      #optimise.automatic = true;
+      #optimise.dates = [ "21:00" ]; # Optional; allows customizing optimisation schedule
 
       # Enable the Flakes feature and the accompanying new nix command-line tool
       settings.experimental-features = [
@@ -84,7 +84,7 @@ with lib;
       [
         wget
         efibootmgr
-        neofetch
+        fastfetch
         gitFull
         #GPG
         age
@@ -142,7 +142,7 @@ with lib;
       # Call commands and interactive bash start
       # Commands are separated by \n
       bash.interactiveShellInit = ''
-        neofetch
+        fastfetch
       '';
 
       gnupg.agent = {

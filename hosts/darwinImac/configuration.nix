@@ -33,7 +33,7 @@ with lib;
       (with pkgs; [
         vim
         emacs
-        neofetch
+        fastfetch
         stow
         sops
         nixfmt
