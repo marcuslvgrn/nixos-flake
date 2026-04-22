@@ -27,7 +27,7 @@ in
         cups
         spotify
         bitwarden-desktop
-        protonvpn-gui
+        proton-vpn
         chromium
         microsoft-edge
         yt-dlp
