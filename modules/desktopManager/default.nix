@@ -29,7 +29,7 @@ in
         bitwarden-desktop
         protonvpn-gui
         chromium
-        brave
+        microsoft-edge
         yt-dlp
         nextcloud-client
         bluez
