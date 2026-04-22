@@ -43,6 +43,9 @@ with lib;
         iagno # go game
         tali # poker game
         totem # video player
+        gnome-maps
+        gnome-weather
+        orca
       ]
     )
     #    ++ (with pkgs-stable; [])
@@ -57,8 +60,6 @@ with lib;
         gnomeExtensions.appindicator
         gnomeExtensions.power-off-options
         gnome-tweaks
-        gnome-boxes
-        linssid
         vlc
         gparted
         dconf2nix

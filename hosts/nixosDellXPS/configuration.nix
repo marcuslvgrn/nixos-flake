@@ -57,7 +57,6 @@
         libva-utils
         vdpauinfo
         intel-gpu-tools
-        bottles
         cifs-utils
       ]
     )
