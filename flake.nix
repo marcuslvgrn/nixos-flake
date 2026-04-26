@@ -114,6 +114,7 @@
           overlays = [
             inputs.nur.overlays.default
             self.overlays.firefox
+#            self.overlays.technitium
           ];
           allowUnfree = true;
           # ------------------------------------------------------------
@@ -201,6 +202,7 @@
     in
     {
       overlays.firefox = import ./overlays/firefox.nix;
+      overlays.technitium = import ./overlays/technitium-overlay.nix;
       #Assemble all the system configurations, looping through the variable configurations
       #by calling the function mkSystem on each entry. Separate nixos and darwin
       nixosConfigurations = builtins.listToAttrs (map mkSystem nixosHosts);
