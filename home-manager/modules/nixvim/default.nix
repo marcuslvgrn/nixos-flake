@@ -7,12 +7,18 @@
   pkgs,
   #  pkgs-stable,
   #  pkgs-unstable,
+  hostCfg,
   ...
 }:
 
 {
   imports = [
-    inputs.nixvim.homeModules.nixvim
+    (
+      if hostCfg.isStable then
+        inputs.nixvim.homeModules.nixvim
+      else
+        inputs.nixvim-unstable.homeModules.nixvim
+    )
   ];
 
   programs = lib.mkIf config.nixvimEnable {
@@ -21,6 +27,8 @@
       vimAlias = true;
       viAlias = true;
       globals.mapleader = " ";
+
+      nixpkgs.source = if hostCfg.isStable then inputs.nixpkgs else inputs.nixpkgs-unstable;
 
       opts.termguicolors = true;
       colorschemes.catppuccin.enable = lib.mkDefault true;

@@ -168,6 +168,7 @@ with lib;
     boot.initrd.kernelModules = lib.mkDefault [ ];
     boot.kernelModules = lib.mkDefault [ ];
     boot.extraModulePackages = lib.mkDefault [ ];
+    boot.zfs.forceImportRoot = false;
 
     # Open ports in the firewall.
     # networking.firewall.allowedTCPPorts = [ ... ];

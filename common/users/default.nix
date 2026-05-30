@@ -5,6 +5,7 @@
   pkgs,
   pkgs-stable,
   pkgs-unstable,
+  hostCfg,
   ...
 }:
 
@@ -51,7 +52,7 @@ let
       imports = lib.optional (builtins.pathExists userConfigPath) userConfigPath ++ [ commonHomeConfig ];
 
       _module.args = {
-        inherit userConfig;
+        inherit userConfig hostCfg;
       };
     };
 
@@ -96,6 +97,7 @@ in
           pkgs
           pkgs-stable
           pkgs-unstable
+          hostCfg
           ;
         nixosConfig = config;
       };
