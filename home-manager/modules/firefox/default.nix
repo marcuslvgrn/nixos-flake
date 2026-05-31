@@ -12,6 +12,8 @@
     #Let home-manager manage firefox, but only when installed in nixos
     enable = true;
 
+    configPath = ".mozilla/firefox";
+
     languagePacks = [
       "sv-SE"
       "en-US"
