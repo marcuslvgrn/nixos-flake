@@ -21,6 +21,10 @@
     )
   ];
 
+  home.packages = with pkgs; [
+    ripgrep
+  ];
+
   programs = lib.mkIf config.nixvimEnable {
     nixvim = {
       enable = true;
@@ -61,7 +65,7 @@
             };
           };
         };
-        "indent_blankline" = {
+        "indent-blankline" = {
           enable = true;
           settings = {
             indent = {
@@ -115,7 +119,6 @@
             ];
           };
         };
-        ripgrep.enable = true;
         telescope = {
           enable = true;
         };
@@ -142,16 +145,19 @@
               width = 30;
             };
           };
-          auto_open = true;
         };
         treesitter.enable = true;
         web-devicons.enable = true;
       };
-      extraInit = ''
+      extraConfigLua = ''
         vim.api.nvim_create_autocmd("VimEnter", {
           callback = function()
-            require("neo-tree.command").execute({ toggle = true, dir = vim.loop.cwd() })
-        end
+            require("neo-tree.command").execute({
+              toggle = true,
+              dir = vim.loop.cwd()
+            })
+          end,
+        })
       '';
       extraPlugins = [
 
