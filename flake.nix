@@ -118,7 +118,7 @@
           overlays = [
             inputs.nur.overlays.default
             self.overlays.firefox
-#            self.overlays.technitium
+            #            self.overlays.technitium
           ];
           allowUnfree = true;
           # ------------------------------------------------------------
@@ -127,11 +127,21 @@
           pkgs-stable = import inputs.nixpkgs {
             system = hostCfg.system;
             config.allowUnfree = allowUnfree;
+            config = {
+              permittedInsecurePackages = [
+                "electron-39.8.10"
+              ];
+            };
             inherit overlays;
           };
           pkgs-unstable = import inputs.nixpkgs-unstable {
             system = hostCfg.system;
             config.allowUnfree = allowUnfree;
+            config = {
+              permittedInsecurePackages = [
+                "electron-39.8.10"
+              ];
+            };
             inherit overlays;
           };
           # This is the chosen nixpkg based on configuration
