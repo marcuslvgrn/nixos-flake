@@ -37,6 +37,7 @@ in
         libinput
         gimp
         libreoffice
+        brave
       ])
       #      ++ (with pkgs-stable; [])
       ++ (with pkgs-unstable; [ libinput ]);

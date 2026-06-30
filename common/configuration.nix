@@ -71,11 +71,12 @@ with lib;
     console = {
       font = "Lat2-Terminus16";
       keyMap = "sv-latin1";
+      earlySetup = true;
     };
 
     # Use latest kernel if unstable, default is pkgs.linuxPackages
     # https://search.nixos.org/options?channel=25.11&show=boot.kernelPackages&query=boot.kernelpackages
-#    boot.kernelPackages = lib.mkIf (!hostCfg.isStable) pkgs.linuxPackages_latest;
+    #    boot.kernelPackages = lib.mkIf (!hostCfg.isStable) pkgs.linuxPackages_latest;
 
     # List packages installed in system profile.
     # You can use https://search.nixos.org/ to find more packages (and options).
