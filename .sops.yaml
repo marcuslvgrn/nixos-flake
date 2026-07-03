@@ -1,7 +1,7 @@
 keys:
   - &root age188wtgt8zvfvmrdls7t5kmr4z9fjfapzpsekzlr37mvmp9dv539uq8dq3ek
 creation_rules:
-  - path_regex: secrets/root-secrets.yaml
+  - path_regex: modules/sops/root-secrets.yaml
     key_groups:
     - age:
       - *root

@@ -1,8 +1,8 @@
 {
   config,
-#  pkgs,
+  #  pkgs,
   lib,
-#  hostCfg,
+  #  hostCfg,
   inputLib,
   ...
 }:
@@ -13,9 +13,9 @@ let
     modules = [
       (
         {
-#          config,
-#          pkgs,
-#          lib,
+          #          config,
+          #          pkgs,
+          #          lib,
           modulesPath,
           ...
         }:
@@ -33,10 +33,9 @@ let
                 KbdInteractiveAuthentication = false;
               };
             };
-
-            #          users.users.root.openssh.authorizedKeys.keys = [
-            #            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI..."
-            #          ];
+            users.users.root.openssh.authorizedKeys.keyFiles = [
+              config.sops.secrets."ssh/authorized_keys/root".path
+            ];
           };
         }
       )
