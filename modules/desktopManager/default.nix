@@ -29,6 +29,7 @@ in
         bitwarden-desktop
         proton-vpn
         chromium
+        brave
         microsoft-edge
         yt-dlp
         nextcloud-client
@@ -38,6 +39,7 @@ in
         gimp
         libreoffice
         brave
+        cheese
       ])
       #      ++ (with pkgs-stable; [])
       ++ (with pkgs-unstable; [ libinput ]);

@@ -46,6 +46,8 @@ with lib;
         gnome-maps
         gnome-weather
         orca
+        snapshot
+        yelp
       ]
     )
     #    ++ (with pkgs-stable; [])
