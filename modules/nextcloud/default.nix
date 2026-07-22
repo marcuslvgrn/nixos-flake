@@ -300,6 +300,7 @@ with lib;
           ${occ}/bin/nextcloud-occ config:app:set files_antivirus av_mode --value "socket"
           ${occ}/bin/nextcloud-occ config:app:set files_antivirus av_socket --value "/run/clamav/clamd.ctl"
           ${occ}/bin/nextcloud-occ config:app:set files_antivirus av_socket --value "/run/clamav/clamd.ctl"
+          ${occ}/bin/nextcloud-occ app:enable assistant
         '';
         serviceConfig = {
           Type = "oneshot";
