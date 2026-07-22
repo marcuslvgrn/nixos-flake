@@ -26,7 +26,7 @@ in
       (with pkgs; [
         cups
         spotify
-        bitwarden-desktop
+        #bitwarden-desktop
         proton-vpn
         chromium
         brave
