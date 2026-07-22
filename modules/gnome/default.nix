@@ -2,8 +2,8 @@
   config,
   lib,
   pkgs,
-#  pkgs-stable,
-#  pkgs-unstable,
+  #  pkgs-stable,
+  #  pkgs-unstable,
   ...
 }:
 let
@@ -23,6 +23,7 @@ with lib;
       xserver.enable = true;
       gnome.gnome-browser-connector.enable = true;
       displayManager.gdm.enable = true;
+      gnome.gnome-keyring.enable = true;
     };
 
     # Exclude some packages
