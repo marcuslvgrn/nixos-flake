@@ -147,6 +147,17 @@
           };
         };
         treesitter.enable = true;
+        treesitter.grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
+          nix
+          lua
+          bash
+          markdown
+          vim
+          vimdoc
+          query
+          yaml
+          json
+        ];
         web-devicons.enable = true;
       };
       extraConfigLua = ''
