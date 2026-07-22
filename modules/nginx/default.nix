@@ -1,12 +1,12 @@
 {
   config,
-#  pkgs,
+  #  pkgs,
   lib,
   ...
 }:
 let
   cfg = config.nginxExternal;
-#  serviceCfg = config.services.nginx;
+  #  serviceCfg = config.services.nginx;
   # Define all your domains and backend services here 👇
   proxyHosts = {
     "mlmodem.dynv6.net" = {
@@ -20,6 +20,12 @@ let
       recommendedProxySettings = true;
       recommendedTlsSettings = false;
       #      locationPath = "/router/";
+    };
+    "mllinksys.dynv6.net" = {
+      target = "http://192.168.0.3:80";
+      recommendedProxySettings = true;
+      recommendedTlsSettings = true;
+      #      locationPath = "/airsonic/";
     };
     "mlproxmox.dynv6.net" = {
       target = "https://192.168.0.10:8006";
@@ -108,6 +114,7 @@ with lib;
         "mlrustdesk.dynv6.net"
         "mlsynology.dynv6.net"
         "mlwebmin.dynv6.net"
+        "mllinksys.dynv6.net"
       ];
       nginx = {
         enable = true;
