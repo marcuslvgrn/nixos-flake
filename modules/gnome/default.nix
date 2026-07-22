@@ -84,6 +84,7 @@ with lib;
             appindicator.extensionUuid
             hide-top-bar.extensionUuid
             hibernate-status-button.extensionUuid
+            power-off-options.extensionUuid
           ]
         )
         #          ++ (with pkgs-stable.gnomeExtensions; [])
