@@ -113,6 +113,7 @@ with lib;
         iperf3 # measure network performance
         nurl # generate fetcher based on url
         ripgrep
+        ncdu
       ]
     )
     #      ++
