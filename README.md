@@ -29,6 +29,12 @@ garbage collect, delete all generations of profiles older than the specified amo
 $nix-collect-garbage --delete-older-than <period>
 ```
 
+ncdu to check disk usage per folder
+```
+ncdu /nix
+```
+
+
 Use nurl to generate fetcher
 ```sh
 $ nurl https://github.com/airsonic-advanced/airsonic-advanced/releases/download/11.0.0-SNAPSHOT.20240424015024/airsonic.war
