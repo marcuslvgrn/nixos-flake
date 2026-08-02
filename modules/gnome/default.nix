@@ -67,6 +67,7 @@ with lib;
         gparted
         dconf2nix
         dconf-editor
+        papers
       ]
     )
     #    ++ (with pkgs-stable; [])

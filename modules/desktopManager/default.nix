@@ -40,6 +40,7 @@ in
         libreoffice
         brave
         cheese
+        fragments
       ])
       #      ++ (with pkgs-stable; [])
       ++ (with pkgs-unstable; [ libinput ]);
