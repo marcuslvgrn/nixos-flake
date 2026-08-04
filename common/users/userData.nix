@@ -10,7 +10,7 @@
         "rtc"
       ];
       email = "marcus.lovgren@proton.me";
-      gituser = "marcus.lovgren";
+      gituser = "marcuslvgrn";
       uid = 1000;
       normalUser = true;
       systemUser = false;
