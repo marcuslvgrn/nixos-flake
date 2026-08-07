@@ -3,10 +3,10 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 {
-#  config,
-#  lib,
+  #  config,
+  #  lib,
   hostCfg,
-#  pkgs,
+  #  pkgs,
   ...
 }:
 
@@ -30,7 +30,8 @@
 
     swapDevices = [
       {
-        device = "/dev/disk/by-uuid/5737d59b-b0f2-4de9-b4e3-b1f52b723ab0";
+        device = "/swap/swapfile";
+        size = 8 * 1024;
       }
     ];
 
@@ -42,29 +43,19 @@
 
     #Specify hibernation options
     boot.kernelParams = [
-      "resume=UUID=5737d59b-b0f2-4de9-b4e3-b1f52b723ab0"
+      "resume_offset=8628224"
       "kvm.enable_virt_at_load=0"
     ];
-    boot.resumeDevice = "/dev/disk/by-uuid/5737d59b-b0f2-4de9-b4e3-b1f52b723ab0";
+    boot.resumeDevice = "/dev/disk/by-uuid/4aabc80c-9556-4323-862e-17a0452e695a";
 
     #Power management
     powerManagement.enable = true;
     services.power-profiles-daemon.enable = true;
-    services.logind =
-      if hostCfg.isStable then
-        {
-          #    lidSwitch = "suspend-then-hibernate";
-          lidSwitch = "hibernate";
-          powerKey = "hibernate";
-          powerKeyLongPress = "poweroff";
-        }
-      else
-        {
-          #    settings.Login.HandleLidSwitch = "suspend-then-hibernate";
-          settings.Login.HandleLidSwitch = "hibernate";
-          settings.Login.HandlePowerKey = "hibernate";
-          settings.Login.HandlePowerKeyLongPress = "poweroff";
-        };
+    services.logind = {
+      settings.Login.HandleLidSwitch = "hibernate";
+      settings.Login.HandlePowerKey = "ignore";
+      settings.Login.HandlePowerKeyLongPress = "poweroff";
+    };
 
     #  # Suspend first
     #  boot.kernelParams = ["mem_sleep_default=deep"];

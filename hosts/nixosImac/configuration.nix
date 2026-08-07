@@ -47,12 +47,6 @@ with lib;
   #Power management
   powerManagement.enable = true;
   services.power-profiles-daemon.enable = true;
-#  services.logind = if hostCfg.isStable then {
-##    lidSwitch = "suspend-then-hibernate";
-#    lidSwitch = "hibernate";
-#    powerKey = "hibernate";
-#    powerKeyLongPress = "poweroff";
-#  } else {
   services.logind = {
 #    settings.Login.HandleLidSwitch = "suspend-then-hibernate";
     settings.Login.HandleLidSwitch = "hibernate";

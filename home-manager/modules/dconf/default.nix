@@ -42,7 +42,7 @@ with lib;
     };
 
     "org/gnome/settings-daemon/plugins/power" = {
-      power-button-action = "hibernate";
+      power-button-action = "ignore";
     };
 
     "org/gnome/Console" = {

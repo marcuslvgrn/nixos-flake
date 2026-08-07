@@ -84,21 +84,12 @@
     powerManagement.enable = true;
     services.power-profiles-daemon.enable = true;
     #In Gnome, power key behavior is set by the settings app!
-    services.logind =
-      if hostCfg.isStable then
-        {
-          #    lidSwitch = "suspend-then-hibernate";
-          lidSwitch = "hibernate";
-          #    powerKey = "hibernate";
-          powerKeyLongPress = "poweroff";
-        }
-      else
-        {
-          #    settings.Login.HandleLidSwitch = "suspend-then-hibernate";
-          settings.Login.HandleLidSwitch = "hibernate";
-          #    settings.Login.HandlePowerKey = "hibernate";
-          settings.Login.HandlePowerKeyLongPress = "poweroff";
-        };
+    services.logind = {
+      #    settings.Login.HandleLidSwitch = "suspend-then-hibernate";
+      settings.Login.HandleLidSwitch = "hibernate";
+      #    settings.Login.HandlePowerKey = "hibernate";
+      settings.Login.HandlePowerKeyLongPress = "poweroff";
+    };
 
     #  # Suspend first
     #  boot.kernelParams = ["mem_sleep_default=deep"];

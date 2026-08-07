@@ -1,45 +1,68 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   imports = [ ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
+  boot.initrd.availableKernelModules = [
+    "xhci_pci"
+    "nvme"
+    "usbhid"
+    "usb_storage"
+    "sd_mod"
+  ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/4aabc80c-9556-4323-862e-17a0452e695a";
-      fsType = "btrfs";
-      options = [
-        "subvol=@"
-        "compress=zstd:1"
-      ];
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/4aabc80c-9556-4323-862e-17a0452e695a";
+    fsType = "btrfs";
+    options = [
+      "subvol=@"
+      "compress=zstd:1"
+    ];
+  };
 
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/4aabc80c-9556-4323-862e-17a0452e695a";
-      fsType = "btrfs";
-      options = [
-        "subvol=@home"
-        "compress=zstd:1"
-      ];
-    };
+  fileSystems."/swap" = {
+    device = "/dev/disk/by-uuid/4aabc80c-9556-4323-862e-17a0452e695a";
+    fsType = "btrfs";
+    options = [
+      "subvol=@swap"
+      "compress=none"
+    ];
+  };
 
-  fileSystems."/var/log" =
-    { device = "/dev/disk/by-uuid/4aabc80c-9556-4323-862e-17a0452e695a";
-      fsType = "btrfs";
-      options = [
-        "subvol=@var_log"
-        "compress=zstd:1"
-      ];
-    };
+  fileSystems."/home" = {
+    device = "/dev/disk/by-uuid/4aabc80c-9556-4323-862e-17a0452e695a";
+    fsType = "btrfs";
+    options = [
+      "subvol=@home"
+      "compress=zstd:1"
+    ];
+  };
 
-  fileSystems."/efi" =
-    { device = "/dev/disk/by-uuid/EB52-3F8D";
-      fsType = "vfat";
-      options = [ "fmask=0022" "dmask=0022" ];
-    };
+  fileSystems."/var/log" = {
+    device = "/dev/disk/by-uuid/4aabc80c-9556-4323-862e-17a0452e695a";
+    fsType = "btrfs";
+    options = [
+      "subvol=@var_log"
+      "compress=zstd:1"
+    ];
+  };
+
+  fileSystems."/efi" = {
+    device = "/dev/disk/by-uuid/EB52-3F8D";
+    fsType = "vfat";
+    options = [
+      "fmask=0022"
+      "dmask=0022"
+    ];
+  };
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
