@@ -1,10 +1,14 @@
-{ lib, inputs, ... }:
+{
+  #lib,
+  inputs,
+  ...
+}:
 {
   #load the module
   imports = [
     inputs.disko.nixosModules.disko
   ];
-  
+
   disko.devices = {
     disk.disk1 = {
       device = "/dev/sda";
@@ -36,7 +40,7 @@
                 };
                 # Subvolume name is the same as the mountpoint
                 "/home" = {
-#                  mountOptions = [ "compress=zstd" ];
+                  #                  mountOptions = [ "compress=zstd" ];
                   mountpoint = "/home";
                 };
                 # Subvolume for the swapfile

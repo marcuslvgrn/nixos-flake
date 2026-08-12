@@ -5,7 +5,7 @@
 {
   #  config,
   #  lib,
-  hostCfg,
+  #  hostCfg,
   #  pkgs,
   ...
 }:
@@ -13,7 +13,6 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../common/configuration.nix
   ];
 
   config = {
@@ -21,32 +20,11 @@
     virtualisation.virtualbox.host.enable = true;
     ssdEnable = true;
 
-    #  boot.loader.grub.extraEntries = ''
-    #    menuentry "Arch" {
-    #      set root=(hd0,gpt1)
-    #      chainloader /efi/grub/grubx64.efi
-    #    }
-    #  '';
-
-    swapDevices = [
-      {
-        device = "/swap/swapfile";
-        size = 8 * 1024;
-      }
-    ];
-
     # Autologin a user
     services.displayManager = {
       autoLogin.enable = true;
       autoLogin.user = "lovgren";
     };
-
-    #Specify hibernation options
-    boot.kernelParams = [
-      "resume_offset=8628224"
-      "kvm.enable_virt_at_load=0"
-    ];
-    boot.resumeDevice = "/dev/disk/by-uuid/4aabc80c-9556-4323-862e-17a0452e695a";
 
     #Power management
     powerManagement.enable = true;

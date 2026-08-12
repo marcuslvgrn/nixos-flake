@@ -1,36 +1,50 @@
-{ config, lib, pkgs, ... }:
+{
+  #config,
+  lib,
+  #pkgs,
+  ...
+}:
 
 {
   imports = [ ];
 
-  boot.initrd.availableKernelModules = [ "ahci" "xhci_pci" "sd_mod" "sdhci_acpi" "rtsx_pci_sdmmc" ];
+  boot.initrd.availableKernelModules = [
+    "ahci"
+    "xhci_pci"
+    "sd_mod"
+    "sdhci_acpi"
+    "rtsx_pci_sdmmc"
+  ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/ae0525ee-f0d4-42a9-b6c6-691de903b601";
-      fsType = "btrfs";
-      options = [ "subvol=rootfs" ];
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/ae0525ee-f0d4-42a9-b6c6-691de903b601";
+    fsType = "btrfs";
+    options = [ "subvol=rootfs" ];
+  };
 
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/ae0525ee-f0d4-42a9-b6c6-691de903b601";
-      fsType = "btrfs";
-      options = [ "subvol=home" ];
-    };
+  fileSystems."/home" = {
+    device = "/dev/disk/by-uuid/ae0525ee-f0d4-42a9-b6c6-691de903b601";
+    fsType = "btrfs";
+    options = [ "subvol=home" ];
+  };
 
-  fileSystems."/swap" =
-    { device = "/dev/disk/by-uuid/ae0525ee-f0d4-42a9-b6c6-691de903b601";
-      fsType = "btrfs";
-      options = [ "subvol=swap" ];
-    };
+  fileSystems."/swap" = {
+    device = "/dev/disk/by-uuid/ae0525ee-f0d4-42a9-b6c6-691de903b601";
+    fsType = "btrfs";
+    options = [ "subvol=swap" ];
+  };
 
-  fileSystems."/efi" =
-    { device = "/dev/disk/by-uuid/FEE6-261B";
-      fsType = "vfat";
-      options = [ "fmask=0022" "dmask=0022" ];
-    };
+  fileSystems."/efi" = {
+    device = "/dev/disk/by-uuid/FEE6-261B";
+    fsType = "vfat";
+    options = [
+      "fmask=0022"
+      "dmask=0022"
+    ];
+  };
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

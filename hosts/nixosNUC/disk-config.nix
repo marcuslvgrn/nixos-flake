@@ -1,10 +1,15 @@
-{ pkgs, lib, inputs, ... }:
+{
+  #pkgs,
+  #lib,
+  inputs,
+  ...
+}:
 {
   #load the module
   imports = [
     inputs.disko.nixosModules.disko
   ];
-  
+
   disko.devices = {
     disk.disk1 = {
       device = "/dev/disk/by-id/ata-INTEL_SSDSC2CT120A3_CVMP21540489120BGN";
@@ -29,10 +34,10 @@
             content = {
               type = "btrfs";
               extraArgs = [
-#                "--force"
-#                "--data single"
-#                "--metadata raid1"
-#                "/dev/disk/by-partlabel/ROOT2"
+                #                "--force"
+                #                "--data single"
+                #                "--metadata raid1"
+                #                "/dev/disk/by-partlabel/ROOT2"
               ];
               # Subvolumes must set a mountpoint in order to be mounted,
               # unless their parent is mounted

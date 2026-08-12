@@ -18,6 +18,37 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
+  boot.loader.grub.extraEntries = ''
+    menuentry "Arch" {
+      set root=(hd0,gpt1)
+      chainloader /efi/arch/grubx64.efi
+    }
+  '';
+
+  swapDevices = [
+    {
+      device = "/swap/swapfile";
+      size = 16 * 1024;
+    }
+  ];
+
+  fileSystems."/mnt/nixosTranfor" = {
+    device = "//nixosTranfor/data";
+    fsType = "cifs";
+    options = [
+      "user,users"
+      "uid=1000,gid=100"
+      "file_mode=0664,dir_mode=0775"
+    ];
+  };
+
+  #Specify hibernation options
+  boot.kernelParams = [
+    "resume_offset=2823130"
+    "kvm.enable_virt_at_load=0"
+  ];
+  boot.resumeDevice = "/dev/disk/by-partlabel/NIXOSROOT";
+
   fileSystems."/" = {
     device = "/dev/disk/by-partlabel/NIXOSROOT";
     fsType = "btrfs";
@@ -26,7 +57,7 @@
       "compress=zstd:1"
     ];
   };
-  
+
   fileSystems."/swap" = {
     device = "/dev/disk/by-partlabel/NIXOSROOT";
     fsType = "btrfs";
