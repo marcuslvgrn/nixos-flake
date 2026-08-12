@@ -26,6 +26,15 @@
       "compress=zstd:1"
     ];
   };
+  
+  fileSystems."/swap" = {
+    device = "/dev/disk/by-partlabel/NIXOSROOT";
+    fsType = "btrfs";
+    options = [
+      "subvol=@swap"
+      "compress=none"
+    ];
+  };
 
   fileSystems."/home" = {
     device = "/dev/disk/by-partlabel/NIXOSROOT";

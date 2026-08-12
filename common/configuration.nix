@@ -114,6 +114,7 @@ with lib;
         nurl # generate fetcher based on url
         ripgrep
         ncdu
+        e2fsprogs
       ]
     )
     #      ++

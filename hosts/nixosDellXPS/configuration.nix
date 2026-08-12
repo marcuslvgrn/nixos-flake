@@ -5,7 +5,7 @@
 {
   #  config,
   #  lib,
-  hostCfg,
+  #  hostCfg,
   pkgs,
   #  pkgs-stable,
   #  pkgs-unstable,
@@ -75,7 +75,7 @@
 
     #Specify hibernation options
     boot.kernelParams = [
-      "resume_offset=4838900"
+      "resume_offset=2823130"
       "kvm.enable_virt_at_load=0"
     ];
     boot.resumeDevice = "/dev/disk/by-partlabel/NIXOSROOT";
