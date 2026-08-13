@@ -1,9 +1,9 @@
 {
-#  config,
+  #  config,
   lib,
   pkgs,
-#  pkgs-stable,
-#  pkgs-unstable,
+  #  pkgs-stable,
+  #  pkgs-unstable,
   ...
 }:
 with lib;
@@ -43,29 +43,7 @@ in
     };
 
     nixpkgs.overlays = [
-      #    # Emacs GTK2 override
-      #    (final: prev: {
-      #      emacs = prev.emacs.override {
-      #        withGTK2 = true;
-      #        withGTK3 = false;
-      #      };
-      #    })
     ];
-
-    #let
-    #  # Overlay to force GTK2 for Emacs
-    #  overlay = self: super: {
-    #    emacs = super.emacs.override {
-    #      withGTK2 = true;
-    #      withGTK3 = false;
-    #    };
-    #  };
-    #
-    #  pkgsHost = import <nixpkgs> {
-    #    system = builtins.currentSystem;
-    #    overlays = [ overlay ];
-    #  };
-    #in {
 
     services = {
       airsonic.enable = true;
@@ -91,23 +69,22 @@ in
     };
 
     #Packages only installed on this host
-    environment.systemPackages =
-      (with pkgs; [
-        compose2nix
+    environment.systemPackages = (
+      with pkgs;
+      [
+        compose2nix #Generate a NixOS config from a Docker Compose project
         docker-compose
-        #to solve ssh -X errors from gnome
-        glib.dev
-        gsettings-desktop-schemas
         php82
         mariadb
-        util-linux
-        ethtool
-        net-tools
+        util-linux # Set of system utilities for Linux
+        ethtool # Utility for controlling network drivers and hardware
+        net-tools # Set of tools for controlling the network subsystem in Linux
         cups
-      ])
-#      ++ (with pkgs-stable; [])
-#      ++ (with pkgs-unstable; [])
-      ;
+      ]
+    )
+    #      ++ (with pkgs-stable; [])
+    #      ++ (with pkgs-unstable; [])
+    ;
   };
   #  # Ensure schema directories are visible system-wide
   #  environment.pathsToLink = [
