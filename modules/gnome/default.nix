@@ -68,6 +68,7 @@ with lib;
         dconf2nix
         dconf-editor
         papers
+        gsettings-desktop-schemas
       ]
     )
     #    ++ (with pkgs-stable; [])

@@ -59,18 +59,20 @@
   networking = {
     useDHCP = lib.mkForce false;
     interfaces.eno1 = {
+    #interfaces.enp0s3 = {
       wakeOnLan.enable = true;
       ipv4.addresses = [
         {
-          address = "192.168.0.7";
+          address = "192.168.0.8";
           prefixLength = 24;
         }
       ];
     };
-    nameservers = [ "192.168.0.7" ];
+    nameservers = [ "192.168.0.6" ];
     defaultGateway = {
       address = "192.168.0.1";
       interface = "eno1";
+      #interface = "enp0s3";
     };
     search = [
       "local"
