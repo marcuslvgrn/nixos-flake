@@ -62,6 +62,7 @@ with lib;
         gnomeExtensions.hide-top-bar
         gnomeExtensions.appindicator
         gnomeExtensions.power-off-options
+        gnomeExtensions.wake-on-lan
         gnome-tweaks
         vlc
         gparted

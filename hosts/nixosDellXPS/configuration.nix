@@ -21,7 +21,7 @@
 
   config = {
     ssdEnable = true;
-
+    deskflow.enable = true;
     services.desktopManager.gnome.enable = true;
     virtualisation.virtualbox.host.enable = true;
 
