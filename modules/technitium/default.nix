@@ -53,7 +53,6 @@ with lib;
         Group = "technitium"; # set the group
 
         StateDirectory = "technitium-dns-server";
-        WorkingDirectory = "/var/lib/technitium-dns-server";
 
         # Optional: allow writes anywhere under WorkingDirectory
         ReadWritePaths = [ "/var/lib/technitium-dns-server" ];
