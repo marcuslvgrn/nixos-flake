@@ -17,7 +17,13 @@ with lib;
 
   config = mkIf config.services.desktopManager.gnome.enable {
     services.flatpak.enable = true;
-    programs.firefox.enable = true;
+    programs.firefox = {
+      enable = true;
+      languagePacks = [
+        "sv-SE"
+        "en-US"
+      ];
+    };
 
     services = {
       xserver.enable = true;

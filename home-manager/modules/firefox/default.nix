@@ -14,10 +14,10 @@
 
     configPath = ".mozilla/firefox";
 
-    languagePacks = [
-      "sv-SE"
-      "en-US"
-    ];
+#    languagePacks = [
+#      "sv-SE"
+#      "en-US"
+#    ];
 
     policies = {
       DisableFirefoxAccounts = true;

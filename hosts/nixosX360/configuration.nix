@@ -3,13 +3,13 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 {
-  #  config,
-  #  lib,
+  config,
+  lib,
   #  hostCfg,
-  #  pkgs,
+  pkgs,
   ...
 }:
-
+with lib;
 {
   imports = [
     ./hardware-configuration.nix
@@ -17,14 +17,49 @@
 
   config = {
     services.desktopManager.gnome.enable = true;
+    services.desktopManager.plasma6.enable = true;
+    services.desktopManager.cosmic.enable = true;
+    services.desktopManager.budgie.enable = true;
+    services.xserver.desktopManager.cinnamon.enable = true;
+    programs.nm-applet.indicator = lib.mkForce true;
+    
     virtualisation.virtualbox.host.enable = true;
     ssdEnable = true;
-
+    deskflow.enable = true;
+    services.orca.enable = mkForce false;
     # Autologin a user
     services.displayManager = {
-      autoLogin.enable = true;
+      defaultSession = "gnome";
+      autoLogin.enable = false;
+      #autoLogin.enable = true;
       autoLogin.user = "lovgren";
     };
+
+    # resolve environment.sessionVariables.NIX_GSETTINGS_OVERRIDES_DIR conflict between gnome and budgie
+    environment.sessionVariables.NIX_GSETTINGS_OVERRIDES_DIR = lib.mkForce (
+      let
+        cfg = config.services.desktopManager.gnome;
+
+        nixos-background-light = pkgs.nixos-artwork.wallpapers.simple-blue;
+        nixos-background-dark = pkgs.nixos-artwork.wallpapers.simple-dark-gray;
+
+        flashbackEnabled = cfg.flashback.enableMetacity || lib.length cfg.flashback.customSessions > 0;
+
+        nixos-gsettings-desktop-schemas = pkgs.gnome.nixos-gsettings-overrides.override {
+          inherit (cfg)
+            extraGSettingsOverrides
+            extraGSettingsOverridePackages
+            favoriteAppsOverride
+            ;
+          inherit
+            flashbackEnabled
+            nixos-background-dark
+            nixos-background-light
+            ;
+        };
+      in
+      "${nixos-gsettings-desktop-schemas}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas"
+    );
 
     #Power management
     powerManagement.enable = true;
