@@ -93,6 +93,7 @@ with lib;
             hide-top-bar.extensionUuid
             hibernate-status-button.extensionUuid
             power-off-options.extensionUuid
+            wake-on-lan.extensionUuid
           ]
         )
         #          ++ (with pkgs-stable.gnomeExtensions; [])

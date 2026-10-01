@@ -118,7 +118,7 @@
           overlays = [
             inputs.nur.overlays.default
             self.overlays.firefox
-#            self.overlays.technitium
+            #            self.overlays.technitium
           ];
           allowUnfree = true;
           # ------------------------------------------------------------
@@ -191,6 +191,10 @@
                   ./common/configuration.nix
                   #host specific configuration
                   ./hosts/${hostCfg.hostname}/configuration.nix
+                  {
+                    #For printing commit messages in nixos-generations
+                    system.configurationRevision = if self ? dirtyRev then "${self.dirtyRev}-dirty" else self.rev;
+                  }
                 ];
                 specialArgs = {
                   inherit
