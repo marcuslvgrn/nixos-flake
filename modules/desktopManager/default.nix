@@ -48,5 +48,6 @@ in
     # Enable touchpad support (enabled default in most desktopManager).
     services.libinput.enable = true;
     services.teamviewer.enable = true;
+    programs.artcraft.enable = true;
   };
 }
