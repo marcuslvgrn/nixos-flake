@@ -12,8 +12,11 @@
 
 {
   config = {
+    home.shellAliases = {
+      nixos-generations-delete = "nix-env -p /nix/var/nix/profiles/system --delete-generations ";
+    };
     home.packages = [
-      (pkgs.writeShellScriptBin "nixos-generations" ''
+      (pkgs.writeShellScriptBin "nixos-generations-list" ''
         #!/usr/bin/env bash
 
         flake="$HOME/git/nixos-flake"
@@ -47,7 +50,7 @@
             "$gen" "$date $time" "$short" "$dirty" "$message"
         done
       '')
-      (pkgs.writeShellScriptBin "nixos-clean-dirty-generations" ''
+      (pkgs.writeShellScriptBin "nixos-generations-delete-dirty" ''
         #!/usr/bin/env bash
 
         profile="/nix/var/nix/profiles/system"
