@@ -44,7 +44,8 @@
         gps = "git push";
         gpl = "git pull";
         gd = "git diff";
-        rebuild = lib.mkDefault "nixos-rebuild switch --flake ~/git/nixos-flake";
+        rebuild-switch = lib.mkDefault "nixos-rebuild switch --flake ~/git/nixos-flake";
+        rebuild-boot = lib.mkDefault "nixos-rebuild boot --flake ~/git/nixos-flake";
         sudo = "sudo ";
       };
       stateVersion = "25.05";
