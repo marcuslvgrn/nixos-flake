@@ -49,5 +49,6 @@ in
     services.libinput.enable = true;
     services.teamviewer.enable = true;
     programs.artcraft.enable = true;
+    services.speechd.enable = false;
   };
 }
