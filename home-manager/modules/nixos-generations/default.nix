@@ -49,6 +49,7 @@
           printf '%-4s %-19s %-12s %-2s %s\n' \
             "$gen" "$date $time" "$short" "$dirty" "$message"
         done
+        nixos-generations-type
       '')
       (pkgs.writeShellScriptBin "nixos-generations-delete-dirty" ''
         #!/usr/bin/env bash
@@ -75,6 +76,27 @@
               --delete-generations "$gen"
           fi
         done
+      '')
+      (pkgs.writeShellScriptBin "nixos-generations-type" ''
+        #!/usr/bin/env bash
+
+        current=$(readlink -f /run/current-system)
+        booted=$(readlink -f /run/booted-system)
+        default=$(readlink -f /nix/var/nix/profiles/system)
+
+        for link in /nix/var/nix/profiles/system-*-link; do
+            [ -e "$link" ] || continue
+            target=$(readlink -f "$link")
+            gen=''${link##*system-}
+            gen=''${gen%-link}
+
+            markers=""
+            [ "$target" = "$current" ] && markers+=" CURRENT"
+            [ "$target" = "$booted" ] && markers+=" BOOTED"
+            [ "$target" = "$default" ] && markers+=" DEFAULT"
+
+            printf "%-6s %s%s\n" "$gen" "$(stat -c '%y' "$link" | cut -d. -f1)" "$markers"
+        done | sort -n
       '')
     ];
   };
