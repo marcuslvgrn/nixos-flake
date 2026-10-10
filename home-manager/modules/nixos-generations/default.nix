@@ -83,20 +83,29 @@
         current=$(readlink -f /run/current-system)
         booted=$(readlink -f /run/booted-system)
         default=$(readlink -f /nix/var/nix/profiles/system)
+        booted_found=false
 
         for link in /nix/var/nix/profiles/system-*-link; do
-            [ -e "$link" ] || continue
-            target=$(readlink -f "$link")
-            gen=''${link##*system-}
-            gen=''${gen%-link}
+          [ -e "$link" ] || continue
+          [ "$(readlink -f "$link")" = "$booted" ] && booted_found=true
+        done
 
-            markers=""
-            [ "$target" = "$current" ] && markers+=" CURRENT"
-            [ "$target" = "$booted" ] && markers+=" BOOTED"
-            [ "$target" = "$default" ] && markers+=" DEFAULT"
+        for link in /nix/var/nix/profiles/system-*-link; do
+          [ -e "$link" ] || continue
+          target=$(readlink -f "$link")
+          gen=''${link##*system-}
+          gen=''${gen%-link}
 
-            printf "%-6s %s%s\n" "$gen" "$(stat -c '%y' "$link" | cut -d. -f1)" "$markers"
+          markers=""
+          [ "$target" = "$current" ] && markers+=" CURRENT"
+          [ "$target" = "$booted" ] && markers+=" BOOTED"
+          [ "$target" = "$default" ] && markers+=" DEFAULT"
+
+          [ -n "$markers" ] || continue
+          printf "%-6s %s%s\n" "$gen" "$(stat -c '%y' "$link" | cut -d. -f1)" "$markers"
         done | sort -n
+
+        [ "$booted_found" = true ] || echo "BOOTED has been removed"
       '')
     ];
   };
