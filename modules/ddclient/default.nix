@@ -21,6 +21,10 @@ with lib;
     username = "none";
     interval = "30min";
   };
+
+  # Secret needed by ddclient — declared here so it is only decrypted
+  # on hosts that actually enable ddclient.
+  sops.secrets."ddclient-pass" = mkIf serviceCfg.enable { };
   assertions = [
     {
       assertion = serviceCfg.domains != [ ];

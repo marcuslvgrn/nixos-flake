@@ -115,6 +115,7 @@ with lib;
         ripgrep
         ncdu
         e2fsprogs
+        kiro
       ]
     )
     #      ++
@@ -204,6 +205,8 @@ with lib;
     # and migrated your data accordingly.
     #
     # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
-    system.stateVersion = "25.05"; # Did you read the comment?
+    # Set per-host in flake.nix overrides. Must match the NixOS version at first
+    # install — never change it after that, even when upgrading NixOS.
+    system.stateVersion = hostCfg.stateVersion;
   };
 }

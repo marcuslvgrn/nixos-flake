@@ -6,42 +6,8 @@
 }:
 let
   cfg = config.nginxExternal;
-  #  serviceCfg = config.services.nginx;
-  # Define all your domains and backend services here 👇
-  proxyHosts = {
-    "mlmodem.dynv6.net" = {
-      target = "http://192.168.0.1";
-      recommendedProxySettings = false;
-      recommendedTlsSettings = true;
-      #      locationPath = "/modem/";
-    };
-    "mlrouter.dynv6.net" = {
-      target = "http://192.168.0.2:80";
-      recommendedProxySettings = true;
-      recommendedTlsSettings = false;
-      #      locationPath = "/router/";
-    };
-    "mllinksys.dynv6.net" = {
-      target = "http://192.168.0.3:80";
-      recommendedProxySettings = true;
-      recommendedTlsSettings = true;
-      #      locationPath = "/airsonic/";
-    };
-    "mlproxmox.dynv6.net" = {
-      target = "https://192.168.0.10:8006";
-      recommendedProxySettings = true;
-      recommendedTlsSettings = true;
-      #      locationPath = "/airsonic/";
-    };
-    #    "mlpassbolt.dynv6.net" = {
-    #      target = "https://192.168.0.7:444";
-    #      recommendedProxySettings = true;
-    #      recommendedTlsSettings = true;
-    ##      locationPath = "/airsonic/";
-    #    };
-  };
 
-  # Helper to create vhost definitions from proxyHosts
+  # Helper to build a vhost definition from a proxyHosts entry.
   mkVhost =
     host: proxyCfg:
     let
@@ -52,40 +18,92 @@ let
       forceSSL = true;
       serverName = host;
       extraConfig = lib.optionalString (proxyCfg.recommendedTlsSettings or false) ''
-        # Recommended TLS settings (copied from NixOS module)
+        # Recommended TLS settings
         ssl_protocols TLSv1.2 TLSv1.3;
         ssl_prefer_server_ciphers on;
         ssl_session_timeout 1d;
         ssl_session_cache shared:SSL:10m;
         ssl_session_tickets off;
       '';
-
       locations = {
         "${loc}" = {
           proxyPass = proxyCfg.target;
           extraConfig = ''
-              ${lib.optionalString (proxyCfg.recommendedProxySettings or false) ''
-                # Recommended proxy settings (copied from NixOS module)
-                proxy_redirect          off;
-                proxy_set_header        Host $host;
-                proxy_set_header        X-Real-IP $remote_addr;
-                proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header        X-Forwarded-Proto $scheme;
-                proxy_set_header        X-Forwarded-Host $host;
-                proxy_set_header        X-Forwarded-Port $server_port;
-              ''}
+            ${lib.optionalString (proxyCfg.recommendedProxySettings or false) ''
+              # Recommended proxy settings
+              proxy_redirect          off;
+              proxy_set_header        Host $host;
+              proxy_set_header        X-Real-IP $remote_addr;
+              proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header        X-Forwarded-Proto $scheme;
+              proxy_set_header        X-Forwarded-Host $host;
+              proxy_set_header        X-Forwarded-Port $server_port;
+            ''}
             ${proxyCfg.extraConfig or ""}
           '';
-          #    # proxyWebsockets = true; # uncomment if needed
+          # proxyWebsockets = true; # uncomment if needed
         };
       };
     };
+
+  # Submodule type for a single proxy host entry.
+  proxyHostOpts = lib.types.submodule {
+    options = {
+      target = lib.mkOption {
+        type = lib.types.str;
+        description = "Backend URL to proxy to, e.g. http://192.168.0.1";
+      };
+      recommendedProxySettings = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Add standard proxy headers (Host, X-Real-IP, etc.)";
+      };
+      recommendedTlsSettings = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Add recommended TLS settings to the vhost";
+      };
+      locationPath = lib.mkOption {
+        type = lib.types.str;
+        default = "/";
+        description = "Location path to proxy";
+      };
+      extraConfig = lib.mkOption {
+        type = lib.types.str;
+        default = "";
+        description = "Extra nginx location config";
+      };
+    };
+  };
 in
 with lib;
 {
   options = {
     nginxExternal = {
-      enable = mkEnableOption "Enable nginx for external servers";
+      enable = mkEnableOption "Enable nginx reverse proxy for external hosts";
+
+      # Map of public hostname → proxy target and settings.
+      # Define this in the host config, not here.
+      proxyHosts = mkOption {
+        type = types.attrsOf proxyHostOpts;
+        default = { };
+        description = "Attrset of public hostnames to proxy. Keys are hostnames, values are proxy settings.";
+        example = {
+          "myhost.example.com" = {
+            target = "http://192.168.0.1";
+            recommendedProxySettings = true;
+            recommendedTlsSettings = true;
+          };
+        };
+      };
+
+      # Additional domains to register with ddclient that are not in proxyHosts
+      # (e.g. services proxied elsewhere, like Plex, Portainer, Synology).
+      extraDdclientDomains = mkOption {
+        type = types.listOf types.str;
+        default = [ ];
+        description = "Extra domains to register with ddclient beyond those in proxyHosts.";
+      };
     };
   };
 
@@ -95,36 +113,24 @@ with lib;
       443
     ];
 
+    # Secret needed for dynv6 DDNS — only decrypted on hosts running nginx external.
+    sops.secrets."dynv6-credentials" = { };
+
     security.acme = {
-      # Generate ACME certs for all hosts automatically
-      certs = lib.genAttrs (builtins.attrNames proxyHosts) (domain: {
-        #        webroot = "/var/lib/acme/acme-challenge";
-      });
+      # Generate ACME certs for all proxy hosts automatically.
+      certs = lib.genAttrs (builtins.attrNames cfg.proxyHosts) (_: { });
     };
 
     services = {
-      ddclient.domains = [
-        "mldrupal.dynv6.net"
-        "mlgeegnomer.dynv6.net"
-        "mlmodem.dynv6.net"
-        "mlplex.dynv6.net"
-        "mlportainer.dynv6.net"
-        "mlproxmox.dynv6.net"
-        "mlrouter.dynv6.net"
-        "mlrustdesk.dynv6.net"
-        "mlsynology.dynv6.net"
-        "mlwebmin.dynv6.net"
-        "mllinksys.dynv6.net"
-      ];
+      # Register all proxy hostnames + any extra ones with ddclient.
+      ddclient.domains = (builtins.attrNames cfg.proxyHosts) ++ cfg.extraDdclientDomains;
+
       nginx = {
         enable = true;
-        #recommendedProxySettings = true;
         recommendedTlsSettings = true;
         recommendedOptimisation = true;
         recommendedGzipSettings = true;
-        virtualHosts = {
-        }
-        // lib.mapAttrs mkVhost proxyHosts; # add all proxied HTTPS vhosts
+        virtualHosts = lib.mapAttrs mkVhost cfg.proxyHosts;
       };
     };
   };

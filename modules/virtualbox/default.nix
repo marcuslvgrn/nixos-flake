@@ -12,6 +12,8 @@
   #    (with pkgs; [])
   #    ++ (with pkgs-stable; [])
   #    ++ (with pkgs-unstable; [])
+  # Uncomment the block above to add packages, using either block to pin to stable
+  # or unstable regardless of the host's isStable setting (see technitium for an example).
   #    ;
 
   #Host extensions (USB forwarding) - causes frequent rebuilds

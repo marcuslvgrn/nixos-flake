@@ -31,6 +31,10 @@ with lib;
         assertion = cfg.hostName != "";
       }
     ];
+
+    # Secret needed by this service — declared here so it is only
+    # decrypted on hosts that actually run vaultwarden.
+    sops.secrets."vaultwarden-env" = { };
     services = {
 
       ddclient.domains = [

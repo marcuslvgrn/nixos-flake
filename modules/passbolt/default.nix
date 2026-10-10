@@ -213,6 +213,11 @@ in
       443
     ];
 
+    # Secrets needed by this service — declared here so they are only
+    # decrypted on hosts that actually run passbolt.
+    sops.secrets."passbolt-security-salt" = { };
+    sops.secrets."passbolt-env" = { };
+
     # Generate ACME certs for host automatically
     security.acme.certs = {
       "${cfg.hostName}" = {

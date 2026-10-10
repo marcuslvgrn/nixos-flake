@@ -17,56 +17,23 @@
 
     age.keyFile = "/root/.config/sops/age/keys.txt";
 
+    # Global secrets needed on every host.
+    # Service-specific secrets are declared in their respective modules.
     secrets."wifi.env" = { };
     secrets."ssh/authorized_keys/lovgren" = { };
     secrets."ssh/authorized_keys/root" = { };
     secrets."ssh/keys/id_ed25519.pub" = { };
     secrets."ssh/keys/id_ed25519" = { };
     secrets."age/keys.txt" = { };
-    secrets."passbolt-security-salt" = {
-      #      owner = "passbolt";
-      #      group = "keys";
-    };
-    secrets."passbolt-env" = {
-      #      owner = "passbolt";
-      #      group = "keys";
-    };
-    secrets."nextcloud-admin-pass" = {
-      #      owner = "nextcloud";
-      #      group = "keys";
-    };
-    secrets."nextcloud-secrets" = {
-      #      owner = "nextcloud";
-      #      group = "keys";
-    };
-    secrets."nextcloud-whiteboard-secret" = {
-      #      owner = "nextcloud";
-      #      group = "keys";
-    };
     secrets."passwords/lovgren" = {
-      #make password available to users module, can then be used with hashedPasswordFile during user creation
+      # make password available to users module for hashedPasswordFile
       neededForUsers = true;
     };
     secrets."passwords/gerd" = {
-      #make password available to users module, can then be used with hashedPasswordFile during user creation
       neededForUsers = true;
     };
     secrets."passwords/root" = {
-      #make password available to users module, can then be used with hashedPasswordFile during user creation
       neededForUsers = true;
-    };
-    secrets."dynv6-credentials" = {
-      #      owner = "nginx";
-      #      group = "nginx";
-    };
-    secrets."vaultwarden-env" = { };
-    secrets."ddclient-pass" = { };
-    templates = {
-      nextcloud-whiteboard-env = {
-        content = ''
-          JWT_SECRET_KEY=${config.sops.placeholder."nextcloud-whiteboard-secret"}
-        '';
-      };
     };
   };
 }

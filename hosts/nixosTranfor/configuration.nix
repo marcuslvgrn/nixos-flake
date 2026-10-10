@@ -26,7 +26,49 @@ in
       collaboraHostName = "mlcollabora.dynv6.net";
     };
     #enables proxy to external hosts
-    nginxExternal.enable = true;
+    nginxExternal = {
+      enable = true;
+      # Reverse proxy entries for LAN devices exposed via dynv6.
+      # Keys are public hostnames, values are the internal backend targets.
+      proxyHosts = {
+        "mlmodem.dynv6.net" = {
+          target = "http://192.168.0.1";
+          recommendedProxySettings = false;
+          recommendedTlsSettings = true;
+        };
+        "mlrouter.dynv6.net" = {
+          target = "http://192.168.0.2:80";
+          recommendedProxySettings = true;
+          recommendedTlsSettings = false;
+        };
+        "mllinksys.dynv6.net" = {
+          target = "http://192.168.0.3:80";
+          recommendedProxySettings = true;
+          recommendedTlsSettings = true;
+        };
+        "mlproxmox.dynv6.net" = {
+          target = "https://192.168.0.10:8006";
+          recommendedProxySettings = true;
+          recommendedTlsSettings = true;
+        };
+        #"mlpassbolt.dynv6.net" = {
+        #  target = "https://192.168.0.7:444";
+        #  recommendedProxySettings = true;
+        #  recommendedTlsSettings = true;
+        #};
+      };
+      # Additional domains to keep updated in ddclient but not proxied here
+      # (they are handled by their own services on this host).
+      extraDdclientDomains = [
+        "mldrupal.dynv6.net"
+        "mlgeegnomer.dynv6.net"
+        "mlplex.dynv6.net"
+        "mlportainer.dynv6.net"
+        "mlrustdesk.dynv6.net"
+        "mlsynology.dynv6.net"
+        "mlwebmin.dynv6.net"
+      ];
+    };
     passbolt = {
       #      enable = true;
       hostName = "mlpassbolt.dynv6.net";
@@ -84,6 +126,8 @@ in
     )
     #      ++ (with pkgs-stable; [])
     #      ++ (with pkgs-unstable; [])
+    # Uncomment either block above to pin specific packages to stable or unstable
+    # regardless of the host's isStable setting (see technitium for an example).
     ;
   };
   #  # Ensure schema directories are visible system-wide

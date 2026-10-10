@@ -24,16 +24,13 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    #Gather system information
+    #Gather system information — planned replacement for hand-edited hardware-configuration.nix
+    #Use nixos-facter to scan hardware at install time and generate a facter.json per host
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
     #Nix user repository
     nur = {
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-    #Flake utils, for example automatic machine type identification
-    flake-utils = {
-      url = "github:numtide/flake-utils";
     };
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
     nix-darwin = {
@@ -53,6 +50,10 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     artcraft.url = "github:ipeglin/artcraft-nix";
+    nixos-anywhere = {
+      url = "github:nix-community/nixos-anywhere";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -61,57 +62,40 @@
       # Auto-detect host folders
       hostFolders = builtins.attrNames (builtins.readDir ./hosts);
 
-      # Build host configurations with defaults
-      defaultHostCfgs = map (
-        hostname:
+      # Build a hostCfg attrset for each host by reading its hosts/<name>/hostCfg.nix.
+      # Defaults are applied first, then merged with the host-specific file.
+      #
+      # stateVersion MUST be set in each hostCfg.nix — it must reflect the NixOS
+      # version at first install and should never change after that. Only update
+      # it when reinstalling a system or adding a new host. Omitting it is a
+      # hard error to prevent silently inheriting a wrong value in the future.
+      mkHostCfg = hostname:
         let
           platform = if builtins.match "darwin.*" hostname != null then "darwin" else "nixos";
           system = if platform == "nixos" then "x86_64-linux" else "x86_64-darwin";
-          isStable = true;
+          hostCfgFile = ./hosts/${hostname}/hostCfg.nix;
+          # Hard error if hostCfg.nix is missing entirely
+          hostOverrides =
+            if builtins.pathExists hostCfgFile
+            then import hostCfgFile
+            else builtins.throw "hosts/${hostname}/hostCfg.nix is missing — create it with at least { stateVersion = \"<version>\"; }";
+          # Hard error if stateVersion is not set
+          checkedOverrides =
+            if hostOverrides ? stateVersion
+            then hostOverrides
+            else builtins.throw "hosts/${hostname}/hostCfg.nix must define stateVersion";
         in
+        # Defaults, overridden by the host-specific file
         {
-          inherit
-            hostname
-            platform
-            system
-            isStable
-            ;
-        }
-      ) hostFolders;
+          inherit hostname platform system;
+          isStable = true;
+        } // checkedOverrides;
 
-      # Per-host overrides
-      overrides = {
-        "nixosNUC" = {
-          isStable = false;
-        };
-        "nixosX360" = {
-          isStable = false;
-        };
-        "nixosDellXPS" = {
-          isStable = false;
-        };
-      };
-
-      # Apply overrides
-      overriddenHostCfgs = map (
-        perHostDefaultCfg:
-        let
-          #make a list of overrides from the attributes specified in the overrides set
-          #only with a newer nix that takes three arguments, I should update nix (use unstable)
-          #          perHostOverrides = builtins.getAttr perHostDefaultCfg.hostname overrides {};
-          perHostOverrides =
-            if builtins.hasAttr perHostDefaultCfg.hostname overrides then
-              builtins.getAttr perHostDefaultCfg.hostname overrides
-            else
-              { };
-        in
-        #merge the defaultConfigs and hostOverrides
-        perHostDefaultCfg // perHostOverrides
-      ) defaultHostCfgs;
+      allHostCfgs = map mkHostCfg hostFolders;
 
       # Split by platform
-      nixosHosts = builtins.filter (c: c.platform == "nixos") overriddenHostCfgs;
-      darwinHosts = builtins.filter (c: c.platform == "darwin") overriddenHostCfgs;
+      nixosHosts = builtins.filter (c: c.platform == "nixos") allHostCfgs;
+      darwinHosts = builtins.filter (c: c.platform == "darwin") allHostCfgs;
 
       mkSystem =
         hostCfg:
@@ -216,5 +200,10 @@
       #by calling the function mkSystem on each entry. Separate nixos and darwin
       nixosConfigurations = builtins.listToAttrs (map mkSystem nixosHosts);
       darwinConfigurations = builtins.listToAttrs (map mkSystem darwinHosts);
+      # Expose pinned nixos-anywhere so install.sh can use it via `nix run .#nixos-anywhere`
+      apps.x86_64-linux.nixos-anywhere = {
+        type = "app";
+        program = "${inputs.nixos-anywhere.packages.x86_64-linux.nixos-anywhere}/bin/nixos-anywhere";
+      };
     };
 }

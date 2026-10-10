@@ -100,8 +100,8 @@ sudo cp /run/secrets/ssh/keys/id_ed25519.pub \
 install -d -m755 "$temp/home/lovgren/git"
 cp -r /home/lovgren/git/* "$temp/home/lovgren/git/"
 
-# Install NixOS
-sudo nix run github:nix-community/nixos-anywhere -- \
+# Install NixOS using the pinned nixos-anywhere from the flake
+sudo nix run /home/lovgren/git/nixos-flake#nixos-anywhere -- \
     --copy-host-keys \
     --extra-files "$temp" \
     --phases "$phases" \

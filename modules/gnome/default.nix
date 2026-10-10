@@ -7,7 +7,7 @@
   ...
 }:
 let
-
+  userData = import ../../common/users/userData.nix;
 in
 with lib;
 {
@@ -58,6 +58,8 @@ with lib;
     )
     #    ++ (with pkgs-stable; [])
     #    ++ (with pkgs-unstable; [])
+    # Uncomment either block above to pin specific packages to stable or unstable
+    # regardless of the host's isStable setting (see technitium for an example).
     ;
 
     environment.systemPackages = (
@@ -79,28 +81,31 @@ with lib;
     )
     #    ++ (with pkgs-stable; [])
     #    ++ (with pkgs-unstable; [])
+    # Uncomment either block above to pin specific packages to stable or unstable
+    # regardless of the host's isStable setting (see technitium for an example).
     ;
 
-    home-manager.users.lovgren.dconf = {
-      enable = true;
-      settings."org/gnome/shell" = {
-        disable-user-extensions = false;
-        enabled-extensions = (
-          with pkgs.gnomeExtensions;
-          [
+    home-manager.users = lib.genAttrs (
+      # Apply gnome extension dconf settings to all normal users on gnome hosts.
+      # This belongs here rather than hardcoding a username — a NixOS module
+      # should not reference specific users directly.
+      lib.filter (u: (userData.users.${u}.normalUser or false)) (config.userNames or [])
+    ) (username: {
+      dconf = lib.mkIf config.services.desktopManager.gnome.enable {
+        enable = true;
+        settings."org/gnome/shell" = {
+          disable-user-extensions = false;
+          enabled-extensions = with pkgs.gnomeExtensions; [
             dash-to-dock.extensionUuid
             appindicator.extensionUuid
             hide-top-bar.extensionUuid
             hibernate-status-button.extensionUuid
             power-off-options.extensionUuid
             wake-on-lan.extensionUuid
-          ]
-        )
-        #          ++ (with pkgs-stable.gnomeExtensions; [])
-        #          ++ (with pkgs-unstable.gnomeExtensions; [])
-        ;
+          ];
+        };
       };
-    };
+    });
   };
 
 }

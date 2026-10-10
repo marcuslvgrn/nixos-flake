@@ -42,6 +42,8 @@ with lib;
       ])
 #      ++ (with pkgs-stable; [])
 #      ++ (with pkgs-unstable; [])
+# Uncomment either block above to pin specific packages to stable or unstable
+# regardless of the host's isStable setting (see technitium for an example).
       ;
   };
 }

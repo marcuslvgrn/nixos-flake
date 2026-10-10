@@ -59,12 +59,12 @@ let
 in
 {
   # Safety check: all users listed in config must exist in userData.nix
-  #  assertions = [
-  #    {
-  #      assertion = lib.all (u: usersByName ? u) (config.userNames or []);
-  #      message = "config.userNames contains users not defined in userData.nix";
-  #    }
-  #  ];
+  assertions = [
+    {
+      assertion = lib.all (u: usersByName ? ${u}) (config.userNames or []);
+      message = "config.userNames contains users not defined in userData.nix";
+    }
+  ];
 
   environment.variables.EDITOR = "emacs -nw";
 

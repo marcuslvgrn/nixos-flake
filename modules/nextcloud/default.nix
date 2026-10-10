@@ -39,6 +39,18 @@ with lib;
       }
     ];
 
+    # Secrets needed by this service — declared here so they are only
+    # decrypted on hosts that actually run nextcloud.
+    sops.secrets."nextcloud-admin-pass" = { };
+    sops.secrets."nextcloud-secrets" = { };
+    sops.secrets."nextcloud-whiteboard-secret" = { };
+
+    sops.templates.nextcloud-whiteboard-env = {
+      content = ''
+        JWT_SECRET_KEY=${config.sops.placeholder."nextcloud-whiteboard-secret"}
+      '';
+    };
+
     networking.firewall.allowedTCPPorts = [
       80
       443
@@ -57,6 +69,8 @@ with lib;
       ])
 #      ++ (with pkgs-stable; [])
 #      ++ (with pkgs-unstable; [])
+# Uncomment either block above to pin specific packages to stable or unstable
+# regardless of the host's isStable setting (see technitium for an example).
       ;
 
     #Setup services
