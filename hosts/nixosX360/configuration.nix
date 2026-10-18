@@ -22,7 +22,7 @@ with lib;
     services.desktopManager.budgie.enable = true;
     services.xserver.desktopManager.cinnamon.enable = true;
     programs.nm-applet.indicator = lib.mkForce true;
-    
+
     virtualisation.virtualbox.host.enable = true;
     ssdEnable = true;
     deskflow.enable = true;
@@ -34,6 +34,20 @@ with lib;
       #autoLogin.enable = true;
       autoLogin.user = "lovgren";
     };
+
+    environment.systemPackages = (
+      with pkgs;
+      [
+        libva-utils
+        vdpauinfo
+        intel-gpu-tools
+      ]
+    )
+    #      ++ (with pkgs-stable; [])
+    #      ++ (with pkgs-unstable; [])
+    # Uncomment either block above to pin specific packages to stable or unstable
+    # regardless of the host's isStable setting (see technitium for an example).
+    ;
 
     # resolve environment.sessionVariables.NIX_GSETTINGS_OVERRIDES_DIR conflict between gnome and budgie
     environment.sessionVariables.NIX_GSETTINGS_OVERRIDES_DIR = lib.mkForce (
@@ -83,18 +97,18 @@ with lib;
       ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled" 
     '';
 
-    #  environment.sessionVariables = {
-    #    LIBVA_DRIVER_NAME = "iHD";
-    #    VDPAU_DRIVER = "va_gl";
-    #  };
-    #  hardware.graphics = {
-    #    enable = true;
-    #    extraPackages = with pkgs; [
-    #      intel-media-driver
-    #      intel-vaapi-driver
-    #      libvdpau-va-gl
-    #      vpl-gpu-rt
-    #    ];
-    #  };
+    environment.sessionVariables = {
+      LIBVA_DRIVER_NAME = "iHD";
+      VDPAU_DRIVER = "va_gl";
+    };
+    hardware.graphics = {
+      enable = true;
+      extraPackages = with pkgs; [
+        intel-media-driver
+        intel-vaapi-driver
+        libvdpau-va-gl
+        vpl-gpu-rt
+      ];
+    };
   };
 }
