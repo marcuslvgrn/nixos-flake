@@ -1,6 +1,6 @@
 final: prev:
 let
-  version = "15.0.1";
+  version = "15.5.1";
 in
 {
   technitium-dns-server-library = prev.technitium-dns-server-library.overrideAttrs (old: {
@@ -8,8 +8,8 @@ in
     src = prev.fetchFromGitHub {
       owner = "TechnitiumSoftware";
       repo = "TechnitiumLibrary";
-      tag = "v${version}";
-      hash = "sha256-U6Hpg2HMd8o+vXuu4XQo2P5sZDyQ5jPiU3+oPw/rsPs=";
+      tag = "dns-server-v${version}";
+      hash = "sha256-GkHHAXfmT1MUSIG8zsPHBxtpKVSV7KMONLHy00lk10Y=";
       name = "${old.pname}-${version}";
     };
     projectFile = [
@@ -21,8 +21,8 @@ in
     src = prev.fetchFromGitHub {
       owner = "TechnitiumSoftware";
       repo = "DnsServer";
-      tag = "v${version}";
-      hash = "sha256-U6Hpg2HMd8o+vXuu4XQo2P5sZDyQ5jPiU3+oPw/rsPs=";
+      tag = "dns-server-v${version}";
+      hash = "sha256-h6GhWVqv+SRpJberH/xJ2bny1j+RFM7FI1E+LxuhLOw=";
       name = "${old.pname}-${version}";
     };
   });
