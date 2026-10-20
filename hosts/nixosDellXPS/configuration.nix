@@ -20,10 +20,13 @@
   ];
 
   config = {
-    ssdEnable = true;
+    ssd.enable = true;
     deskflow.enable = true;
     services.desktopManager.gnome.enable = true;
     virtualisation.virtualbox.host.enable = true;
+
+    nextcloud-client.enable = true;
+    bitwarden-desktop.enable = true;
 
     environment.systemPackages = (
       with pkgs;

@@ -1,7 +1,6 @@
 # Generated via dconf2nix: https://github.com/gvolpe/dconf2nix
 #dconf dump / > /home/lovgren/dconf.dump && dconf2nix -i /home/lovgren/dconf.dump -o /home/lovgren/dconf.nix
 {
-#  config,
   lib,
   nixosConfig,
   ...
@@ -67,7 +66,8 @@ with lib;
         "emacs.desktop"
         "proton.vpn.app.gtk.desktop"
         "org.gnome.Settings.desktop"
-      ];
+      ]
+      ++ nixosConfig.extraFavoriteApps;
     };
   };
 }

@@ -19,7 +19,7 @@ with lib;
 
   config = {
 
-    ssdEnable = true;
+    ssd.enable = true;
 
     services.desktopManager.gnome.enable = true;
     userNames = mkAfter [ "gerd" ];

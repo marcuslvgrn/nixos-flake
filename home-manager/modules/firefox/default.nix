@@ -1,11 +1,16 @@
 {
-  #  config,
   lib,
   nixosConfig,
   #pkgs,
   pkgs-unstable,
   ...
 }:
+let
+  # Convert the list of firefox extension strings to a list of extension packages
+  extraExtensionPackages = map (name: pkgs-unstable.nur.repos.rycee.firefox-addons.${name}) (
+    nixosConfig.extraFirefoxExtensions or [ ]
+  );
+in
 
 {
   programs.firefox = lib.mkIf nixosConfig.programs.firefox.enable {
@@ -14,10 +19,10 @@
 
     configPath = ".mozilla/firefox";
 
-#    languagePacks = [
-#      "sv-SE"
-#      "en-US"
-#    ];
+    #    languagePacks = [
+    #      "sv-SE"
+    #      "en-US"
+    #    ];
 
     policies = {
       DisableFirefoxAccounts = true;
@@ -31,16 +36,19 @@
         force = true;
         default = "ddg";
       };
-      extensions.packages = with pkgs-unstable.nur.repos.rycee.firefox-addons; [
-        ublock-origin
-        bitwarden
-        i-dont-care-about-cookies
-        istilldontcareaboutcookies
-        gnome-shell-integration
-        duckduckgo-privacy-essentials
-        floccus
-        proton-pass
-      ];
+      extensions.packages =
+        with pkgs-unstable.nur.repos.rycee.firefox-addons;
+        [
+          ublock-origin
+          bitwarden
+          i-dont-care-about-cookies
+          istilldontcareaboutcookies
+          gnome-shell-integration
+          duckduckgo-privacy-essentials
+          floccus
+          proton-pass
+        ]
+        ++ extraExtensionPackages;
       settings = {
         "intl.locale.requested" = "sv-SE,en-US";
         "browser.startup.page" = 3;
@@ -57,5 +65,4 @@
       };
     };
   };
-
 }

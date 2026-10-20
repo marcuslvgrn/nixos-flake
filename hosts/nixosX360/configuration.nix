@@ -23,8 +23,15 @@ with lib;
     services.xserver.desktopManager.cinnamon.enable = true;
     programs.nm-applet.indicator = lib.mkForce true;
 
+    nextcloud-client.enable = true;
+    bitwarden-desktop.enable = true;
+
+    extraFirefoxExtensions = [
+      "enhanced-h264ify"
+    ];
+
     virtualisation.virtualbox.host.enable = true;
-    ssdEnable = true;
+    ssd.enable = true;
     deskflow.enable = true;
     services.orca.enable = mkForce false;
     # Autologin a user

@@ -20,7 +20,16 @@ with lib;
   options = {
     #Users
     userNames = mkOption {
+      description = "Host specific user names";
       type = types.listOf types.str;
+    };
+    extraFirefoxExtensions = mkOption {
+      type = types.listOf types.str;
+      description = "Host specific firefox extensions";
+    };
+    extraFavoriteApps = mkOption {
+      type = types.listOf types.str;
+      description = "Host specific favorite apps (for dock)";
     };
   };
 

@@ -3,16 +3,14 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 {
-  #config,
-  #lib,
-  #hostCfg,
+  lib,
   pkgs,
-  pkgs-stable,
-  pkgs-unstable,
+  #pkgs-stable,
+  #pkgs-unstable,
   #inputs,
   ...
 }:
-
+with lib;
 {
   imports = [
     ./hardware-configuration.nix
@@ -22,8 +20,18 @@
 
   config = {
     services.desktopManager.gnome.enable = true;
-    virtualisation.virtualbox.host.enable = true;
-    ssdEnable = true;
+    services.xserver.desktopManager.kodi.enable = true;
+    ssd.enable = true;
+
+    kodi.enable = true;
+
+    extraFavoriteApps = [
+      "kodi.desktop"
+    ];
+
+    extraFirefoxExtensions = [
+      "enhanced-h264ify"
+    ];
 
     #  boot.loader.grub.extraEntries = ''
     #    menuentry "Arch" {
@@ -32,24 +40,27 @@
     #    }
     #  '';
 
-    environment.systemPackages =
-      (with pkgs; [
-        #      libva-utils
-        #      vdpauinfo
-        #      intel-gpu-tools
-      ])
-      # Populate either block to pin specific packages to stable or unstable
-      # regardless of the host's isStable setting (see technitium for an example).
-      ++ (with pkgs-stable; [
-
-      ])
-      ++ (with pkgs-unstable; [
-
-      ]);
+    environment.systemPackages = (
+      with pkgs;
+      [
+        libva-utils
+        vdpauinfo
+        intel-gpu-tools
+        #])
+        # Populate either block to pin specific packages to stable or unstable
+        # regardless of the host's isStable setting (see technitium for an example).
+        #++ (with pkgs-stable; [
+        #
+        #])
+        #++ (with pkgs-unstable; [
+        #
+      ]
+    );
 
     # Autologin a user
     services.displayManager = {
-      autoLogin.enable = false;
+      autoLogin.enable = true;
+      autoLogin.user = "lovgren";
     };
 
     #Specify hibernation options
@@ -88,27 +99,27 @@
     #    ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled"
     #  '';
     #
-    #  environment.sessionVariables = {
-    #    LIBVA_DRIVER_NAME = "iHD";
-    #    VDPAU_DRIVER = "va_gl";
-    #  };
-    #  hardware.graphics = {
-    #    enable = true;
-    #    extraPackages =
-    #      (with pkgs; [
-    #        intel-media-driver
-    #        intel-vaapi-driver
-    #        libvdpau-va-gl
-    #        vpl-gpu-rt
-    #      ])
-    #      ++
-    #      (with pkgs-stable; [
-    #
-    #      ])
-    #      ++
-    #      (with pkgs-unstable; [
-    #
-    #      ]);
-    #  };
+    environment.sessionVariables = {
+      LIBVA_DRIVER_NAME = "i965";
+      VDPAU_DRIVER = "va_gl";
+    };
+    hardware.graphics = {
+      enable = true;
+      extraPackages = (
+        with pkgs;
+        [
+          #intel-media-driver
+          intel-vaapi-driver
+          libvdpau-va-gl
+          #vpl-gpu-rt
+          #])
+          #++ (with pkgs-stable; [
+          #
+          #       ])
+          #      ++ (with pkgs-unstable; [
+          #
+        ]
+      );
+    };
   };
 }

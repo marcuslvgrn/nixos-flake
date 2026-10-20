@@ -8,10 +8,10 @@
 with lib;
 {
   options = {
-    ssdEnable = mkEnableOption "enable SSD settings";
+    ssd.enable = mkEnableOption "enable SSD settings";
   };
 
-  config = lib.mkIf config.ssdEnable {
+  config = lib.mkIf config.ssd.enable {
     #Enable SSD trim
     services.fstrim.enable = true;
   };

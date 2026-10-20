@@ -30,10 +30,8 @@ in
         brave
         cups
         spotify
-        bitwarden-desktop
         proton-vpn
         yt-dlp
-        nextcloud-client
         bluez
         bluez-tools
         libinput

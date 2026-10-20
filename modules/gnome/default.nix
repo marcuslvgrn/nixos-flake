@@ -70,6 +70,7 @@ with lib;
         gnomeExtensions.appindicator
         gnomeExtensions.power-off-options
         gnomeExtensions.wake-on-lan
+        gnomeExtensions.no-overview
         gnome-tweaks
         vlc
         gparted
@@ -102,6 +103,7 @@ with lib;
             hibernate-status-button.extensionUuid
             power-off-options.extensionUuid
             wake-on-lan.extensionUuid
+            no-overview.extensionUuid
           ];
         };
       };
