@@ -116,7 +116,7 @@ with lib;
         #mail_smtppassword
         secretFile = config.sops.secrets."nextcloud-secrets".path;
         #choose package
-        package = pkgs.nextcloud34;
+        package = pkgs.nextcloud35;
         #install apps. nonexistent apps are:
         #printer files_antivirus previewgenerator whiteboard
         #check available apps in nix repl: nixosConfigurations.nixosTranfor.config.services.nextcloud.package.packages.apps
@@ -124,13 +124,13 @@ with lib;
           inherit
             richdocuments
             news
-            contacts
+            #contacts
             calendar
             tasks
             cookbook
             mail
             bookmarks
-            memories
+            #memories
             music
             ;
         };

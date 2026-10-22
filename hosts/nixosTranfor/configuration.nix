@@ -116,7 +116,6 @@ in
       [
         compose2nix #Generate a NixOS config from a Docker Compose project
         docker-compose
-        php82
         mariadb
         util-linux # Set of system utilities for Linux
         ethtool # Utility for controlling network drivers and hardware

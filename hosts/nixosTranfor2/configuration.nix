@@ -72,7 +72,6 @@ in
       [
         compose2nix
         docker-compose
-        php82
         mariadb
         util-linux
         ethtool
