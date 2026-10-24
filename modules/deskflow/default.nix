@@ -15,19 +15,30 @@ with lib;
   };
 
   config = mkIf config.deskflow.enable {
-    environment.systemPackages =
-      (with pkgs; [
+    environment.systemPackages = (
+      with pkgs;
+      [
         deskflow
-      ])
-      #      ++ (with pkgs-stable; [])
-      #      ++ (with pkgs-unstable; [])
-      # Uncomment either block above to pin specific packages to stable or unstable
-      # regardless of the host's isStable setting (see technitium for an example).
-      ;
+      ]
+    )
+    #      ++ (with pkgs-stable; [])
+    #      ++ (with pkgs-unstable; [])
+    # Uncomment either block above to pin specific packages to stable or unstable
+    # regardless of the host's isStable setting (see technitium for an example).
+    ;
 
     networking.firewall = {
       allowedTCPPorts = [ 24800 ];
       allowedUDPPorts = [ 24800 ];
     };
+    environment.etc."xdg/autostart/deskflow.desktop".text = ''
+      [Desktop Entry]
+      Type=Application
+      Name=Deskflow
+      Exec=${lib.getExe pkgs.deskflow}
+      Terminal=false
+      OnlyShowIn=GNOME;
+      X-GNOME-Autostart-enabled=true
+    '';
   };
 }
