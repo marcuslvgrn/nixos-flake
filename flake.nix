@@ -5,6 +5,7 @@
     #Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-unstable-pkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     #Secrets management
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -69,27 +70,31 @@
       # version at first install and should never change after that. Only update
       # it when reinstalling a system or adding a new host. Omitting it is a
       # hard error to prevent silently inheriting a wrong value in the future.
-      mkHostCfg = hostname:
+      mkHostCfg =
+        hostname:
         let
           platform = if builtins.match "darwin.*" hostname != null then "darwin" else "nixos";
           system = if platform == "nixos" then "x86_64-linux" else "x86_64-darwin";
           hostCfgFile = ./hosts/${hostname}/hostCfg.nix;
           # Hard error if hostCfg.nix is missing entirely
           hostOverrides =
-            if builtins.pathExists hostCfgFile
-            then import hostCfgFile
-            else builtins.throw "hosts/${hostname}/hostCfg.nix is missing — create it with at least { stateVersion = \"<version>\"; }";
+            if builtins.pathExists hostCfgFile then
+              import hostCfgFile
+            else
+              builtins.throw "hosts/${hostname}/hostCfg.nix is missing — create it with at least { stateVersion = \"<version>\"; }";
           # Hard error if stateVersion is not set
           checkedOverrides =
-            if hostOverrides ? stateVersion
-            then hostOverrides
-            else builtins.throw "hosts/${hostname}/hostCfg.nix must define stateVersion";
+            if hostOverrides ? stateVersion then
+              hostOverrides
+            else
+              builtins.throw "hosts/${hostname}/hostCfg.nix must define stateVersion";
         in
         # Defaults, overridden by the host-specific file
         {
           inherit hostname platform system;
           isStable = true;
-        } // checkedOverrides;
+        }
+        // checkedOverrides;
 
       allHostCfgs = map mkHostCfg hostFolders;
 
@@ -100,12 +105,22 @@
       mkSystem =
         hostCfg:
         let
+          allowUnfree = true;
+
+          nixpkgsConfig = {
+            inherit allowUnfree;
+          };
+
           overlays = [
             inputs.nur.overlays.default
             self.overlays.firefox
             #            self.overlays.technitium
+            (self.overlays.php {
+              inherit (inputs) nixpkgs-unstable-pkgs;
+              config = nixpkgsConfig;
+              system = hostCfg.system;
+            })
           ];
-          allowUnfree = true;
           # ------------------------------------------------------------
           # Define nixpkgs variants for stable and unstable
           # ------------------------------------------------------------
@@ -196,6 +211,7 @@
     {
       overlays.firefox = import ./overlays/firefox.nix;
       overlays.technitium = import ./overlays/technitium-overlay.nix;
+      overlays.php = import ./overlays/php-overlay.nix;
       #Assemble all the system configurations, looping through the variable configurations
       #by calling the function mkSystem on each entry. Separate nixos and darwin
       nixosConfigurations = builtins.listToAttrs (map mkSystem nixosHosts);
