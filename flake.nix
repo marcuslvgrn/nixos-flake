@@ -5,7 +5,7 @@
     #Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-unstable-pkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    #nixpkgs-unstable-pkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     #Secrets management
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -107,19 +107,19 @@
         let
           allowUnfree = true;
 
-          nixpkgsConfig = {
-            inherit allowUnfree;
-          };
+          #nixpkgsConfig = {
+          #  inherit allowUnfree;
+          #};
 
           overlays = [
             inputs.nur.overlays.default
             self.overlays.firefox
             #            self.overlays.technitium
-            (self.overlays.php {
-              inherit (inputs) nixpkgs-unstable-pkgs;
-              config = nixpkgsConfig;
-              system = hostCfg.system;
-            })
+            #(self.overlays.php {
+            #  inherit (inputs) nixpkgs-unstable-pkgs;
+            #  config = nixpkgsConfig;
+            #  system = hostCfg.system;
+            #})
           ];
           # ------------------------------------------------------------
           # Define nixpkgs variants for stable and unstable
@@ -211,7 +211,7 @@
     {
       overlays.firefox = import ./overlays/firefox.nix;
       overlays.technitium = import ./overlays/technitium-overlay.nix;
-      overlays.php = import ./overlays/php-overlay.nix;
+      #overlays.php = import ./overlays/php-overlay.nix;
       #Assemble all the system configurations, looping through the variable configurations
       #by calling the function mkSystem on each entry. Separate nixos and darwin
       nixosConfigurations = builtins.listToAttrs (map mkSystem nixosHosts);

@@ -1,8 +1,8 @@
 {
   config,
   pkgs,
-#  pkgs-stable,
-#  pkgs-unstable,
+  #  pkgs-stable,
+  #  pkgs-unstable,
   lib,
   ...
 }:
@@ -58,20 +58,22 @@ with lib;
     ]; # nginx + collabora
 
     #Nextcloud dependencies
-    environment.systemPackages =
-      (with pkgs; [
+    environment.systemPackages = (
+      with pkgs;
+      [
         chromium # dependency for whiteboard
         corefonts # dependency for office
         ffmpeg
         nodejs
         #      libtensorflow
         util-linux
-      ])
-#      ++ (with pkgs-stable; [])
-#      ++ (with pkgs-unstable; [])
-# Uncomment either block above to pin specific packages to stable or unstable
-# regardless of the host's isStable setting (see technitium for an example).
-      ;
+      ]
+    )
+    #      ++ (with pkgs-stable; [])
+    #      ++ (with pkgs-unstable; [])
+    # Uncomment either block above to pin specific packages to stable or unstable
+    # regardless of the host's isStable setting (see technitium for an example).
+    ;
 
     #Setup services
     services = {
@@ -163,6 +165,7 @@ with lib;
         #address warning in GUI
         phpOptions = {
           "opcache.interned_strings_buffer" = "23";
+          "session.upload_progress.enabled" = "Off";
         };
 
         #enable caching
