@@ -22,7 +22,8 @@ with lib;
     services.desktopManager.budgie.enable = true;
     services.xserver.desktopManager.cinnamon.enable = true;
     programs.nm-applet.indicator = lib.mkForce true;
-
+    services.teamviewer.enable = true;
+ 
     nextcloud-client.enable = true;
     bitwarden-desktop.enable = true;
 

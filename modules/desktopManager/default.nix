@@ -47,8 +47,6 @@ in
 
     # Enable touchpad support (enabled default in most desktopManager).
     services.libinput.enable = true;
-    # Enable teamviewer
-    services.teamviewer.enable = true;
     # Enable artcraft (a adobe suite replacement)
     programs.artcraft.enable = true;
     # Disable speechd (not needed)
