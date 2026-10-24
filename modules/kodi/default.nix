@@ -51,27 +51,24 @@ let
     PYTHON
   '';
 
-  pythonWithEvdev = pkgs.python3.withPackages (ps: [
-    ps.evdev
-  ]);
-
-  xboxKodiListener = pkgs.writeScript "xbox-kodi-listener.py" ''
+  kodiMceListener = pkgs.writeScript "kodi-mce-listener.py" ''
     #!${pythonWithEvdev}/bin/python3
 
     import subprocess
     import time
 
-    from evdev import InputDevice, ecodes
+    from evdev import InputDevice, ecodes, list_devices
 
-    device_path = (
-        "/dev/input/by-id/"
-        "usb-©Microsoft_Xbox_360_Wireless_Receiver_for_Windows_"
-        "E079BF00-event-joystick"
-    )
-
+    device_name = "Nuvoton w836x7hg Infrared Remote Transceiver"
     kodi_command = "/run/current-system/sw/bin/kodi"
-    kodi_send_command = "${pkgs.kodi-gbm}/bin/kodi-send"
+    kodi_send_command = "${pkgs.kodi}/bin/kodi-send"
     pgrep_command = "${pkgs.procps}/bin/pgrep"
+
+    recommendations_action = (
+        "ActivateWindow(Videos,"
+        "plugin://plugin.video.youtube/special/recommendations/"
+        "?category_label=Recommendations,return)"
+    )
 
     def kodi_is_running():
         result = subprocess.run(
@@ -82,67 +79,106 @@ let
         )
         return result.returncode == 0
 
-    def launch_kodi():
-        if kodi_is_running():
-            print(
-                "Kodi is already running; not launching another instance.",
-                flush=True,
-            )
-            return
+    def open_recommendations():
+        if not kodi_is_running():
+            print("Starting Kodi...", flush=True)
+            subprocess.Popen([kodi_command], start_new_session=True)
 
-        print("Starting Kodi...", flush=True)
-        subprocess.Popen(
-            [kodi_command],
-            start_new_session=True,
-        )
-
-        # Wait for Kodi to initialize before opening YouTube.
-        time.sleep(2)
+            # Wait for Kodi to initialize.
+            for _ in range(20):
+                time.sleep(1)
+                if kodi_is_running():
+                    break
 
         if kodi_is_running():
-            print("Opening YouTube...", flush=True)
+            print("Opening YouTube Recommendations...", flush=True)
             subprocess.run(
-                [
-                    kodi_send_command,
-                    "--action=ActivateWindow(Videos,plugin://plugin.video.youtube/special/recommendations/?category_label=Recommendations,return)",
-                ],
+                [kodi_send_command, f"--action={recommendations_action}"],
                 check=False,
             )
         else:
-            print(
-                "Kodi did not start; skipping YouTube launch.",
-                flush=True,
-            )
+            print("Kodi did not start.", flush=True)
 
     while True:
+        device = None
         try:
-            print(f"Opening controller: {device_path}", flush=True)
+            device_path = next(
+                (
+                    path
+                    for path in list_devices()
+                    if InputDevice(path).name == device_name
+                ),
+                None,
+            )
+
+            if device_path is None:
+                print(f"Waiting for {device_name}...", flush=True)
+                time.sleep(3)
+                continue
+
             device = InputDevice(device_path)
 
             print(
-                f"Listening to {device.name} ({device.path})",
+                f"Listening for MCE keys on "
+                f"{device.name} ({device.path})",
                 flush=True,
             )
 
+            
             for event in device.read_loop():
-                if (
-                    event.type == ecodes.EV_KEY
-                    and event.code == ecodes.BTN_START
-                    and event.value == 1
-                ):
-                    launch_kodi()
+                if event.type != ecodes.EV_KEY or event.value != 1:
+                    continue
+
+                if event.code == ecodes.KEY_F12:
+                    open_recommendations()
+                    continue
+
+                if event.code == ecodes.KEY_ESC:
+                    if kodi_is_running():
+                        print("Opening YouTube add-on menu...", flush=True)
+                        subprocess.run(
+                            [
+                                kodi_send_command,
+                                "--action=ActivateWindow(Videos,plugin://plugin.video.youtube/,return)",
+                            ],
+                            check=False,
+                        )
+                    continue
+
+                actions = {
+                    ecodes.KEY_X: ("Stop", "Stop"),
+                    ecodes.KEY_PLAY: ("Play", "Play"),
+                    ecodes.KEY_PAUSE: ("Pause", "Play/Pause"),
+                    ecodes.KEY_REWIND: ("PlayerControl(Rewind)", "Rewind"),
+                    ecodes.KEY_FASTFORWARD: (
+                        "PlayerControl(Forward)",
+                        "Fast Forward",
+                    ),
+                    ecodes.KEY_PREVIOUS: ("PlayerControl(Previous)", "Previous"),
+                    ecodes.KEY_NEXT: ("PlayerControl(Next)", "Next"),
+                    ecodes.KEY_INFO: ("Info", "Info"),
+                }
+
+                if event.code in actions and kodi_is_running():
+                    media_action, label = actions[event.code]
+                    print(f"Sending {label} to Kodi...", flush=True)
+                    subprocess.run(
+                        [kodi_send_command, f"--action={media_action}"],
+                        check=False,
+                    )
 
         except (OSError, RuntimeError) as exc:
-            print(
-                f"Controller unavailable ({exc}); retrying in 3 seconds.",
-                flush=True,
-            )
+            print(f"IR device unavailable ({exc}); retrying.", flush=True)
             time.sleep(3)
-
-        except KeyboardInterrupt:
-            break
-
+        finally:
+            if device is not None:
+                device.close()
   '';
+
+  pythonWithEvdev = pkgs.python3.withPackages (ps: [
+    ps.evdev
+  ]);
+
 in
 with lib;
 {
@@ -203,14 +239,53 @@ with lib;
         ]
       );
     };
-    systemd.user.services.xbox-kodi-listener = {
-      description = "Launch Kodi using Xbox 360 controller Start button";
+    systemd.user.services.kodi-mce-listener = {
+      description = "Kodi listening to the MCE remote";
       wantedBy = [ "graphical-session.target" ];
       after = [ "graphical-session.target" ];
+
       serviceConfig = {
-        ExecStart = "${pythonWithEvdev}/bin/python3 ${xboxKodiListener}";
+        ExecStart = "${pythonWithEvdev}/bin/python3 ${kodiMceListener}";
         Restart = "on-failure";
         RestartSec = 3;
+      };
+    };
+    users.groups.ir = { };
+    users.users.lovgren.extraGroups = [ "ir" ];
+    services.udev.extraRules = ''
+      SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="Nuvoton w836x7hg Infrared Remote Transceiver", GROUP="ir", MODE="0660"
+    '';
+    environment.systemPackages = (
+      with pkgs;
+      [
+        v4l-utils
+        #])
+        # Populate either block to pin specific packages to stable or unstable
+        # regardless of the host's isStable setting (see technitium for an example).
+        #++ (with pkgs-stable; [
+        #
+        #])
+        #++ (with pkgs-unstable; [
+        #
+      ]
+    );
+    systemd.services.nuvoton-ir-keymap = {
+      description = "Configure Nuvoton IR remote keymap";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "systemd-udev-settle.service" ];
+      wants = [ "systemd-udev-settle.service" ];
+
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = ''
+          ${pkgs.v4l-utils}/bin/ir-keytable \
+            -s rc0 \
+            -k 0x800f0422=KEY_ENTER \
+            -k 0x800f0423=KEY_ESC \
+            -k 0x800f040d=KEY_F12 \
+            -k 0x800f0419=KEY_X
+        '';
+        RemainAfterExit = true;
       };
     };
   };
