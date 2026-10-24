@@ -137,7 +137,9 @@
 
             buffers = {
               show_unloaded = true; # shows buffers not loaded into memory
-              follow_current_file = true;
+              follow_current_file = {
+                enabled = true;
+              };
             };
 
             window = {
