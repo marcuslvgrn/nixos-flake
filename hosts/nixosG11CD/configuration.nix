@@ -66,6 +66,9 @@ in
     deskflow.enable = true;
     ssd.enable = true;
 
+    startFirefoxAtLogin = true;
+    shutdownApp.enable = true;
+
     #extraFirefoxExtensions = [
     #  "enhanced-h264ify"
     #];

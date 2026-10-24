@@ -31,14 +31,5 @@ with lib;
       allowedTCPPorts = [ 24800 ];
       allowedUDPPorts = [ 24800 ];
     };
-    environment.etc."xdg/autostart/deskflow.desktop".text = ''
-      [Desktop Entry]
-      Type=Application
-      Name=Deskflow
-      Exec=${lib.getExe pkgs.deskflow}
-      Terminal=false
-      OnlyShowIn=GNOME;
-      X-GNOME-Autostart-enabled=true
-    '';
   };
 }

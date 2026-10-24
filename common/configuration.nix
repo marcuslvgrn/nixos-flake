@@ -31,6 +31,8 @@ with lib;
       type = types.listOf types.str;
       description = "Host specific favorite apps (for dock)";
     };
+    startFirefoxAtLogin = mkEnableOption "Enable starting firefox at login";
+    shutdownApp.enable = mkEnableOption "Enable a shutdown App";
   };
 
   config = {

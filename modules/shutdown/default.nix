@@ -6,7 +6,7 @@
 }:
 
 {
-  environment.systemPackages = [
+  environment.systemPackages = lib.mkIf config.shutdownApp.enable [
     (pkgs.writeTextFile {
       name = "shutdown-launcher";
       destination = "/share/applications/shutdown-computer.desktop";
