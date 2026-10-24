@@ -24,7 +24,7 @@
     deskflow.enable = true;
     services.desktopManager.gnome.enable = true;
     services.teamviewer.enable = true;
-     #virtualisation.virtualbox.host.enable = true;
+    virtualisation.virtualbox.host.enable = true;
 
     nextcloud-client.enable = true;
     bitwarden-desktop.enable = true;
