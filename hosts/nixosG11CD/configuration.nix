@@ -104,6 +104,16 @@ in
       autoLogin.user = "lovgren";
     };
 
+    environment.etc."xdg/autostart/deskflow.desktop".text = ''
+      [Desktop Entry]
+      Type=Application
+      Name=Deskflow
+      Exec=${lib.getExe pkgs.deskflow}
+      Terminal=false
+      OnlyShowIn=GNOME;
+      X-GNOME-Autostart-enabled=true
+    '';
+
     hardware.graphics = {
       enable = true;
       extraPackages = (

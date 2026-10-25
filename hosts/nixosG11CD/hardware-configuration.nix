@@ -51,6 +51,6 @@
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.vboxnet0.useDHCP = lib.mkDefault true;
-  # networking.interfaces.wlp114s0.useDHCP = lib.mkDefault true;
+  networking.interfaces.enp3s0.wakeOnLan.enable = true;
 
 }
