@@ -39,6 +39,7 @@ in
         libreoffice
         cheese
         fragments
+        chatgpt
       ])
       #      ++ (with pkgs-stable; [])
       # Uncomment and populate either block to pin specific packages to stable or
