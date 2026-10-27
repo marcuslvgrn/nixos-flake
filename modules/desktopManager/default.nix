@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  #  pkgs-stable,
   pkgs-unstable,
   ...
 }:
@@ -39,12 +38,9 @@ in
         libreoffice
         cheese
         fragments
-        chatgpt
       ])
-      #      ++ (with pkgs-stable; [])
-      # Uncomment and populate either block to pin specific packages to stable or
-      # unstable regardless of the host's isStable setting (see technitium for an example).
-      ++ (with pkgs-unstable; [ libinput ]);
+      # The stable channel's ChatGPT package is Darwin-only; unstable supports Linux.
+      ++ [ pkgs-unstable.chatgpt ];
 
     # Enable touchpad support (enabled default in most desktopManager).
     services.libinput.enable = true;

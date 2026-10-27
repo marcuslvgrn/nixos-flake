@@ -5,4 +5,3 @@
     ./disk-config.nix
   ];
 }
-

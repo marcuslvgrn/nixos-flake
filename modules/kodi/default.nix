@@ -2,10 +2,24 @@
   lib,
   config,
   pkgs,
+  pkgs-stable,
+  pkgs-unstable,
+  hostSettings,
   ...
 }:
 
 let
+  cfg = config.kodi;
+  packageChannel = import ../../lib/packageChannel.nix {
+    inherit
+      lib
+      pkgs-stable
+      pkgs-unstable
+      hostSettings
+      ;
+  };
+  kodiPackageSet = packageChannel.forChannel cfg.packageChannel;
+
   youtubeKeysScript = pkgs.writeShellScript "kodi-youtube-keys" ''
     set -eu
 
@@ -61,7 +75,7 @@ let
 
     device_name = "Nuvoton w836x7hg Infrared Remote Transceiver"
     kodi_command = "/run/current-system/sw/bin/kodi"
-    kodi_send_command = "${pkgs.kodi}/bin/kodi-send"
+    kodi_send_command = "${kodiPackageSet.kodi}/bin/kodi-send"
     pgrep_command = "${pkgs.procps}/bin/pgrep"
 
     recommendations_action = (
@@ -180,12 +194,17 @@ let
   ]);
 
 in
-with lib;
 {
-  options = {
-    kodi.enable = mkEnableOption "Enable Kodi or not";
+  options.kodi = {
+    enable = lib.mkEnableOption "Enable Kodi or not";
+    # "default" follows this host's defaultPkgChannel; stable/unstable override it.
+    packageChannel = lib.mkOption {
+      type = packageChannel.type;
+      default = "default";
+      description = "Nixpkgs channel to use for Kodi and its add-ons.";
+    };
   };
-  config = mkIf config.kodi.enable {
+  config = lib.mkIf cfg.enable {
     sops.secrets = {
       "kodi-youtube/api_key" = {
         owner = "lovgren";
@@ -219,7 +238,7 @@ with lib;
     services.xserver.desktopManager.kodi = {
       enable = true;
 
-      package = pkgs.kodi.withPackages (
+      package = kodiPackageSet.kodi.withPackages (
         kodiPkgs: with kodiPkgs; [
           (youtube.overrideAttrs (old: {
             postInstall = (old.postInstall or "") + ''
@@ -256,17 +275,9 @@ with lib;
       SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="Nuvoton w836x7hg Infrared Remote Transceiver", GROUP="ir", MODE="0660"
     '';
     environment.systemPackages = (
-      with pkgs;
+      with kodiPackageSet;
       [
         v4l-utils
-        #])
-        # Populate either block to pin specific packages to stable or unstable
-        # regardless of the host's isStable setting (see technitium for an example).
-        #++ (with pkgs-stable; [
-        #
-        #])
-        #++ (with pkgs-unstable; [
-        #
       ]
     );
     systemd.services.nuvoton-ir-keymap = {
@@ -278,7 +289,7 @@ with lib;
       serviceConfig = {
         Type = "oneshot";
         ExecStart = ''
-          ${pkgs.v4l-utils}/bin/ir-keytable \
+          ${kodiPackageSet.v4l-utils}/bin/ir-keytable \
             -s rc0 \
             -k 0x800f0422=KEY_ENTER \
             -k 0x800f0423=KEY_ESC \

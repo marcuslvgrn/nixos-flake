@@ -1,31 +1,37 @@
 {
   config,
   lib,
-  #nixosConfig,
-  pkgs,
-  #pkgs-unstable,
+  pkgs-stable,
+  pkgs-unstable,
+  hostSettings,
   ...
 }:
-with lib;
+let
+  cfg = config.deskflow;
+  packageChannel = import ../../lib/packageChannel.nix {
+    inherit
+      lib
+      pkgs-stable
+      pkgs-unstable
+      hostSettings
+      ;
+  };
+in
 {
-  options = {
-    deskflow = {
-      enable = mkEnableOption "Enable deskflow";
+  options.deskflow = {
+    enable = lib.mkEnableOption "Enable deskflow";
+    # "default" follows this host's defaultPkgChannel; stable/unstable override it.
+    packageChannel = lib.mkOption {
+      type = packageChannel.type;
+      default = "default";
+      description = "Nixpkgs channel to use for the Deskflow package.";
     };
   };
 
-  config = mkIf config.deskflow.enable {
-    environment.systemPackages = (
-      with pkgs;
-      [
-        deskflow
-      ]
-    )
-    #      ++ (with pkgs-stable; [])
-    #      ++ (with pkgs-unstable; [])
-    # Uncomment either block above to pin specific packages to stable or unstable
-    # regardless of the host's isStable setting (see technitium for an example).
-    ;
+  config = lib.mkIf cfg.enable {
+    environment.systemPackages = [
+      (packageChannel.forChannel cfg.packageChannel).deskflow
+    ];
 
     networking.firewall = {
       allowedTCPPorts = [ 24800 ];

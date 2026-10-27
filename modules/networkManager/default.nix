@@ -1,9 +1,6 @@
 {
   lib,
-#  pkgs,
-#  inputs,
   config,
-#  pkgs-unstable,
   ...
 }:
 

@@ -1,14 +1,34 @@
 {
   config,
-  pkgs,
-  #  pkgs-stable,
-  #  pkgs-unstable,
   lib,
+  pkgs-stable,
+  pkgs-unstable,
+  hostSettings,
   ...
 }:
 let
   cfg = config.nextcloud;
   serviceCfg = config.services.nextcloud;
+  # Share the channel enum and package-set selection logic with other modules.
+  packageChannel = import ../../lib/packageChannel.nix {
+    inherit
+      lib
+      pkgs-stable
+      pkgs-unstable
+      hostSettings
+      ;
+  };
+  # Select the channel explicitly chosen here, or fall back to the host default.
+  packageSet = packageChannel.forChannel cfg.packageChannel;
+  # Normalize a configured mount path so URLs and nginx locations use one form.
+  nextcloudWebroot =
+    if cfg.contextPath == "/" then
+      ""
+    else
+      "/${
+        lib.concatStringsSep "/" (lib.filter (part: part != "") (lib.splitString "/" cfg.contextPath))
+      }";
+  nextcloudLocationPrefix = if nextcloudWebroot == "" then "/" else "${nextcloudWebroot}/";
 in
 with lib;
 {
@@ -26,8 +46,13 @@ with lib;
       contextPath = mkOption {
         type = types.str;
         default = "/";
-        #      default = "/nextcloud/";
-        description = "Context path for nginx";
+        description = "URL path where Nextcloud is served; use / for the domain root.";
+      };
+      # "default" follows this host's defaultPkgChannel; stable/unstable override it.
+      packageChannel = mkOption {
+        type = packageChannel.type;
+        default = "default";
+        description = "Nixpkgs channel to use for the Nextcloud server and its apps.";
       };
     };
   };
@@ -36,6 +61,12 @@ with lib;
     assertions = [
       {
         assertion = (cfg.nextcloudHostName != "" && cfg.collaboraHostName != "");
+        message = "nextcloud.nextcloudHostName and nextcloud.collaboraHostName must both be set when Nextcloud is enabled.";
+      }
+      {
+        assertion =
+          cfg.contextPath == "/" || builtins.match "^(/[A-Za-z0-9_-]+)+/?$" cfg.contextPath != null;
+        message = "nextcloud.contextPath must be / or a slash-prefixed path containing only letters, numbers, _ and -.";
       }
     ];
 
@@ -54,26 +85,16 @@ with lib;
     networking.firewall.allowedTCPPorts = [
       80
       443
-      9980
-    ]; # nginx + collabora
+    ]; # nginx; Collabora is reached through nginx on loopback
 
     #Nextcloud dependencies
-    environment.systemPackages = (
-      with pkgs;
-      [
-        chromium # dependency for whiteboard
-        corefonts # dependency for office
-        ffmpeg
-        nodejs
-        #      libtensorflow
-        util-linux
-      ]
-    )
-    #      ++ (with pkgs-stable; [])
-    #      ++ (with pkgs-unstable; [])
-    # Uncomment either block above to pin specific packages to stable or unstable
-    # regardless of the host's isStable setting (see technitium for an example).
-    ;
+    environment.systemPackages = with packageSet; [
+      chromium # dependency for whiteboard
+      corefonts # dependency for office
+      ffmpeg
+      nodejs
+      util-linux
+    ];
 
     #Setup services
     services = {
@@ -101,16 +122,27 @@ with lib;
         forceSSL = true;
         enableACME = true;
         #proxy whiteboard subdir to whiteboard server on port 3002
-        locations."/whiteboard/" = {
-          extraConfig = ''
-            proxy_pass http://localhost:3002/;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header Host $host;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
+        locations = {
+          # Keep Nginx's generated PHP regex locations from intercepting this proxy path.
+          "^~ ${nextcloudLocationPrefix}whiteboard/" = {
+            extraConfig = ''
+              proxy_pass http://localhost:3002/;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header Host $host;
+              proxy_http_version 1.1;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection "upgrade";
+            '';
+          };
+        }
+        // (lib.optionalAttrs (nextcloudWebroot != "") {
+          # Nextcloud's NixOS nginx configuration serves from /. Rewrite the
+          # configured URL prefix away before passing requests to that location.
+          "= ${nextcloudWebroot}".return = "308 ${nextcloudLocationPrefix}$is_args$args";
+          "^~ ${nextcloudLocationPrefix}".extraConfig = ''
+            rewrite ^${nextcloudLocationPrefix}(.*)$ /$1 last;
           '';
-        };
+        });
       };
 
       #enable and configure service
@@ -118,7 +150,7 @@ with lib;
         #mail_smtppassword
         secretFile = config.sops.secrets."nextcloud-secrets".path;
         #choose package
-        package = pkgs.nextcloud35;
+        package = packageSet.nextcloud35;
         #install apps. nonexistent apps are:
         #printer files_antivirus previewgenerator whiteboard
         #check available apps in nix repl: nixosConfigurations.nixosTranfor.config.services.nextcloud.package.packages.apps
@@ -149,6 +181,8 @@ with lib;
           appstoreenabled = true;
           overwriteprotocol = "https";
           overwritehost = "${cfg.nextcloudHostName}";
+          overwritewebroot = nextcloudWebroot;
+          "overwrite.cli.url" = "https://${cfg.nextcloudHostName}${nextcloudWebroot}";
           mail_domain = "gmail.com";
           mail_from_address = "marcuslvgrn";
           mail_smtphost = "smtp.gmail.com";
@@ -229,7 +263,7 @@ with lib;
         #nextcloud-whiteboard-secret, which is used below to set the secret in nextcloud
         secrets = [ config.sops.templates."nextcloud-whiteboard-env".path ];
         settings = {
-          NEXTCLOUD_URL = "https://${cfg.nextcloudHostName}";
+          NEXTCLOUD_URL = "https://${cfg.nextcloudHostName}${nextcloudWebroot}";
           CHROME_EXECUTABLE_PATH = "/run/current-system/sw/bin/chromium";
         };
       };
@@ -264,7 +298,7 @@ with lib;
           ${occ}/bin/nextcloud-occ config:app:set richdocuments public_wopi_url --value ${lib.escapeShellArg public_wopi_url}
           ${occ}/bin/nextcloud-occ config:app:set richdocuments wopi_allowlist --value ${lib.escapeShellArg wopi_allowlist}
           ${occ}/bin/nextcloud-occ richdocuments:setup
-          ${occ}/bin/nextcloud-occ config:app:set whiteboard collabBackendUrl --value "https://${cfg.nextcloudHostName}/whiteboard"
+          ${occ}/bin/nextcloud-occ config:app:set whiteboard collabBackendUrl --value "https://${cfg.nextcloudHostName}${nextcloudLocationPrefix}whiteboard"
           ${occ}/bin/nextcloud-occ config:app:set whiteboard jwt_secret_key --value "$JWT_SECRET"
           ${occ}/bin/nextcloud-occ user:setting admin settings email "marcus.lovgren@proton.me"
         '';

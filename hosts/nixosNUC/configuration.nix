@@ -48,7 +48,7 @@ with lib;
         intel-gpu-tools
         #])
         # Populate either block to pin specific packages to stable or unstable
-        # regardless of the host's isStable setting (see technitium for an example).
+        # regardless of the host's defaultPkgChannel setting (see technitium for an example).
         #++ (with pkgs-stable; [
         #
         #])
@@ -74,7 +74,7 @@ with lib;
     #  powerManagement.enable = true;
     #  services.power-profiles-daemon.enable = true;
     #  #In Gnome, power key behavior is set by the settings app!
-    #  services.logind = if hostCfg.isStable then {
+    #  services.logind = if hostSettings.defaultPkgChannel == "stable" then {
     ##    lidSwitch = "suspend-then-hibernate";
     #    lidSwitch = "hibernate";
     ##    powerKey = "hibernate";

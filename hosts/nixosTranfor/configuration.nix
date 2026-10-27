@@ -18,6 +18,8 @@ in
   ];
 
   config = {
+    services.printing.enable = true;
+
     airsonic = {
       hostName = "mlairsonic.dynv6.net";
     };
@@ -50,6 +52,15 @@ in
           target = "https://192.168.0.10:8006";
           recommendedProxySettings = true;
           recommendedTlsSettings = true;
+          proxyWebsockets = true;
+          extraConfig = ''
+            proxy_buffering off;
+            client_max_body_size 0;
+            proxy_connect_timeout 3600s;
+            proxy_read_timeout 3600s;
+            proxy_send_timeout 3600s;
+            send_timeout 3600s;
+          '';
         };
         #"mlpassbolt.dynv6.net" = {
         #  target = "https://192.168.0.7:444";
@@ -114,7 +125,7 @@ in
     environment.systemPackages = (
       with pkgs;
       [
-        compose2nix #Generate a NixOS config from a Docker Compose project
+        compose2nix # Generate a NixOS config from a Docker Compose project
         docker-compose
         mariadb
         util-linux # Set of system utilities for Linux
@@ -126,7 +137,7 @@ in
     #      ++ (with pkgs-stable; [])
     #      ++ (with pkgs-unstable; [])
     # Uncomment either block above to pin specific packages to stable or unstable
-    # regardless of the host's isStable setting (see technitium for an example).
+    # regardless of the host's defaultPkgChannel setting (see technitium for an example).
     ;
   };
   #  # Ensure schema directories are visible system-wide

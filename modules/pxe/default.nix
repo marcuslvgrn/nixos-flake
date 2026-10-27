@@ -1,8 +1,6 @@
 {
   config,
-  #  pkgs,
   lib,
-  #  hostCfg,
   inputLib,
   ...
 }:
@@ -13,9 +11,6 @@ let
     modules = [
       (
         {
-          #          config,
-          #          pkgs,
-          #          lib,
           modulesPath,
           ...
         }:
@@ -23,7 +18,7 @@ let
           imports = [ (modulesPath + "/installer/netboot/netboot-minimal.nix") ];
           config = {
             console.keyMap = "sv-latin1";
-            system.stateVersion = "25.05";
+            system.stateVersion = "26.05";
             services.openssh = {
               enable = true;
               openFirewall = true;

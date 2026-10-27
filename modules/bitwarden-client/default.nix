@@ -1,22 +1,36 @@
 {
   config,
   lib,
-  pkgs,
+  pkgs-stable,
+  pkgs-unstable,
+  hostSettings,
   ...
 }:
-with lib;
+let
+  cfg = config.bitwarden-desktop;
+  packageChannel = import ../../lib/packageChannel.nix {
+    inherit
+      lib
+      pkgs-stable
+      pkgs-unstable
+      hostSettings
+      ;
+  };
+in
 {
-  options = {
-    bitwarden-desktop = {
-      enable = mkEnableOption "Enable the nextcloud-client module";
+  options.bitwarden-desktop = {
+    enable = lib.mkEnableOption "Bitwarden Desktop";
+    # "default" follows this host's defaultPkgChannel; stable/unstable override it.
+    packageChannel = lib.mkOption {
+      type = packageChannel.type;
+      default = "default";
+      description = "Nixpkgs channel to use for Bitwarden Desktop.";
     };
   };
 
-  config.environment.systemPackages = mkIf config.bitwarden-desktop.enable (
-    with pkgs;
-    [
-      bitwarden-desktop
-    ]
-  );
-
+  config = lib.mkIf cfg.enable {
+    environment.systemPackages = [
+      (packageChannel.forChannel cfg.packageChannel).bitwarden-desktop
+    ];
+  };
 }

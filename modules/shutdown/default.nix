@@ -6,6 +6,9 @@
 }:
 
 {
+  options = {
+    shutdownApp.enable = lib.mkEnableOption "Enable a shutdown App";
+  };
   config = lib.mkIf config.shutdownApp.enable {
 
     environment.systemPackages = [

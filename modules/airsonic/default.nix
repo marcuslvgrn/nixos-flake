@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   cfg = config.airsonic;
   serviceCfg = config.services.airsonic;
@@ -6,20 +11,17 @@ let
     url = "https://github.com/airsonic-advanced/airsonic-advanced/releases/download/11.0.0-SNAPSHOT.20240424015024/airsonic.war";
     hash = "sha256-fDWstS076BeXE55aOeMSSZuuYhOLLVAfjRGZRnMksz4=";
   };
-in with lib; {
+in
+with lib;
+{
 
   options = {
     airsonic = {
       hostName = mkOption {
         type = types.str;
+        default = "";
         description = "Hostname for airsonic nginx";
       };
-#      contextPath = mkOption {
-#        type = types.str;
-#        default = "/";
-#        #      default = "/airsonic/";
-#        description = "Context path for nginx";
-#      };
     };
   };
 
@@ -27,48 +29,31 @@ in with lib; {
     assertions = [
       {
         assertion = cfg.hostName != "";
+        message = "Set airsonic.hostName when services.airsonic.enable is true.";
       }
     ];
-    
-    environment.systemPackages = (with pkgs; [
-      javaPackages.compiler.openjdk11
-    ])
-#    ++
-#    (with pkgs-stable; [])
-#    ++
-#    (with pkgs-unstable; [])
-# Uncomment either block above to pin specific packages to stable or unstable
-# regardless of the host's isStable setting (see technitium for an example).
-    ;
 
     services = {
       ddclient.domains = [
         "${cfg.hostName}"
       ];
       airsonic = {
-        listenAddress = mkDefault "0.0.0.0";
-#        contextPath = mkDefault "/airsonic";
-#        contextPath = mkDefault "/";
         maxMemory = mkDefault 256;
-#        jvmOptions = mkDefault [
-#          "-Dserver.servlet.context-path=/airsonic"
-#        ];
-        #This is needed by airsonic-advanced
+        virtualHost = cfg.hostName;
+        # NixOS sets the legacy server.context-path property; Airsonic Advanced 11.x uses server.servlet.context-path.
+        jvmOptions = mkAfter [
+          "-Dserver.servlet.context-path=${serviceCfg.contextPath}"
+        ];
+        # Airsonic Advanced 11.x requires Java 11 or newer.
         jre = pkgs.javaPackages.compiler.openjdk11;
         war = airsonicAdvancedWar;
       };
       nginx = {
-        enable = true;
         virtualHosts.${cfg.hostName} = {
           forceSSL = true;
           enableACME = true;
-          locations."${serviceCfg.contextPath}" = {
-#            extraConfig = ''
-#              proxy_set_header Host              $proxy_host;
-#            '';
-            proxyPass = "http://127.0.0.1:${toString serviceCfg.port}";
-            proxyWebsockets = true;
-          };
+          # Airsonic Advanced uses WebSockets for its UI behind the reverse proxy.
+          locations.${serviceCfg.contextPath}.proxyWebsockets = true;
         };
       };
     };

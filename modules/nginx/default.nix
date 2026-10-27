@@ -41,7 +41,7 @@ let
             ''}
             ${proxyCfg.extraConfig or ""}
           '';
-          # proxyWebsockets = true; # uncomment if needed
+          proxyWebsockets = proxyCfg.proxyWebsockets;
         };
       };
     };
@@ -67,6 +67,11 @@ let
         type = lib.types.str;
         default = "/";
         description = "Location path to proxy";
+      };
+      proxyWebsockets = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable WebSocket proxying for this host";
       };
       extraConfig = lib.mkOption {
         type = lib.types.str;
@@ -112,9 +117,6 @@ with lib;
       80
       443
     ];
-
-    # Secret needed for dynv6 DDNS — only decrypted on hosts running nginx external.
-    sops.secrets."dynv6-credentials" = { };
 
     security.acme = {
       # Generate ACME certs for all proxy hosts automatically.

@@ -4,7 +4,7 @@
   #  inputs,
   # nixosConfig,
   userConfig,
-  hostCfg,
+  hostSettings,
   #  pkgs,
   #  pkgs-stable,
   # pkgs-unstable,
@@ -49,7 +49,7 @@
         rebuild-boot = lib.mkDefault "nixos-rebuild boot --flake ~/git/nixos-flake";
         sudo = "sudo ";
       };
-      stateVersion = hostCfg.stateVersion;
+      stateVersion = hostSettings.stateVersion;
     };
 
     programs.bash = {

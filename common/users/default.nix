@@ -5,7 +5,7 @@
   pkgs,
   pkgs-stable,
   pkgs-unstable,
-  hostCfg,
+  hostSettings,
   ...
 }:
 
@@ -52,7 +52,7 @@ let
       imports = lib.optional (builtins.pathExists userConfigPath) userConfigPath ++ [ commonHomeConfig ];
 
       _module.args = {
-        inherit userConfig hostCfg;
+        inherit userConfig hostSettings;
       };
     };
 
@@ -61,7 +61,7 @@ in
   # Safety check: all users listed in config must exist in userData.nix
   assertions = [
     {
-      assertion = lib.all (u: usersByName ? ${u}) (config.userNames or []);
+      assertion = lib.all (u: usersByName ? ${u}) (config.userNames or [ ]);
       message = "config.userNames contains users not defined in userData.nix";
     }
   ];
@@ -97,7 +97,7 @@ in
           pkgs
           pkgs-stable
           pkgs-unstable
-          hostCfg
+          hostSettings
           ;
         nixosConfig = config;
       };

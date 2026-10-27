@@ -1,19 +1,17 @@
 {
-#  config,
-#  lib,
-#  pkgs,
+  config,
+  lib,
   ...
 }:
 
 {
-  #configure SSH
-  services.openssh = {
-    enable = true;
-    settings = {
+  config = lib.mkIf config.services.openssh.enable {
+    services.openssh.settings = {
       X11Forwarding = true;
       PermitRootLogin = "no";
       PasswordAuthentication = false; # disable password login
+      KbdInteractiveAuthentication = false; # disable PAM-based password prompts
     };
-    openFirewall = true;
+    services.openssh.openFirewall = true;
   };
 }

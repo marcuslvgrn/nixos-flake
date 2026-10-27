@@ -1,17 +1,32 @@
 {
   config,
   lib,
-  pkgs,
-#  pkgs-stable,
-#  pkgs-unstable,
+  pkgs-stable,
+  pkgs-unstable,
+  hostSettings,
   ...
 }:
 let
-
+  cfg = config.xfce;
+  packageChannel = import ../../lib/packageChannel.nix {
+    inherit
+      lib
+      pkgs-stable
+      pkgs-unstable
+      hostSettings
+      ;
+  };
+  packageSet = packageChannel.forChannel cfg.packageChannel;
 in
-with lib;
 {
-  config = mkIf config.services.xserver.desktopManager.xfce.enable {
+  # Selects the channel for XFCE and related packages as a group.
+  options.xfce.packageChannel = lib.mkOption {
+    type = packageChannel.type;
+    default = "default";
+    description = "Nixpkgs channel to use for XFCE and related packages.";
+  };
+
+  config = lib.mkIf config.services.xserver.desktopManager.xfce.enable {
 
     programs.nm-applet.enable = true;
 
@@ -20,17 +35,14 @@ with lib;
       displayManager.gdm.enable = true;
     };
 
-    environment.systemPackages =
-      (with pkgs; [
+    environment.systemPackages = (
+      with packageSet;
+      [
         linssid
         vlc
         gparted
-      ])
-#      ++ (with pkgs-stable; [])
-#      ++ (with pkgs-unstable; [])
-# Uncomment either block above to pin specific packages to stable or unstable
-# regardless of the host's isStable setting (see technitium for an example).
-      ;
+      ]
+    );
 
   };
 }

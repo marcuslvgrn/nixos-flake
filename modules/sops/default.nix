@@ -1,12 +1,10 @@
 {
-#  pkgs,
   inputs,
-  config,
   ...
 }:
 
 {
-  #load the module
+  # Load the module
   imports = [
     inputs.sops-nix.nixosModules.sops
   ];

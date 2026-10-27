@@ -5,7 +5,7 @@
 {
   config,
   lib,
-  #  hostCfg,
+  #  hostSettings,
   pkgs,
   ...
 }:
@@ -23,7 +23,7 @@ with lib;
     services.xserver.desktopManager.cinnamon.enable = true;
     programs.nm-applet.indicator = lib.mkForce true;
     services.teamviewer.enable = true;
- 
+
     nextcloud-client.enable = true;
     bitwarden-desktop.enable = true;
 
@@ -54,7 +54,7 @@ with lib;
     #      ++ (with pkgs-stable; [])
     #      ++ (with pkgs-unstable; [])
     # Uncomment either block above to pin specific packages to stable or unstable
-    # regardless of the host's isStable setting (see technitium for an example).
+    # regardless of the host's defaultPkgChannel setting (see technitium for an example).
     ;
 
     # resolve environment.sessionVariables.NIX_GSETTINGS_OVERRIDES_DIR conflict between gnome and budgie

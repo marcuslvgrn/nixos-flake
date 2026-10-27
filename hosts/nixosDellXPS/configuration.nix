@@ -5,7 +5,7 @@
 {
   #  config,
   #  lib,
-  #  hostCfg,
+  #  hostSettings,
   pkgs,
   #  pkgs-stable,
   #  pkgs-unstable,
@@ -42,7 +42,7 @@
     #      ++ (with pkgs-stable; [])
     #      ++ (with pkgs-unstable; [])
     # Uncomment either block above to pin specific packages to stable or unstable
-    # regardless of the host's isStable setting (see technitium for an example).
+    # regardless of the host's defaultPkgChannel setting (see technitium for an example).
     ;
 
     services.fprintd.enable = true;
@@ -96,7 +96,7 @@
       #        ++ (with pkgs-stable; [])
       #        ++ (with pkgs-unstable; [])
       # Uncomment either block above to pin specific packages to stable or unstable
-      # regardless of the host's isStable setting (see technitium for an example).
+      # regardless of the host's defaultPkgChannel setting (see technitium for an example).
       ;
     };
   };

@@ -20,6 +20,7 @@
       gmailUserName = "marcuslvgrn@gmail.com";
     };
     diskoConfig.enable = true;
+    diskoConfig.device = "/dev/sda";
     services.desktopManager.gnome.enable = true;
     virtualisation.vmware.guest.enable = true;
   };

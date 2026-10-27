@@ -5,7 +5,6 @@
     #Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    #nixpkgs-unstable-pkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     #Secrets management
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -52,88 +51,112 @@
   outputs =
     inputs@{ self, ... }:
     let
-      # Auto-detect host folders
-      hostFolders = builtins.attrNames (builtins.readDir ./hosts);
+      # Discover every directory under hosts; each one must be a complete host.
+      hostEntries = builtins.readDir ./hosts;
+      hostFolders = builtins.filter (hostname: hostEntries.${hostname} == "directory") (
+        builtins.attrNames hostEntries
+      );
 
-      # Build a hostCfg attrset for each host by reading its hosts/<name>/hostCfg.nix.
-      # Defaults are applied first, then merged with the host-specific file.
-      #
-      # stateVersion MUST be set in each hostCfg.nix — it must reflect the NixOS
-      # version at first install and should never change after that. Only update
-      # it when reinstalling a system or adding a new host. Omitting it is a
-      # hard error to prevent silently inheriting a wrong value in the future.
+      # Load hostSettings.nix, validate required values, and add shared host fields.
       mkHostCfg =
         hostname:
         let
-          system = "x86_64-linux";
-          hostCfgFile = ./hosts/${hostname}/hostCfg.nix;
-          # Hard error if hostCfg.nix is missing entirely
-          hostOverrides =
-            if builtins.pathExists hostCfgFile then
-              import hostCfgFile
+          hostDir = ./hosts + "/${hostname}";
+          hostSettingsFile = hostDir + "/hostSettings.nix";
+          nixosModulePath = hostDir + "/configuration.nix";
+          checkedNixosModulePath =
+            if builtins.pathExists nixosModulePath then
+              nixosModulePath
             else
-              builtins.throw "hosts/${hostname}/hostCfg.nix is missing — create it with at least { stateVersion = \"<version>\"; }";
-          # Hard error if stateVersion is not set
-          checkedOverrides =
-            if hostOverrides ? stateVersion then
-              hostOverrides
+              builtins.throw "hosts/${hostname}/configuration.nix is missing";
+          hostSettings =
+            if builtins.pathExists hostSettingsFile then
+              import hostSettingsFile
             else
-              builtins.throw "hosts/${hostname}/hostCfg.nix must define stateVersion";
+              builtins.throw "hosts/${hostname}/hostSettings.nix is missing — create it with stateVersion and defaultPkgChannel";
+          stateVersion =
+            if hostSettings ? stateVersion then
+              hostSettings.stateVersion
+            else
+              builtins.throw "hosts/${hostname}/hostSettings.nix must define stateVersion";
+          # Takes a channel name, fallback value, and required flag; returns a
+          # validated "stable" or "unstable" string, or throws a host-specific error.
+          resolveChannel =
+            name: fallback: required:
+            let
+              isSet = builtins.hasAttr name hostSettings;
+              channel = if isSet then hostSettings.${name} else fallback;
+            in
+            if required && !isSet then
+              builtins.throw "hosts/${hostname}/hostSettings.nix must define ${name} as \"stable\" or \"unstable\""
+            # builtins.elem verifies the channel is one of the supported values.
+            else if
+              builtins.elem channel [
+                "stable"
+                "unstable"
+              ]
+            then
+              channel
+            else
+              builtins.throw "hosts/${hostname}/hostSettings.nix ${name} must be \"stable\" or \"unstable\"";
+          defaultPkgChannel = resolveChannel "defaultPkgChannel" null true;
+          homeManagerChannel = resolveChannel "homeManagerChannel" defaultPkgChannel false;
+          nixvimChannel = resolveChannel "nixvimChannel" defaultPkgChannel false;
         in
-        # Defaults, overridden by the host-specific file
-        {
-          inherit hostname system;
-          isStable = true;
-        }
-        // checkedOverrides;
+        hostSettings
+        // {
+          inherit
+            hostname
+            stateVersion
+            defaultPkgChannel
+            homeManagerChannel
+            nixvimChannel
+            ;
+          system = "x86_64-linux";
+          nixosModulePath = checkedNixosModulePath;
+        };
 
       allHostCfgs = map mkHostCfg hostFolders;
 
+      # Import a nixpkgs input with the host's shared system and package settings.
+      mkPkgs =
+        nixpkgs: hostSettings: overlays:
+        import nixpkgs {
+          system = hostSettings.system;
+          config.allowUnfree = true;
+          inherit overlays;
+        };
+
+      # Assemble one complete NixOS configuration from a validated host config.
       mkSystem =
-        hostCfg:
+        hostSettings:
         let
-          allowUnfree = true;
-
-          #nixpkgsConfig = {
-          #  inherit allowUnfree;
-          #};
-
           overlays = [
             inputs.nur.overlays.default
             self.overlays.firefox
-            #            self.overlays.technitium
-            #(self.overlays.php {
-            #  inherit (inputs) nixpkgs-unstable-pkgs;
-            #  config = nixpkgsConfig;
-            #  system = hostCfg.system;
-            #})
           ];
           # ------------------------------------------------------------
           # Define nixpkgs variants for stable and unstable
           # ------------------------------------------------------------
-          pkgs-stable = import inputs.nixpkgs {
-            system = hostCfg.system;
-            config.allowUnfree = allowUnfree;
-            inherit overlays;
-          };
-          pkgs-unstable = import inputs.nixpkgs-unstable {
-            system = hostCfg.system;
-            config.allowUnfree = allowUnfree;
-            inherit overlays;
-          };
+          pkgs-stable = mkPkgs inputs.nixpkgs hostSettings overlays;
+          pkgs-unstable = mkPkgs inputs.nixpkgs-unstable hostSettings overlays;
           # This is the chosen nixpkg based on configuration
-          pkgs = if hostCfg.isStable then pkgs-stable else pkgs-unstable;
-          #For choosing the correc input libs based on configuration
-          inputLib = if hostCfg.isStable then inputs.nixpkgs.lib else inputs.nixpkgs-unstable.lib;
-          homeManagerModule =
-            (if hostCfg.isStable then inputs.home-manager else inputs.home-manager-unstable)
-            .nixosModules.home-manager;
+          useStable = hostSettings.defaultPkgChannel == "stable";
+          pkgs = if useStable then pkgs-stable else pkgs-unstable;
+          #For choosing the correct input libs based on configuration
+          inputLib = if useStable then inputs.nixpkgs.lib else inputs.nixpkgs-unstable.lib;
+          homeManagerInput =
+            if hostSettings.homeManagerChannel == "stable" then
+              inputs.home-manager
+            else
+              inputs.home-manager-unstable;
+          homeManagerModule = homeManagerInput.nixosModules.home-manager;
         in
         {
-          name = hostCfg.hostname;
+          name = hostSettings.hostname;
           value = inputLib.nixosSystem {
             inherit pkgs;
-            system = hostCfg.system;
+            system = hostSettings.system;
             modules = [
               #load default.nix in the modules directory, will import all modules
               ./modules
@@ -142,16 +165,16 @@
               #common configuration
               ./common/configuration.nix
               #host specific configuration
-              ./hosts/${hostCfg.hostname}/configuration.nix
+              hostSettings.nixosModulePath
               {
                 #For printing commit messages in nixos-generations
                 system.configurationRevision = if self ? dirtyRev then "${self.dirtyRev}-dirty" else self.rev;
               }
             ];
             specialArgs = {
+              inherit hostSettings;
               inherit
                 inputs
-                hostCfg
                 pkgs-stable
                 pkgs-unstable
                 inputLib
@@ -162,8 +185,6 @@
     in
     {
       overlays.firefox = import ./overlays/firefox.nix;
-      overlays.technitium = import ./overlays/technitium-overlay.nix;
-      #overlays.php = import ./overlays/php-overlay.nix;
       # Assemble all host configurations as NixOS systems.
       nixosConfigurations = builtins.listToAttrs (map mkSystem allHostCfgs);
       # Expose pinned nixos-anywhere so install.sh can use it via `nix run .#nixos-anywhere`

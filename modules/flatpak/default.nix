@@ -5,29 +5,45 @@
   ...
 }:
 let
+  # Put applications wanted on every Flatpak-enabled host here.
+  defaultPackages = [ ];
 in
-with lib;
 {
 
   imports = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
 
-  services.flatpak = mkIf config.services.flatpak.enable {
-    remotes = [
+  options.flatpak.packages = lib.mkOption {
+    type = lib.types.listOf (
+      lib.types.oneOf [
+        lib.types.str
+        (lib.types.attrsOf lib.types.anything)
+      ]
+    );
+    default = [ ];
+    description = "Additional Flatpak applications to install on this host.";
+    example = [
+      "org.mozilla.firefox"
       {
-        name = "flathub";
-        location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+        appId = "com.brave.Browser";
+        origin = "flathub";
       }
     ];
+  };
 
-    update.auto.enable = false;
-    uninstallUnmanaged = false;
+  config = lib.mkIf config.services.flatpak.enable {
+    services.flatpak = {
+      remotes = [
+        {
+          name = "flathub";
+          location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+        }
+      ];
 
-    # Add here the flatpaks you want to install
-    packages = [
-      #{ appId = "com.brave.Browser"; origin = "flathub"; }
-      #"com.obsproject.Studio"
-      #"im.riot.Riot"
-      #"com.brave.Browser"
-    ];
+      update.auto.enable = false;
+      uninstallUnmanaged = false;
+
+      # Append shared defaults and host additions to any directly configured packages.
+      packages = lib.mkAfter (defaultPackages ++ config.flatpak.packages);
+    };
   };
 }

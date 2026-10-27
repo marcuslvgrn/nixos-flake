@@ -95,7 +95,7 @@ let
 
     php = phpPackage;
     #5.8.0    vendorHash = "sha256-aGGIJ0jUu0if6R/M7D53Ekn8qQhfOwtDGVyLeP13LME=";
-    vendorHash = "sha256-RPkXLU1d76FzD9dggcq7iEdyukRsrGKvTy5UegN5yrk=";
+    vendorHash = "sha256-Rc93BZLyAmXqCSigckeH3l0sRehOQM/w0t6ewfz0oIM=";
     composerStrictValidation = false;
 
     #Move files that should be writable to ${cfg.passboltHome}

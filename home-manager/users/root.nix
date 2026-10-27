@@ -1,7 +1,7 @@
 {
   #  pkgs,
   #  inputs,
-  hostCfg,
+  hostSettings,
   ...
 }:
 {
@@ -11,7 +11,7 @@
   ];
 
   home = {
-    stateVersion = hostCfg.stateVersion;
+    stateVersion = hostSettings.stateVersion;
     sessionVariables = {
       LANG = "en_US.UTF-8";
       EDITOR = "emacs -nw";

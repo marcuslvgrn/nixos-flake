@@ -19,6 +19,7 @@ in
   config = {
     #use the disko module to format the disk
     diskoConfig.enable = true;
+    diskoConfig.device = "/dev/sda";
     #    airsonic = {
     #      hostName = "mlairsonic.dynv6.net";
     #    };
@@ -82,7 +83,7 @@ in
     #      ++ (with pkgs-stable; [])
     #      ++ (with pkgs-unstable; [])
     # Uncomment either block above to pin specific packages to stable or unstable
-    # regardless of the host's isStable setting (see technitium for an example).
+    # regardless of the host's defaultPkgChannel setting (see technitium for an example).
     ;
   };
 }

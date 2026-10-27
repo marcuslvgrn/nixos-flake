@@ -32,9 +32,9 @@ with lib;
         default = "4G";
       };
       device = mkOption {
-        type = lib.types.str;
+        type = types.nullOr types.str;
         description = "Root device name";
-        default = "/dev/sda";
+        default = null;
       };
       mountOptions = mkOption {
         type = types.listOf types.str;
@@ -45,6 +45,15 @@ with lib;
   };
 
   config = {
+    assertions = [
+      {
+        assertion =
+          !config.diskoConfig.enable
+          || (config.diskoConfig.device != null && config.diskoConfig.device != "");
+        message = "Set diskoConfig.device when diskoConfig.enable is true.";
+      }
+    ];
+
     disko.devices = mkIf config.diskoConfig.enable {
       disk.disk1 = {
         device = config.diskoConfig.device;

@@ -1,10 +1,6 @@
 {
-#  inputs,
   config,
   lib,
-#  pkgs,
-#  pkgs-stable,
-#  pkgs-unstable,
   ...
 }:
 let
@@ -27,7 +23,8 @@ with lib;
   sops.secrets."ddclient-pass" = mkIf serviceCfg.enable { };
   assertions = [
     {
-      assertion = serviceCfg.domains != [ ];
+      assertion = !serviceCfg.enable || serviceCfg.domains != [ ];
+      message = "services.ddclient.domains must contain at least one domain when ddclient is enabled.";
     }
   ];
 }

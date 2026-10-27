@@ -1,35 +1,46 @@
 {
-#  inputs,
+  #  inputs,
   config,
   lib,
-#  pkgs,
-#  pkgs-stable,
+  pkgs-stable,
   pkgs-unstable,
+  hostSettings,
   ...
 }:
 let
   cfg = config.technitium;
   serviceCfg = config.services.technitium-dns-server;
+  packageChannel = import ../../lib/packageChannel.nix {
+    inherit
+      lib
+      pkgs-stable
+      pkgs-unstable
+      hostSettings
+      ;
+  };
 in
-with lib;
 {
 
-  options = {
-    technitium = {
-      hostName = mkOption {
-        type = types.str;
-        description = "Public hostname for nginx";
-      };
-      contextPath = mkOption {
-        type = types.str;
-        default = "/";
-        #default = "/technitium/";
-        description = "Context path for nginx";
-      };
+  options.technitium = {
+    hostName = lib.mkOption {
+      type = lib.types.str;
+      description = "Public hostname for nginx";
+    };
+    contextPath = lib.mkOption {
+      type = lib.types.str;
+      default = "/";
+      description = "Context path for nginx";
+    };
+    # This defaults to unstable to preserve the module's previous package pin.
+    packageChannel = lib.mkOption {
+      type = packageChannel.type;
+      # Preserve the module's previous behavior, which pinned this package to unstable.
+      default = "unstable";
+      description = "Nixpkgs channel to use for the Technitium DNS server package.";
     };
   };
 
-  config = mkIf serviceCfg.enable {
+  config = lib.mkIf serviceCfg.enable {
     assertions = [
       {
         assertion = cfg.hostName != "";
@@ -77,7 +88,7 @@ with lib;
 
       technitium-dns-server = {
         openFirewall = true;
-        package = pkgs-unstable.technitium-dns-server;
+        package = (packageChannel.forChannel cfg.packageChannel).technitium-dns-server;
       };
       nginx = {
         enable = true;

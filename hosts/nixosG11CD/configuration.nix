@@ -89,7 +89,7 @@ in
         nvtopPackages.full
         #])
         # Populate either block to pin specific packages to stable or unstable
-        # regardless of the host's isStable setting (see technitium for an example).
+        # regardless of the host's defaultPkgChannel setting (see technitium for an example).
         #++ (with pkgs-stable; [
         #
         #])

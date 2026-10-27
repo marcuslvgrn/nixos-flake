@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  hostCfg,
+  hostSettings,
   pkgs,
   #  pkgs-stable,
   #  pkgs-unstable,
@@ -18,7 +18,7 @@ with lib;
   ];
 
   options = {
-    #Users
+    # Options here are for homemanager to find them in nixosConfig
     userNames = mkOption {
       description = "Host specific user names";
       type = types.listOf types.str;
@@ -32,7 +32,6 @@ with lib;
       description = "Host specific favorite apps (for dock)";
     };
     startFirefoxAtLogin = mkEnableOption "Enable starting firefox at login";
-    shutdownApp.enable = mkEnableOption "Enable a shutdown App";
   };
 
   config = {
@@ -87,7 +86,9 @@ with lib;
 
     # Use latest kernel if unstable, default is pkgs.linuxPackages
     # https://search.nixos.org/options?channel=25.11&show=boot.kernelPackages&query=boot.kernelpackages
-    boot.kernelPackages = lib.mkIf (!hostCfg.isStable) pkgs.linuxPackages_latest;
+    boot.kernelPackages = lib.mkIf (
+      hostSettings.defaultPkgChannel == "unstable"
+    ) pkgs.linuxPackages_latest;
 
     # List packages installed in system profile.
     # You can use https://search.nixos.org/ to find more packages (and options).
@@ -145,8 +146,8 @@ with lib;
     };
 
     services = {
+      openssh.enable = true;
       emacs.defaultEditor = true;
-      printing.enable = true;
       pcscd.enable = true;
       timesyncd = {
         enable = true;
@@ -191,9 +192,9 @@ with lib;
     # Or disable the firewall altogether.
     # networking.firewall.enable = false;
 
-    nixpkgs.hostPlatform = hostCfg.system;
+    nixpkgs.hostPlatform = hostSettings.system;
     networking = {
-      hostName = hostCfg.hostname;
+      hostName = hostSettings.hostname;
       useDHCP = lib.mkDefault true;
       enableIPv6 = false;
       networkmanager.enable = true;
@@ -218,6 +219,6 @@ with lib;
     # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
     # Set per-host in flake.nix overrides. Must match the NixOS version at first
     # install — never change it after that, even when upgrading NixOS.
-    system.stateVersion = hostCfg.stateVersion;
+    system.stateVersion = hostSettings.stateVersion;
   };
 }
