@@ -43,6 +43,8 @@ with lib;
         # NixOS sets the legacy server.context-path property; Airsonic Advanced 11.x uses server.servlet.context-path.
         jvmOptions = mkAfter [
           "-Dserver.servlet.context-path=${serviceCfg.contextPath}"
+          # Make Airsonic Advanced honor X-Forwarded-* headers from nginx when generating URLs.
+          "-Dserver.forward-headers-strategy=native"
         ];
         # Airsonic Advanced 11.x requires Java 11 or newer.
         jre = pkgs.javaPackages.compiler.openjdk11;

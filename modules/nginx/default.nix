@@ -29,18 +29,29 @@ let
         "${loc}" = {
           proxyPass = proxyCfg.target;
           extraConfig = ''
-            ${lib.optionalString (proxyCfg.recommendedProxySettings or false) ''
-              # Recommended proxy settings
-              proxy_redirect          off;
-              proxy_set_header        Host $host;
-              proxy_set_header        X-Real-IP $remote_addr;
-              proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
-              proxy_set_header        X-Forwarded-Proto $scheme;
-              proxy_set_header        X-Forwarded-Host $host;
-              proxy_set_header        X-Forwarded-Port $server_port;
-            ''}
+             ${
+              if (proxyCfg.recommendedProxySettings or false) then
+                ''
+                  # Recommended proxy settings
+                  proxy_redirect          off;
+                  proxy_set_header        Host $host;
+                  proxy_set_header        X-Real-IP $remote_addr;
+                  proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header        X-Forwarded-Proto $scheme;
+                  proxy_set_header        X-Forwarded-Host $host;
+                  proxy_set_header        X-Forwarded-Port $server_port;
+                ''
+              else
+                ''
+                  # Override globally inherited proxy headers and preserve the upstream host.
+                  proxy_set_header        Host $proxy_host;
+                ''
+            }
             ${proxyCfg.extraConfig or ""}
           '';
+          # Prevent NixOS's global recommendedProxySettings from overriding
+          # this host's setting; this module adds those headers conditionally above.
+          recommendedProxySettings = false;
           proxyWebsockets = proxyCfg.proxyWebsockets;
         };
       };
