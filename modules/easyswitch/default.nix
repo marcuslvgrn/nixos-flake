@@ -50,10 +50,12 @@ let
       chmod +x $out/lib/easyswitch/easyswitch
       makeWrapper $out/lib/easyswitch/easyswitch $out/bin/easyswitch \
         --chdir $out/lib/easyswitch \
-        --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [
-          pkgs.wayland
-          pkgs.libxkbcommon
-        ]}"
+        --prefix LD_LIBRARY_PATH : "${
+          lib.makeLibraryPath [
+            pkgs.wayland
+            pkgs.libxkbcommon
+          ]
+        }"
 
       runHook postInstall
     '';
@@ -83,6 +85,9 @@ in
     services.udev.extraRules = ''
       KERNEL=="uinput", GROUP="input", MODE="0660", OPTIONS+="static_node=uinput"
     '';
+
+    networking.firewall.allowedTCPPorts = [ 41420 ];
+    networking.firewall.allowedUDPPorts = [ 41417 5353 ];
 
     users.groups.input = { };
     users.users.${config.services.easyswitch.user or "your-username"}.extraGroups = [ "input" ];
