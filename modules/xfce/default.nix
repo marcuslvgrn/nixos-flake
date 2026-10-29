@@ -32,7 +32,7 @@ in
 
     services = {
       xserver.enable = true;
-      displayManager.gdm.enable = true;
+      displayManager.sddm.enable = true;
     };
 
     environment.systemPackages = (
