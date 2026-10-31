@@ -66,6 +66,17 @@ sudo -u nextcloud gunzip -c mariadb-nextcloud.sql.gz | mariadb nextcloud
 ```
 
 
+## Networking
+DHCP is enabled globally for all interfaces in `common/configuration.nix` via `networking.useDHCP = lib.mkDefault true`. NetworkManager is also enabled globally.
+
+To change this for a specific host or interface, override in the host's `hw.nix`:
+```nix
+# Disable global DHCP and set per-interface
+networking.useDHCP = false;
+networking.interfaces.enp0s31f6.useDHCP = true;
+networking.interfaces.wlp114s0.useDHCP = false;
+```
+
 ## Packages I use (or intend to use)
 - [technitium dns server](https://technitium.com/) on github https://github.com/TechnitiumSoftware/DnsServer
 - [airsonic advanced music streaming](https://docs.linuxserver.io/images/docker-airsonic-advanced), on github https://github.com/airsonic-advanced/airsonic-advanced

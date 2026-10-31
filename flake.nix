@@ -24,9 +24,6 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    #Gather system information — planned replacement for hand-edited hardware-configuration.nix
-    #Use nixos-facter to scan hardware at install time and generate a facter.json per host
-    nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
     #Nix user repository
     nur = {
       url = "github:nix-community/NUR";
