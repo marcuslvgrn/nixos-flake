@@ -38,6 +38,7 @@ in
         libreoffice
         cheese
         fragments
+        kiro
       ])
       # The stable channel's ChatGPT package is Darwin-only; unstable supports Linux.
       ++ [ pkgs-unstable.chatgpt ];

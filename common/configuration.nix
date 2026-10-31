@@ -127,7 +127,7 @@ with lib;
         ripgrep
         ncdu
         e2fsprogs
-        kiro
+        kiro-cli
       ]
     )
     #      ++
