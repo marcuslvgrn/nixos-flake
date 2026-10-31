@@ -2941,7 +2941,6 @@
       }
     ],
     "cpu": [
-      null,
       {
         "architecture": "x86_64",
         "vendor_name": "GenuineIntel",
