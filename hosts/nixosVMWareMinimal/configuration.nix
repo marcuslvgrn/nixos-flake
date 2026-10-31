@@ -11,7 +11,7 @@
 
 {
   imports = [
-    ./hardware-configuration.nix
+    ./hw.nix
   ];
   diskoConfig.enable = true;
   diskoConfig.device = "/dev/sda";
