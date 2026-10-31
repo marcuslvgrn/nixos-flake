@@ -104,7 +104,7 @@ in
                 dash-to-dock.extensionUuid
                 appindicator.extensionUuid
                 hide-top-bar.extensionUuid
-                hibernate-status-button.extensionUuid
+                #hibernate-status-button.extensionUuid
                 power-off-options.extensionUuid
                 wake-on-lan.extensionUuid
                 no-overview.extensionUuid
