@@ -28,8 +28,6 @@ in
 
   config = lib.mkIf config.services.xserver.desktopManager.xfce.enable {
 
-    programs.nm-applet.enable = true;
-
     services = {
       xserver.enable = true;
       displayManager.sddm.enable = true;

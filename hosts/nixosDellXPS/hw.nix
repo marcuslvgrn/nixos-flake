@@ -91,27 +91,20 @@
     ACTION=="add", SUBSYSTEM=="pci", DRIVER=="pcieport", ATTR{power/wakeup}="disabled"
   '';
 
-  # GPU acceleration for intel
-  environment.sessionVariables = {
-    LIBVA_DRIVER_NAME = "iHD";
-    VDPAU_DRIVER = "va_gl";
-  };
-  hardware.graphics = {
-    enable = true;
-    extraPackages = (
-      with pkgs;
-      [
-        intel-media-driver
-        intel-vaapi-driver
-        libvdpau-va-gl
-        vpl-gpu-rt
-      ]
-    )
-    #        ++ (with pkgs-stable; [])
-    #        ++ (with pkgs-unstable; [])
-    # Uncomment either block above to pin specific packages to stable or unstable
-    # regardless of the host's defaultPkgChannel setting (see technitium for an example).
-    ;
-  };
+  # Install host specific packages
+  environment.systemPackages = (
+    with pkgs;
+    [
+      fprintd
+   ]
+  )
+  #      ++ (with pkgs-stable; [])
+  #      ++ (with pkgs-unstable; [])
+  # Uncomment either block above to pin specific packages to stable or unstable
+  # regardless of the host's defaultPkgChannel setting (see technitium for an example).
+  ;
+
+  # Enable GPU acceleration for intel
+  intel-gpuacc.enable = true;
 
 }

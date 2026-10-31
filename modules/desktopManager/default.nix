@@ -39,6 +39,7 @@ in
         cheese
         fragments
         kiro
+        cifs-utils
       ])
       # The stable channel's ChatGPT package is Darwin-only; unstable supports Linux.
       ++ [ pkgs-unstable.chatgpt ];
@@ -49,5 +50,8 @@ in
     programs.artcraft.enable = true;
     # Disable speechd (not needed)
     services.speechd.enable = false;
+
+    programs.nm-applet.indicator = lib.mkForce true;
+
   };
 }

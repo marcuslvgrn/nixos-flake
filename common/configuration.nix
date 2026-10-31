@@ -34,8 +34,6 @@ with lib;
   };
 
   config = {
-    # For when nixos-rebuild with --target-host
-    #    nix.settings.require-sigs = false;
     security.sudo = {
       enable = true;
       extraConfig = ''
@@ -171,29 +169,6 @@ with lib;
       };
 
     };
-
-    hardware.enableRedistributableFirmware = lib.mkDefault true;
-    hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-    boot.initrd.availableKernelModules = lib.mkDefault [
-      "ata_piix"
-      "mptspi"
-      "uhci_hcd"
-      "ehci_pci"
-      "ahci"
-      "sd_mod"
-      "sr_mod"
-      "nvme"
-    ];
-    boot.initrd.kernelModules = lib.mkDefault [ ];
-    boot.kernelModules = lib.mkDefault [ ];
-    boot.extraModulePackages = lib.mkDefault [ ];
-    boot.zfs.forceImportRoot = false;
-
-    # Open ports in the firewall.
-    # networking.firewall.allowedTCPPorts = [ ... ];
-    # networking.firewall.allowedUDPPorts = [ ... ];
-    # Or disable the firewall altogether.
-    # networking.firewall.enable = false;
 
     nixpkgs.hostPlatform = hostSettings.system;
     networking = {

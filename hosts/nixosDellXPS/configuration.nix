@@ -1,5 +1,5 @@
 {
-  pkgs,
+  # pkgs,
   ...
 }:
 
@@ -29,21 +29,16 @@
   bitwarden-desktop.enable = true;
 
   # Install host specific packages
-  environment.systemPackages = (
-    with pkgs;
-    [
-      fprintd
-      libva-utils
-      vdpauinfo
-      intel-gpu-tools
-      cifs-utils
-    ]
-  )
+  #environment.systemPackages = (
+  #  with pkgs;
+  #  [
+  #  ]
+  #)
   #      ++ (with pkgs-stable; [])
   #      ++ (with pkgs-unstable; [])
   # Uncomment either block above to pin specific packages to stable or unstable
   # regardless of the host's defaultPkgChannel setting (see technitium for an example).
-  ;
+  #;
 
   # Autologin a user
   services.displayManager = {
