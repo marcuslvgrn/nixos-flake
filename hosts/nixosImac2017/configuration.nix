@@ -15,8 +15,6 @@
 {
   imports = [
     ./hardware-configuration.nix
-    #    ../../services/ath11k-suspend.nix
-    #    ../../services/bluetooth-suspend.nix
   ];
 
   config = {

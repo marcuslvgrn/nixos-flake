@@ -14,7 +14,6 @@ with lib;
 {
   imports = [
     ./users
-    ../services/create-swapfile.nix
   ];
 
   options = {
@@ -45,6 +44,10 @@ with lib;
     };
 
     userNames = mkAfter [ "lovgren" ];
+
+    # create-swapfile module is shared by all hosts (previously imported directly
+    # here); enable it in the shared config so every host gets it.
+    create-swapfile.enable = true;
     nix = {
       gc = {
         automatic = true;

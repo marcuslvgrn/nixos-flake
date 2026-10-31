@@ -15,13 +15,16 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../services/ath11k-suspend.nix
-    ../../services/bluetooth-suspend.nix
   ];
 
   config = {
     ssd.enable = true;
     deskflow.enable = true;
+
+    # Service toggles (options defined in common/configuration.nix); previously
+    # imported directly from services/.
+    ath11k-suspend.enable = true;
+    bluetooth-suspend.enable = true;
     services.desktopManager.gnome.enable = true;
     services.teamviewer.enable = true;
     virtualisation.virtualbox.host.enable = true;

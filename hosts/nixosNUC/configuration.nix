@@ -15,7 +15,6 @@ with lib;
   imports = [
     ./hardware-configuration.nix
     ./disk-config.nix
-    #    ../../services/bluetooth-suspend.nix
   ];
 
   config = {
