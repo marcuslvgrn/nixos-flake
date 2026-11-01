@@ -1,4 +1,4 @@
 {
-  defaultPkgChannel = "stable";
-  stateVersion = "25.05";
+  defaultPkgChannel = "unstable";
+  stateVersion = "26.05";
 }
