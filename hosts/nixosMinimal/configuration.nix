@@ -1,7 +1,10 @@
-{ config, lib, ... }:
+{
+  ...
+}:
 
 {
   imports = [
-    ./disk-config.nix
   ];
+  disko.enable = true;
+  disko.device = "dev/sda";
 }
