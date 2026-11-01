@@ -1,0 +1,32 @@
+efi/x86: add iMac18,3 to apple_match_product_name() for set_os
+
+The iMac18,3's Apple firmware hides the Intel HD 630 (8086:5912) unless
+something calls the set_os EFI protocol before the kernel starts. The
+kernel already calls apple_set_os() for eight MacBook Pro models via
+apple_match_product_name(). Adding iMac18,3 to that list makes the
+firmware expose the Intel chip on this iMac too.
+
+MacBookPro16,4 is replaced rather than appended: the array is declared
+char[][15] and "MacBookPro16,4" is 14 bytes (15 with NUL), the same as
+"iMac18,3" padded to 15. Replacing the last slot keeps the array size
+and the EFI stub's .rodata layout identical.
+
+Only safe alongside i915.disable_display=1 and a headless VBT. Without
+them i915 invents an eDP connector on DDI A, which blanked the
+Radeon-driven panel on iMac20,1.
+
+Based on ahmadtv/omarchy-imac18-3 igpu/linux-side/mkinitcpio/imac-setos,
+adapted as a compile-time source patch for NixOS.
+
+--- a/drivers/firmware/efi/libstub/x86-stub.c
++++ b/drivers/firmware/efi/libstub/x86-stub.c
+@@ -307,7 +307,7 @@ static bool apple_match_product_name(void)
+ 		"MacBookPro14,3",
+ 		"MacBookPro15,1",
+ 		"MacBookPro15,3",
+ 		"MacBookPro16,1",
+-		"MacBookPro16,4",
++		"iMac18,3",
+ 	};
+ 	const struct efi_smbios_type1_record *record;
+ 	const u8 *product;
