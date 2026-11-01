@@ -5,9 +5,9 @@
   python3,
   xz,
 }:
-
 let
   kbuild = "${kernel.dev}/lib/modules/${kernel.modDirVersion}/build";
+  kernelSource = "${kernel.dev}/lib/modules/${kernel.modDirVersion}/source";
 in
 kernel.stdenv.mkDerivation {
   pname = "imac-cs8409-linux-audio";
@@ -20,7 +20,10 @@ kernel.stdenv.mkDerivation {
     hash = "sha256-T0hiCQFVE7ii6UwRANHFKWo8nwLdBXqpUALqO9WpcEw=";
   };
 
-  nativeBuildInputs = kernel.moduleBuildDependencies ++ [ python3 xz ];
+  nativeBuildInputs = kernel.moduleBuildDependencies ++ [
+    python3
+    xz
+  ];
   dontStrip = true;
 
   postPatch = ''
@@ -55,6 +58,11 @@ kernel.stdenv.mkDerivation {
                 out.append((dst, KERNEL_VMLINUX))
             out.append((KERNEL_VMLINUX, None))
             return out'
+
+    # These private HDA headers define structs shared with the in-tree codec
+    # modules. Use the target kernel's own versions to keep their ABI aligned.
+    cp "${kernelSource}/sound/hda/common/hda_local.h" hda_local.h
+    cp "${kernelSource}/sound/hda/codecs/generic.h" hda_generic.h
   '';
 
   buildPhase = ''
