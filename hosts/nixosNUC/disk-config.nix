@@ -1,6 +1,4 @@
 {
-  #pkgs,
-  #lib,
   inputs,
   ...
 }:
@@ -33,12 +31,6 @@
             label = "NIXOSROOT";
             content = {
               type = "btrfs";
-              extraArgs = [
-                #                "--force"
-                #                "--data single"
-                #                "--metadata raid1"
-                #                "/dev/disk/by-partlabel/ROOT2"
-              ];
               # Subvolumes must set a mountpoint in order to be mounted,
               # unless their parent is mounted
               subvolumes = {
