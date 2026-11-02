@@ -22,12 +22,6 @@
       chainloader /efi/arch/grubx64.efi
     }
   '';
-  #Specify hibernation options
-  boot.kernelParams = [
-    "resume_offset=2823130"
-    "kvm.enable_virt_at_load=0"
-  ];
-  boot.resumeDevice = "/dev/disk/by-partlabel/NIXOSROOT";
 
   # Filesystems
   swapDevices = [
@@ -96,7 +90,7 @@
     with pkgs;
     [
       fprintd
-   ]
+    ]
   )
   #      ++ (with pkgs-stable; [])
   #      ++ (with pkgs-unstable; [])

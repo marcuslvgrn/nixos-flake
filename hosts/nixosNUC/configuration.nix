@@ -62,13 +62,6 @@ with lib;
       autoLogin.user = "lovgren";
     };
 
-    #Specify hibernation options
-    boot.kernelParams = [
-      "resume_offset=533760"
-      "kvm.enable_virt_at_load=0"
-    ];
-    boot.resumeDevice = "/dev/disk/by-partlabel/NIXOSROOT";
-
     #  #Power management
     #  powerManagement.enable = true;
     #  services.power-profiles-daemon.enable = true;

@@ -10,14 +10,6 @@
   # There is an SSD
   ssd.enable = true;
 
-  # Boot
-  # Specify hibernation options
-  boot.kernelParams = [
-    "resume_offset=8628224"
-    "kvm.enable_virt_at_load=0"
-  ];
-  boot.resumeDevice = "/dev/disk/by-uuid/4aabc80c-9556-4323-862e-17a0452e695a";
-
   # Filesystems
   swapDevices = [
     {

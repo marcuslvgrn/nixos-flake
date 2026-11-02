@@ -44,14 +44,6 @@ with lib;
       autoLogin.user = "gerd";
     };
 
-    #Specify hibernation options
-    #  boot.kernelParams = [
-    #    "resume_offset=533760"
-    #    "resume=UUID=68beb70a-0619-4393-8956-ce7d4658ae5d"
-    #    "kvm.enable_virt_at_load=0"
-    #  ];
-    #  boot.resumeDevice = "/dev/disk/by-uuid/68beb70a-0619-4393-8956-ce7d4658ae5d";
-
     #Power management
     powerManagement.enable = true;
     services.power-profiles-daemon.enable = true;

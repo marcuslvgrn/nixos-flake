@@ -1,5 +1,5 @@
 {
-  config,
+  # config,
   lib,
   hostSettings,
   pkgs,
@@ -34,6 +34,7 @@ with lib;
   };
 
   config = {
+    programs.get-resume-offset.enable = true;
     security.sudo = {
       enable = true;
       extraConfig = ''
