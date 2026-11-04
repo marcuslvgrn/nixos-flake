@@ -35,10 +35,14 @@ let
       description = usrcfg.realname or "";
       shell = lib.mkIf (usrcfg.normalUser or false) pkgs.bashInteractive;
 
+      hashedPassword = usrcfg.hashedPassword or null;
+
       hashedPasswordFile = lib.mkIf (usrcfg.normalUser or false
       ) config.sops.secrets."passwords/${username}".path;
 
       uid = usrcfg.uid or null;
+
+      openssh.authorizedKeys.keys = usrcfg.authorizedKeys or [ ];
     };
 
   # Home Manager per-user builder
@@ -75,7 +79,7 @@ in
     let
       userNamesList = config.userNames or [ ];
     in
-    lib.genAttrs userNamesList mkUser // { root.hashedPassword = "!"; };
+    lib.genAttrs userNamesList mkUser;
 
   # Home Manager configuration
   home-manager =

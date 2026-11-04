@@ -77,25 +77,6 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# AGE key
-install -d -m755 "$temp/root/.config/sops/age"
-sudo cp /run/secrets/age/keys.txt \
-    "$temp/root/.config/sops/age/keys.txt"
-
-# SSH keys
-install -d -m755 "$temp/etc/ssh/authorized_keys.d"
-sudo cp -r /run/secrets/ssh/authorized_keys/root \
-    "$temp/etc/ssh/authorized_keys.d/"
-
-install -d -m755 "$temp/home/lovgren/.ssh"
-sudo cp /run/secrets/ssh/authorized_keys/lovgren \
-    "$temp/home/lovgren/.ssh/authorized_keys"
-
-sudo cp /run/secrets/ssh/keys/id_ed25519 \
-    "$temp/home/lovgren/.ssh/"
-sudo cp /run/secrets/ssh/keys/id_ed25519.pub \
-    "$temp/home/lovgren/.ssh/"
-
 # Git repos
 install -d -m755 "$temp/home/lovgren/git"
 cp -r /home/lovgren/git/* "$temp/home/lovgren/git/"
@@ -105,7 +86,6 @@ sudo nix run /home/lovgren/git/nixos-flake#nixos-anywhere -- \
     --copy-host-keys \
     --extra-files "$temp" \
     --phases "$phases" \
-    --chown /home/lovgren/.ssh 1000:100 \
     --chown /home/lovgren/git 1000:100 \
     --chown /root/.config/sops 0:0 \
     --flake "/home/lovgren/git/nixos-flake#$host" \

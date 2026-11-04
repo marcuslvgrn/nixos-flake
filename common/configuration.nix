@@ -42,7 +42,7 @@ with lib;
       '';
     };
 
-    userNames = mkAfter [ "lovgren" ];
+    userNames = mkAfter [ "root" "lovgren" ];
 
     # create-swapfile module is shared by all hosts (previously imported directly
     # here); enable it in the shared config so every host gets it.

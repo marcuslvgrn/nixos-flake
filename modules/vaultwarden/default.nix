@@ -56,7 +56,7 @@ with lib;
           # NOTE: add users from <domain>/#/register page
           SIGNUPS_ALLOWED = false;
 
-          ROCKET_ADDRESS = "0.0.0.0";
+          ROCKET_ADDRESS = "127.0.0.1";
           ROCKET_PORT = 8222;
           ROCKET_LOG = "critical";
 
@@ -81,7 +81,7 @@ with lib;
               proxyPass = "http://127.0.0.1:${toString serviceCfg.config.ROCKET_PORT}";
               proxyWebsockets = true;
             };
-            "= ${cfg.contextPath}/notifications/hub" = {
+            "= ${cfg.contextPath}notifications/hub" = {
               proxyPass = "http://127.0.0.1:${toString serviceCfg.config.ROCKET_PORT}";
               proxyWebsockets = true;
             };

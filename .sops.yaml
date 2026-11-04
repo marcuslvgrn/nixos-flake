@@ -1,7 +1,9 @@
 keys:
   - &root age188wtgt8zvfvmrdls7t5kmr4z9fjfapzpsekzlr37mvmp9dv539uq8dq3ek
+  - &nixosX360 age158wnupgqx3mgp2p0p08vc89cklvux77g0wzdstnv8gy2wdc4ae0q22jec8
 creation_rules:
   - path_regex: modules/sops/root-secrets.yaml
     key_groups:
     - age:
       - *root
+      - *nixosX360

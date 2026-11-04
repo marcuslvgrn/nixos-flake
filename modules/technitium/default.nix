@@ -51,13 +51,10 @@ in
       53
       67
     ];
-    networking.firewall.allowedTCPPorts = [
-      53
-      5380
-    ];
-
     #override the technitium service (disable the DynamicUser, it causes issues with write permissions)
     systemd.services.technitium-dns-server = {
+      # Technitium reads this when creating its initial configuration.
+      environment.DNS_SERVER_WEB_SERVICE_LOCAL_ADDRESSES = "127.0.0.1";
       serviceConfig = {
         DynamicUser = lib.mkForce false; # disable ephemeral user
         User = "technitium"; # use a stable system user
@@ -88,6 +85,7 @@ in
 
       technitium-dns-server = {
         openFirewall = true;
+        firewallTCPPorts = [ 53 ];
         package = (packageChannel.forChannel cfg.packageChannel).technitium-dns-server;
       };
       nginx = {

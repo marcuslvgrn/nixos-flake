@@ -5,6 +5,6 @@
 {
   imports = [
   ];
-  disko.enable = true;
-  disko.device = "dev/sda";
+  diskoConfig.enable = true;
+  diskoConfig.device = "/dev/sda";
 }
