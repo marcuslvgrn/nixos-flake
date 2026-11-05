@@ -13,10 +13,8 @@
     defaultSopsFile = ./root-secrets.yaml;
     defaultSopsFormat = "yaml";
 
-    # Both host key (for nixos-anywhere) and root key (for sops calls)
     age.sshKeyPaths = [
       "/etc/ssh/ssh_host_ed25519_key"
-      "/root/.ssh/id_ed25519"
     ];
 
     # Global secrets needed on every host.
@@ -63,7 +61,7 @@
   ];
 
   # SOPS CLI needs the SSH host key converted back to its age identity.
-  environment.variables.SOPS_AGE_KEY_CMD = "ssh-to-age -private-key -i /root/.ssh/id_ed25519";
+  environment.variables.SOPS_AGE_KEY_CMD = "ssh-to-age -private-key -i /etc/ssh/ssh_host_ed25519_key";
   security.sudo.extraConfig = ''
     Defaults env_keep += "SOPS_AGE_KEY_CMD"
   '';
