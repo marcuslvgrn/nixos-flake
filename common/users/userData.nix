@@ -41,6 +41,7 @@
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICtdS7FUKf8+6NBbwD+KwBjWBDv/DuSaBYuSH1DCv2XD root@nixosVMWareGnome"
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKMxvG/wzUbwpZ/wB1O8CGjNiAsJlF3QRySfuAKuOdrk root@nixosX360"
       ];
+      realname = "System administrator";
     };
   };
 }
