@@ -37,9 +37,7 @@
       uid = 0;
       hashedPassword = "!";
       authorizedKeys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILZcwLi02co7nvCZsNf05AhCa5chgrZzUag1FK0tqAAo root@nixosDellXPS"
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICtdS7FUKf8+6NBbwD+KwBjWBDv/DuSaBYuSH1DCv2XD root@nixosVMWareGnome"
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKMxvG/wzUbwpZ/wB1O8CGjNiAsJlF3QRySfuAKuOdrk root@nixosX360"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKMxvG/wzUbwpZ/wB1O8CGjNiAsJlF3QRySfuAKuOdrk root@nixos"
       ];
       realname = "System administrator";
     };
