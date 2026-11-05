@@ -8,7 +8,7 @@
   config = lib.mkIf config.services.openssh.enable {
     services.openssh.settings = {
       X11Forwarding = true;
-      PermitRootLogin = "no";
+      PermitRootLogin = "yes";
       PasswordAuthentication = false; # disable password login
       KbdInteractiveAuthentication = false; # disable PAM-based password prompts
     };

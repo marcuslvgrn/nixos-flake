@@ -15,7 +15,7 @@
       normalUser = true;
       systemUser = false;
       authorizedKeys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIux8sh6ofpPIAKRCubTDxS0Ojbuv3MPUJH69mWygrYd"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIux8sh6ofpPIAKRCubTDxS0Ojbuv3MPUJH69mWygrYd lovgren@nixos"
       ];
     };
     gerd = {

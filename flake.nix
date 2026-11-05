@@ -165,7 +165,8 @@
               hostSettings.nixosModulePath
               {
                 #For printing commit messages in nixos-generations
-                system.configurationRevision = if self ? dirtyRev then "${self.dirtyRev}-dirty" else self.rev;
+                system.configurationRevision =
+                  if self ? dirtyRev then "${self.dirtyRev}-dirty" else self.rev or null;
               }
             ];
             specialArgs = {

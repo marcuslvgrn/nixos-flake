@@ -19,7 +19,7 @@ with lib;
       espSize = mkOption {
         type = lib.types.str;
         description = "Set the size of the esp partition";
-        default = "500M";
+        default = "100M";
       };
       rootSize = mkOption {
         type = lib.types.str;
