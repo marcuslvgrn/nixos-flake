@@ -2,6 +2,8 @@ keys:
   - &root age1jxxhgjlsjpllr8xu47f2kfp4xmdmvfg2a9an7dpvn3kkt03cc3escupr4g
   - &nixosVBoxMinimal age13tupdcy8nxpycw2ka8kp265xg4dx5974r5xvnsm4a208ge0znaqsmr4ezc
   - &nixosNUC age1cdll47725eeu9hehwxw22kun48pzd3zvg7k9kktahxte7nke6q9qnespux
+  - &nixosDellXPS age1qd4ypesh2walmc4u368l0rr8mqwrpxdulsz9l6xjjth7mm9wvpqqehnxlx
+  - &nixosG11CD age1av45gccrrlqwkdss2wrkjethxwhqkfae90hpynmpf55ggqctwyyqc5dryw
 creation_rules:
   - path_regex: modules/sops/root-secrets.yaml
     key_groups:
@@ -9,3 +11,5 @@ creation_rules:
       - *root
       - *nixosVBoxMinimal
       - *nixosNUC
+      - *nixosDellXPS
+      - *nixosG11CD
