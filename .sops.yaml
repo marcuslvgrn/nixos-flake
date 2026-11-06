@@ -4,6 +4,7 @@ keys:
   - &nixosNUC age1cdll47725eeu9hehwxw22kun48pzd3zvg7k9kktahxte7nke6q9qnespux
   - &nixosDellXPS age1qd4ypesh2walmc4u368l0rr8mqwrpxdulsz9l6xjjth7mm9wvpqqehnxlx
   - &nixosG11CD age1av45gccrrlqwkdss2wrkjethxwhqkfae90hpynmpf55ggqctwyyqc5dryw
+  - &nixosX360 age158wnupgqx3mgp2p0p08vc89cklvux77g0wzdstnv8gy2wdc4ae0q22jec8
 creation_rules:
   - path_regex: modules/sops/root-secrets.yaml
     key_groups:
@@ -13,3 +14,4 @@ creation_rules:
       - *nixosNUC
       - *nixosDellXPS
       - *nixosG11CD
+      - *nixosX360
