@@ -77,6 +77,7 @@ in
         gnomeExtensions.power-off-options
         gnomeExtensions.wake-on-lan
         gnomeExtensions.no-overview
+        gnomeExtensions.disable-unredirect
         gnome-tweaks
         vlc
         gparted
@@ -108,6 +109,7 @@ in
                 power-off-options.extensionUuid
                 wake-on-lan.extensionUuid
                 no-overview.extensionUuid
+                disable-unredirect.extensionUuid
               ];
             };
           };
