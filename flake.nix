@@ -124,7 +124,7 @@
       mkPkgs =
         nixpkgs: hostSettings: overlays:
         import nixpkgs {
-          system = hostSettings.system;
+          localSystem = hostSettings.system;
           config.allowUnfree = true;
           inherit overlays;
         };
@@ -158,7 +158,6 @@
           name = hostSettings.hostname;
           value = inputLib.nixosSystem {
             inherit pkgs;
-            system = hostSettings.system;
             modules = [
               #load default.nix in the modules directory, will import all modules
               ./modules

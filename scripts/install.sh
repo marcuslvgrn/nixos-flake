@@ -2,12 +2,6 @@
 
 set -e
 
-# nixos-anywhere's install environment needs Python 3. Re-enter this script
-# inside a Nix shell when the caller does not already have it on PATH.
-if ! command -v python3 >/dev/null 2>&1; then
-    exec nix shell nixpkgs#python3 --command bash "$0" "$@"
-fi
-
 ipnumber=""
 host=""
 disko="yes"

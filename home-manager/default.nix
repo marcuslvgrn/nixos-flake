@@ -1,13 +1,7 @@
 {
-  #  config,
   lib,
-  #  inputs,
-  nixosConfig,
   userConfig,
   hostSettings,
-  #  pkgs,
-  #  pkgs-stable,
-  # pkgs-unstable,
   ...
 }:
 
@@ -47,7 +41,7 @@
         gd = "git diff";
         rebuild-switch = lib.mkDefault "nixos-rebuild switch --flake ~/git/nixos-flake";
         rebuild-boot = lib.mkDefault "nixos-rebuild boot --flake ~/git/nixos-flake";
-        rebuild-build = lib.mkDefault "nixos-rebuild boot --flake ~/git/nixos-flake";
+        rebuild-build = lib.mkDefault "nixos-rebuild build --flake ~/git/nixos-flake";
         sudo = "sudo ";
       };
       stateVersion = hostSettings.stateVersion;

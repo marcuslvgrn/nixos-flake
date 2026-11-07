@@ -24,7 +24,7 @@ with lib;
   omarchy.enable = true;
 
   # Enable teamviewer
-  services.teamviewer.enable = true;
+  # services.teamviewer.enable = true;
 
   # Nextcloud client
   nextcloud-client.enable = true;

@@ -7,7 +7,6 @@
 with lib;
 let
   sys = inputLib.nixosSystem {
-    system = "x86_64-linux";
     modules = [
       (
         {
@@ -17,6 +16,7 @@ let
         {
           imports = [ (modulesPath + "/installer/netboot/netboot-minimal.nix") ];
           config = {
+            nixpkgs.hostPlatform = "x86_64-linux";
             console.keyMap = "sv-latin1";
             system.stateVersion = "26.05";
             services.openssh = {

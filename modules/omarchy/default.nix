@@ -13,7 +13,7 @@
     # Quickshell is pinned to Qt 6.11 while the system Qt is newer. Put its
     # matching image plugins first so it can decode Omarchy's WebP wallpapers.
     environment.sessionVariables.QT_PLUGIN_PATH = lib.mkForce (
-      "${inputs.nixpkgs.legacyPackages.${pkgs.system}.qt6.qtimageformats}/lib/qt-6/plugins:${config.system.path}/lib/qt-6/plugins"
+      "${inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system}.qt6.qtimageformats}/lib/qt-6/plugins:${config.system.path}/lib/qt-6/plugins"
     );
     home-manager.sharedModules = [ inputs.omarchy-nix.homeModules.default ];
 
