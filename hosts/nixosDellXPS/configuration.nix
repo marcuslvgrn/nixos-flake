@@ -18,6 +18,12 @@
 
   # Use gnome as the desktop manager
   services.desktopManager.gnome.enable = true;
+  omarchy = {
+    enable = false;
+    managedPackagesFile =
+      if builtins.pathExists ./omarchy-packages.json then ./omarchy-packages.json else null;
+    plymouth.enable = false;
+  };
 
   # Enable teamviewer
   services.teamviewer.enable = false;
