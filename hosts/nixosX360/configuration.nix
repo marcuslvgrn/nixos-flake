@@ -21,6 +21,7 @@ with lib;
   services.desktopManager.cosmic.enable = true;
   services.desktopManager.budgie.enable = true;
   services.xserver.desktopManager.cinnamon.enable = true;
+  omarchy.enable = true;
 
   # Enable teamviewer
   services.teamviewer.enable = true;

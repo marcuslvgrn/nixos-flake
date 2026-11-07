@@ -70,7 +70,7 @@ in
     }
   ];
 
-  environment.variables.EDITOR = "emacs -nw";
+  environment.variables.EDITOR = lib.mkDefault "nvim";
 
   users.mutableUsers = false;
 

@@ -15,6 +15,11 @@
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Omarchy's Quickshell desktop, Hyprland configuration, and menu for NixOS.
+    omarchy-nix = {
+      url = "github:zicochaos/omarchy-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     home-manager-unstable = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs-unstable";

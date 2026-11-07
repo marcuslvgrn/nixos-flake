@@ -2,7 +2,7 @@
   #  config,
   lib,
   #  inputs,
-  # nixosConfig,
+  nixosConfig,
   userConfig,
   hostSettings,
   #  pkgs,
@@ -58,6 +58,9 @@
       initExtra = ''
         export LANG="en_US.UTF-8"
         export LC_MESSAGES="en_US.UTF-8"
+        if [[ -z "$TMUX" && -n "$PS1" && -t 0 ]]; then
+          exec tmux new-session -A -s main
+        fi
       '';
     };
 
@@ -66,8 +69,14 @@
       initContent = ''
         export LANG="en_US.UTF-8"
         export LC_MESSAGES="en_US.UTF-8"
+        if [[ -z "$TMUX" && -n "$PS1" && -t 0 ]]; then
+          exec tmux new-session -A -s main
+        fi
       '';
     };
+
+    # Omarchy already provides tmux and seeds ~/.config/tmux/tmux.conf.
+    # Don't let Home Manager replace that existing Omarchy config.
 
     programs.git = {
       enable = true;

@@ -128,6 +128,10 @@
           enable = true;
           settings = {
             filesystem = {
+              filtered_items = {
+                visible = true;
+              };
+
               follow_current_file = {
                 enabled = true;
               };
@@ -189,6 +193,12 @@
         guifont = "FiraCodeNerdFontMono-Regular";
       };
       keymaps = [
+        {
+          mode = "n";
+          key = "<leader>g";
+          action = ":LazyGit<CR>";
+          options.silent = false;
+        }
         {
           mode = "n";
           key = "<leader>wa";
