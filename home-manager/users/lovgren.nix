@@ -1,55 +1,58 @@
 {
   lib,
   nixosConfig,
-#  config,
   pkgs,
-#  pkgs-unstable,
-#  inputs,
+  config,
+  #  pkgs-unstable,
   ...
 }:
 
 {
-  imports = [
+  imports = [ ];
 
-  ];
+  config = lib.mkIf nixosConfig.omarchy.enable {
+    # Enable home manager omarchy module
+    omarchy.enable = true;
 
-  omarchy.enable = true;
+    # tmux started in bash for all users if enabled here
+    programs.tmux.enable = true;
 
-  # Omarchy owns shell.json as an editable runtime file and has no module
-  # option for individual widgets. Preserve its current and future settings,
-  # while enforcing just this one preference after Home Manager writes files.
-  home.activation.omarchyHideSystemUpdateWidget = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    shell_config="$HOME/.config/omarchy/shell.json"
-    if [ -f "$shell_config" ]; then
-      shell_config_tmp=$(mktemp "$shell_config.XXXXXX")
-      ${pkgs.jq}/bin/jq '(.bar.layout |= with_entries(.value |= map(select(.id != "omarchy.system-update"))))' \
-        "$shell_config" >"$shell_config_tmp"
-      if ! cmp -s "$shell_config" "$shell_config_tmp"; then
-        chmod --reference="$shell_config" "$shell_config_tmp"
-        run mv "$shell_config_tmp" "$shell_config"
-      else
-        run rm -f "$shell_config_tmp"
+    # Omarchy owns shell.json as an editable runtime file and has no module
+    # option for individual widgets. Preserve its current and future settings,
+    # while enforcing just this one preference after Home Manager writes files.
+    home.activation.omarchyHideSystemUpdateWidget = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      shell_config="$HOME/.config/omarchy/shell.json"
+      if [ -f "$shell_config" ]; then
+        shell_config_tmp=$(mktemp "$shell_config.XXXXXX")
+        ${pkgs.jq}/bin/jq '(.bar.layout |= with_entries(.value |= map(select(.id != "omarchy.system-update"))))' \
+          "$shell_config" >"$shell_config_tmp"
+        if ! cmp -s "$shell_config" "$shell_config_tmp"; then
+          chmod --reference="$shell_config" "$shell_config_tmp"
+          run mv "$shell_config_tmp" "$shell_config"
+        else
+          run rm -f "$shell_config_tmp"
+        fi
       fi
-    fi
-  '';
-
-  # Omarchy's first-run provisioner retries all onboarding notifications when
-  # any step fails. First-run setup has already run; this marker prevents the
-  # repeated Learn Keybindings toast at each login.
-  home.file.".local/state/omarchy/done/first-run-user".text = "";
-
-  xdg.configFile."hypr/input.lua" = lib.mkIf nixosConfig.programs.hyprland.enable {
-    force = true;
-    text = ''
-      hl.config({
-        input = {
-          kb_layout = "se",
-          touchpad = {
-            natural_scroll = true,
-          },
-        },
-      })
     '';
+
+    # Omarchy's first-run provisioner retries all onboarding notifications when
+    # any step fails. First-run setup has already run; this marker prevents the
+    # repeated Learn Keybindings toast at each login.
+    home.file.".local/state/omarchy/done/first-run-user".text = "";
+
+    xdg.configFile."hypr/input.lua" = lib.mkIf nixosConfig.programs.hyprland.enable {
+      force = true;
+      text = ''
+        hl.config({
+          input = {
+            kb_layout = "se",
+            touchpad = {
+              natural_scroll = true,
+            },
+          },
+        })
+      '';
+    };
   };
 
   #  nixpkgs = {

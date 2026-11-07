@@ -2,6 +2,8 @@
   lib,
   userConfig,
   hostSettings,
+  config,
+  nixosConfig,
   ...
 }:
 
@@ -23,12 +25,6 @@
       homeDirectory = lib.mkDefault "/home/${userConfig.username}";
       sessionVariables = {
         LANG = "sv_SE.UTF-8";
-        #      XDG_DATA_DIRS = lib.mkMerge [
-        #        (lib.mkDefault "/run/current-system/sw/share")
-        #        (lib.mkIf (config.home.username != null)
-        #          "/etc/profiles/per-user/${config.home.username}/share")
-        #      ];
-        #      GSETTINGS_SCHEMA_DIR = "/run/current-system/sw/share/glib-2.0/schemas";
       };
       shellAliases = {
         ll = "ls -lah";
@@ -39,9 +35,10 @@
         gps = "git push";
         gpl = "git pull";
         gd = "git diff";
-        rebuild-switch = lib.mkDefault "nixos-rebuild switch --flake ~/git/nixos-flake";
-        rebuild-boot = lib.mkDefault "nixos-rebuild boot --flake ~/git/nixos-flake";
-        rebuild-build = lib.mkDefault "nixos-rebuild build --flake ~/git/nixos-flake";
+        gl = "git log";
+        rebuild-switch = lib.mkDefault "nixos-rebuild switch --flake ~/git/nixos-flake --log-format bar-with-logs";
+        rebuild-boot = lib.mkDefault "nixos-rebuild boot --flake ~/git/nixos-flake --log-format bar-with-logs";
+        rebuild-build = lib.mkDefault "nixos-rebuild build --flake ~/git/nixos-flake --log-format bar-with-logs";
         sudo = "sudo ";
       };
       stateVersion = hostSettings.stateVersion;
@@ -52,6 +49,9 @@
       initExtra = ''
         export LANG="en_US.UTF-8"
         export LC_MESSAGES="en_US.UTF-8"
+      ''
+      # Start tmux if enabled
+      + lib.optionalString config.programs.tmux.enable ''
         if [[ -z "$TMUX" && -n "$PS1" && -t 0 ]]; then
           exec tmux new-session -A -s main
         fi
@@ -63,14 +63,14 @@
       initContent = ''
         export LANG="en_US.UTF-8"
         export LC_MESSAGES="en_US.UTF-8"
+      ''
+      # Start tmux if enabled
+      + lib.optionalString config.programs.tmux.enable ''
         if [[ -z "$TMUX" && -n "$PS1" && -t 0 ]]; then
           exec tmux new-session -A -s main
         fi
       '';
     };
-
-    # Omarchy already provides tmux and seeds ~/.config/tmux/tmux.conf.
-    # Don't let Home Manager replace that existing Omarchy config.
 
     programs.git = {
       enable = true;

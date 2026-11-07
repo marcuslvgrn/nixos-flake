@@ -70,7 +70,8 @@ in
     }
   ];
 
-  environment.variables.EDITOR = lib.mkDefault "nvim";
+  # Override NixOS's own mkDefault of "nano" for the shared system editor.
+  environment.variables.EDITOR = lib.mkForce "nvim";
 
   users.mutableUsers = false;
 
