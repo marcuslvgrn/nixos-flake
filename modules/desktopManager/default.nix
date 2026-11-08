@@ -11,6 +11,15 @@ in
 {
   config = mkIf config.services.xserver.enable {
 
+    programs.firefox = {
+      enable = true;
+      package = pkgs.firefox;
+      languagePacks = [
+        "sv-SE"
+        "en-US"
+      ];
+    };
+
     services = {
       xserver.xkb.layout = "se";
     };

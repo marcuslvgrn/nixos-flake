@@ -28,14 +28,6 @@ in
   };
 
   config = lib.mkIf config.services.desktopManager.gnome.enable {
-    programs.firefox = {
-      enable = true;
-      languagePacks = [
-        "sv-SE"
-        "en-US"
-      ];
-    };
-
     services = {
       xserver.enable = true;
       gnome.gnome-browser-connector.enable = true;

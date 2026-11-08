@@ -2,12 +2,11 @@
   lib,
   nixosConfig,
   pkgs,
-  pkgs-unstable,
   ...
 }:
 let
   # Convert the list of firefox extension strings to a list of extension packages
-  extraExtensionPackages = map (name: pkgs-unstable.nur.repos.rycee.firefox-addons.${name}) (
+  extraExtensionPackages = map (name: pkgs.nur.repos.rycee.firefox-addons.${name}) (
     nixosConfig.extraFirefoxExtensions or [ ]
   );
 in
@@ -32,7 +31,7 @@ in
           default = "ddg";
         };
         extensions.packages =
-          with pkgs-unstable.nur.repos.rycee.firefox-addons;
+          with pkgs.nur.repos.rycee.firefox-addons;
           [
             ublock-origin
             bitwarden

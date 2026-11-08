@@ -21,6 +21,11 @@ with lib;
   services.desktopManager.cosmic.enable = true;
   services.desktopManager.budgie.enable = true;
   services.xserver.desktopManager.cinnamon.enable = true;
+  services.xserver.desktopManager.xfce.enable = true;
+  # Needed to resolve plasma6 and xfce
+  programs.labwc.enable = true;
+  # Plasma and XFCE suggest different graphical pinentry packages.
+  programs.gnupg.agent.pinentryPackage = pkgs.pinentry-qt;
   omarchy = {
     enable = true;
     plymouth.enable = false;
