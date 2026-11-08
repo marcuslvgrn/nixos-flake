@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  pkgs-unstable,
   ...
 }:
 with lib;
@@ -19,6 +18,7 @@ in
     # Bluetooth
     hardware.bluetooth.enable = true;
     hardware.bluetooth.powerOnBoot = true;
+
     # List packages installed in system profile.
     # You can use https://search.nixos.org/ to find more packages (and options).
     environment.systemPackages =
@@ -27,22 +27,32 @@ in
         chromium
         microsoft-edge
         brave
+        # For printers
         cups
-        spotify
-        proton-vpn
-        yt-dlp
+        # Media streaming
+        spotify # Streaming music
+        yt-dlp # Download youtube videos
+        # Network tools
+        proton-vpn # VPN
+        fragments # Torrents
+        cifs-utils # Mount network drives
+        # Bluetooth tools
         bluez
         bluez-tools
+        # Devices
         libinput
-        gimp
+        #Editors
+        gimp # Image editor
+        # Office programs
         libreoffice
+        # Webcam
         cheese
-        fragments
+        # AI tools
+        chatgpt
         kiro
-        cifs-utils
       ])
-      # The stable channel's ChatGPT package is Darwin-only; unstable supports Linux.
-      ++ [ pkgs-unstable.chatgpt ];
+      ++ [
+      ];
 
     # Enable touchpad support (enabled default in most desktopManager).
     services.libinput.enable = true;

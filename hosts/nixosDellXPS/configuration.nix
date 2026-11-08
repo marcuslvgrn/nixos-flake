@@ -16,6 +16,9 @@
     user = "lovgren";
   };
 
+  ai-cli-tools.enable = true;
+  ai-gui-tools.enable = true;
+
   # Use gnome as the desktop manager
   services.desktopManager.gnome.enable = true;
   omarchy = {

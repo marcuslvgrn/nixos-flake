@@ -1,10 +1,7 @@
 {
-  # config,
   lib,
   hostSettings,
   pkgs,
-  #  pkgs-stable,
-  #  pkgs-unstable,
   ...
 }:
 let
@@ -31,6 +28,8 @@ with lib;
       description = "Host specific favorite apps (for dock)";
     };
     startFirefoxAtLogin = mkEnableOption "Enable starting firefox at login";
+    ai-cli-tools.enable = mkEnableOption "Enable agentic AI CLI tools";
+    ai-gui-tools.enable = mkEnableOption "Enable agentic AI GUI tools";
   };
 
   config = {
@@ -42,7 +41,10 @@ with lib;
       '';
     };
 
-    userNames = mkAfter [ "root" "lovgren" ];
+    userNames = mkAfter [
+      "root"
+      "lovgren"
+    ];
 
     # create-swapfile module is shared by all hosts (previously imported directly
     # here); enable it in the shared config so every host gets it.
@@ -97,39 +99,46 @@ with lib;
     environment.systemPackages = (
       with pkgs;
       [
+        # For fetching files
         wget
+        # For manipulating efi boot entries
         efibootmgr
-        fastfetch
+        # For managing git repos
         gitFull
-        #GPG
+        # Secrets management
         age
         sops
-        gnupg
-        #      pinentry
-        pinentry-curses
+        ssh-to-age
         #
-        emacs
-        nixfmt
-        nixd
+        # Encryption
+        gnupg
+        # GnuPG’s interface to passphrase input.
+        # Pinentry provides a console and (optional) GTK and Qt GUIs allowing users to enter a passphrase when gpg or gpg2 is run and needs it.
+        pinentry-curses
+        # Nix
+        nixd # The nix daemon
+        ncdu # show nix disk usage
+        nixfmt # For formatting nix files
+        nurl # generate fetcher based on url
+        # Network tools
         traceroute
         dig
-        btrfs-progs
-        stow # handle dotfiles in home directory
-        ssh-to-age # for sops-nix
+        iperf3 # measure network performance
+        # Disk management
+        btrfs-progs # Btrfs filesystem management
+        gptfdisk # For partitioning
+        compsize # For calculating compression ratios
+        e2fsprogs # For managing ext drives or wiping drives
+        # Password management
         mkpasswd
-        gptfdisk
-        nix-tree # show nix disk usage
+        # Build tools
         gcc
         gnumake
-        compsize
+        # Device management
         pciutils
         usbutils
-        iperf3 # measure network performance
-        nurl # generate fetcher based on url
+        # Search tool
         ripgrep
-        ncdu
-        e2fsprogs
-        kiro-cli
       ]
     )
     #      ++
@@ -149,7 +158,6 @@ with lib;
 
     services = {
       openssh.enable = true;
-      emacs.defaultEditor = true;
       pcscd.enable = true;
       timesyncd = {
         enable = true;
