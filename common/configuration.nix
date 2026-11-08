@@ -137,6 +137,8 @@ with lib;
         usbutils
         # Search tool
         ripgrep
+        # Show system info
+        fastfetch
       ]
     )
     #      ++
