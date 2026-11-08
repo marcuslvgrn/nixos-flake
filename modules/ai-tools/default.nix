@@ -1,5 +1,6 @@
 {
   pkgs,
+  pkgs-unstable,
   lib,
   config,
   ...
@@ -18,23 +19,36 @@
           kiro-cli
           #chatgpt-cli
           pi-coding-agent
-          omp
           #claude-code
           codex
-          antigravity-cli
           #grok-cli
-          #opencode
           amp
+        ]
+      ))
+      ++ (lib.optionals config.ai-tools.cli.enable (
+        with pkgs-unstable;
+        [
+          omp
+          antigravity-cli
           herdr
+          opencode
         ]
       ))
       ++ (lib.optionals config.ai-tools.gui.enable (
         with pkgs;
         [
-          chatgpt
           kiro
         ]
+      ))
+      # chatgpt only available in unstable
+      ++ (lib.optionals config.ai-tools.gui.enable (
+        with pkgs-unstable;
+        [
+          chatgpt
+        ]
+
       ));
+
     extraFavoriteApps = lib.mkIf config.ai-tools.gui.enable [
       "chatgpt.desktop"
     ];

@@ -1,6 +1,9 @@
 { config, lib, ... }:
 {
   config = lib.mkIf config.services.desktopManager.cosmic.enable {
-    services.displayManager.gdm.enable = true;
+    desktopEnvironment.enable = true;
+    services = {
+      displayManager.gdm.enable = true;
+    };
   };
 }

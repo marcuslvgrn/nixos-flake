@@ -15,13 +15,17 @@
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    home-manager-unstable = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
     # Omarchy's Quickshell desktop, Hyprland configuration, and menu for NixOS.
-    omarchy-nix = {
+    omarchy-nix-stable = {
       url = "github:zicochaos/omarchy-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    home-manager-unstable = {
-      url = "github:nix-community/home-manager";
+    omarchy-nix-unstable = {
+      url = "github:zicochaos/omarchy-nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     #Disk partitioning
@@ -43,7 +47,10 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    artcraft.url = "github:ipeglin/artcraft-nix";
+    artcraft = {
+      url = "github:ipeglin/artcraft-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixos-anywhere = {
       url = "github:nix-community/nixos-anywhere";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -104,6 +111,7 @@
           defaultPkgChannel = resolveChannel "defaultPkgChannel" null true;
           homeManagerChannel = resolveChannel "homeManagerChannel" defaultPkgChannel false;
           nixvimChannel = resolveChannel "nixvimChannel" defaultPkgChannel false;
+          omarchyChannel = resolveChannel "omarchyChannel" "stable" false;
         in
         hostSettings
         // {
@@ -113,6 +121,7 @@
             defaultPkgChannel
             homeManagerChannel
             nixvimChannel
+            omarchyChannel
             ;
           system = "x86_64-linux";
           nixosModulePath = checkedNixosModulePath;

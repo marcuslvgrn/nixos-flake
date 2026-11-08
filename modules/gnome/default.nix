@@ -28,8 +28,8 @@ in
   };
 
   config = lib.mkIf config.services.desktopManager.gnome.enable {
+    desktopEnvironment.enable = true;
     services = {
-      xserver.enable = true;
       gnome.gnome-browser-connector.enable = true;
       displayManager.gdm.enable = true;
       gnome.gnome-keyring.enable = true;

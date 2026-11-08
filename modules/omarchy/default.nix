@@ -3,16 +3,24 @@
   inputs,
   lib,
   pkgs,
+  hostSettings,
   ...
 }:
+let
+  omarchyInput =
+    if hostSettings.omarchyChannel == "stable" then
+      inputs.omarchy-nix-stable
+    else
+      inputs.omarchy-nix-unstable;
+in
 {
-  imports = [ inputs.omarchy-nix.nixosModules.default ];
+  imports = [ omarchyInput.nixosModules.default ];
 
   config = lib.mkMerge [
     {
       # Home Manager applies sharedModules to each configured user. Keep this
       # unconditional so the user's omarchy option is declared on every host.
-      home-manager.sharedModules = [ inputs.omarchy-nix.homeModules.default ];
+      home-manager.sharedModules = [ omarchyInput.homeModules.default ];
     }
     (lib.mkIf config.omarchy.enable {
       environment.sessionVariables.NIXOS_OZONE_WL = "1";

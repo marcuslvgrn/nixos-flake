@@ -27,9 +27,9 @@ in
   };
 
   config = lib.mkIf config.services.desktopManager.plasma6.enable {
+    desktopEnvironment.enable = true;
 
     services = {
-      xserver.enable = true;
       displayManager.gdm.enable = true;
     };
 
