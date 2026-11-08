@@ -21,8 +21,9 @@
 
   # Use gnome as the desktop manager
   services.desktopManager.gnome.enable = true;
+  services.displayManager.defaultSession = "gnome";
   omarchy = {
-    enable = false;
+    enable = true;
     plymouth.enable = false;
   };
 

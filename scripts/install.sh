@@ -87,7 +87,7 @@ fi
 echo "Registering SOPS recipient for $host ($age_recipient)..."
 recipient_config=$(mktemp .sops.yaml.XXXXXX)
 if ! awk -v host="$host" -v recipient="$age_recipient" \
-    -f scripts/register-sops-host.awk .sops.yaml > "$recipient_config"; then
+    -f scripts/install/register-sops-host.awk .sops.yaml > "$recipient_config"; then
     rm -f "$recipient_config"
     exit 1
 fi
