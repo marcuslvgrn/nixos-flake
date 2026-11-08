@@ -63,7 +63,6 @@ with lib;
         "org.gnome.Console.desktop"
         "firefox.desktop"
         "spotify.desktop"
-        "chatgpt.desktop"
         "proton.vpn.app.gtk.desktop"
         "org.gnome.Settings.desktop"
       ]

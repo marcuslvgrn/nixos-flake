@@ -6,12 +6,12 @@
 }:
 {
   options = {
-    ai-cli-tools.enable = lib.mkEnableOption "Enable agentic AI CLI tools";
-    ai-gui-tools.enable = lib.mkEnableOption "Enable agentic AI GUI tools";
+    ai-tools.cli.enable = lib.mkEnableOption "Enable agentic AI CLI tools";
+    ai-tools.gui.enable = lib.mkEnableOption "Enable agentic AI GUI tools";
   };
   config = {
     environment.systemPackages =
-      (lib.optionals config.ai-cli-tools.enable (
+      (lib.optionals config.ai-tools.cli.enable (
         with pkgs;
         [
           # AI CLI tools
@@ -28,12 +28,15 @@
           herdr
         ]
       ))
-      ++ (lib.optionals config.ai-gui-tools.enable (
+      ++ (lib.optionals config.ai-tools.gui.enable (
         with pkgs;
         [
           chatgpt
           kiro
         ]
       ));
+    extraFavoriteApps = lib.mkIf config.ai-tools.gui.enable [
+      "chatgpt.desktop"
+    ];
   };
 }

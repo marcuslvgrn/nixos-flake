@@ -26,6 +26,9 @@ with lib;
     plymouth.enable = false;
   };
 
+  ai-tools.cli.enable = true;
+  ai-tools.gui.enable = true;
+
   # Enable teamviewer
   # services.teamviewer.enable = true;
 

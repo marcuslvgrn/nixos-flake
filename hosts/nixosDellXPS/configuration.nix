@@ -16,8 +16,8 @@
     user = "lovgren";
   };
 
-  ai-cli-tools.enable = true;
-  ai-gui-tools.enable = true;
+  ai-tools.cli.enable = true;
+  ai-tools.gui.enable = true;
 
   # Use gnome as the desktop manager
   services.desktopManager.gnome.enable = true;

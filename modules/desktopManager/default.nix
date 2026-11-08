@@ -47,9 +47,6 @@ in
         libreoffice
         # Webcam
         cheese
-        # AI tools
-        chatgpt
-        kiro
       ])
       ++ [
       ];
