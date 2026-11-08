@@ -13,10 +13,7 @@
   config = lib.mkIf nixosConfig.omarchy.enable {
     # Enable home manager omarchy module
     omarchy.enable = true;
-
-    # tmux started in bash for all users if enabled here
-    programs.tmux.enable = true;
-
+ 
     # Omarchy owns shell.json as an editable runtime file and has no module
     # option for individual widgets. Preserve its current and future settings,
     # while enforcing just this one preference after Home Manager writes files.

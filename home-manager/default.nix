@@ -53,12 +53,6 @@
       initExtra = ''
         export LANG="en_US.UTF-8"
         export LC_MESSAGES="en_US.UTF-8"
-      ''
-      # Start tmux if enabled
-      + lib.optionalString config.programs.tmux.enable ''
-        if [[ -z "$TMUX" && -n "$PS1" && -t 0 ]]; then
-          exec tmux new-session -A -s main
-        fi
       '';
     };
 
@@ -67,12 +61,6 @@
       initContent = ''
         export LANG="en_US.UTF-8"
         export LC_MESSAGES="en_US.UTF-8"
-      ''
-      # Start tmux if enabled
-      + lib.optionalString config.programs.tmux.enable ''
-        if [[ -z "$TMUX" && -n "$PS1" && -t 0 ]]; then
-          exec tmux new-session -A -s main
-        fi
       '';
     };
 

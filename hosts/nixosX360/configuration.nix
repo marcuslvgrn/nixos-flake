@@ -21,7 +21,10 @@ with lib;
   services.desktopManager.cosmic.enable = true;
   services.desktopManager.budgie.enable = true;
   services.xserver.desktopManager.cinnamon.enable = true;
-  omarchy.enable = true;
+  omarchy = {
+    enable = true;
+    plymouth.enable = false;
+  };
 
   # Enable teamviewer
   # services.teamviewer.enable = true;

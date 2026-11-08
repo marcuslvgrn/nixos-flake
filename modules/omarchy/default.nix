@@ -45,6 +45,9 @@
       environment.sessionVariables.NAUTILUS_4_EXTENSION_DIR = lib.mkForce (
         "${config.system.path}/lib/nautilus/extensions-4"
       );
+      environment.sessionVariables.OMARCHY_NIX_FLAKE = "/home/lovgren/git/nixos-flake";
+
+      programs.tmux.enable = true;
     })
   ];
 }
