@@ -28,8 +28,6 @@ with lib;
       description = "Host specific favorite apps (for dock)";
     };
     startFirefoxAtLogin = mkEnableOption "Enable starting firefox at login";
-    ai-cli-tools.enable = mkEnableOption "Enable agentic AI CLI tools";
-    ai-gui-tools.enable = mkEnableOption "Enable agentic AI GUI tools";
   };
 
   config = {
