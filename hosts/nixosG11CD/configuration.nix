@@ -12,6 +12,8 @@
     ./hw.nix
   ];
 
+  programs.wakezilla.client.enable = true;
+
   services.desktopManager.gnome.enable = true;
   deskflow.enable = true;
   ssd.enable = true;

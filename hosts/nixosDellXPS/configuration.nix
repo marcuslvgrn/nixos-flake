@@ -19,6 +19,8 @@
   ai-tools.cli.enable = true;
   ai-tools.gui.enable = true;
 
+  programs.wakezilla.tray.enable = true;
+
   # Use gnome as the desktop manager
   services.desktopManager.gnome.enable = true;
   services.displayManager.defaultSession = "gnome";

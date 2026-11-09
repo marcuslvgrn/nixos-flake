@@ -11,6 +11,8 @@
 
   services.printing.enable = true;
 
+  programs.wakezilla.server.enable = true;
+
   airsonic = {
     hostName = "mlairsonic.dynv6.net";
   };

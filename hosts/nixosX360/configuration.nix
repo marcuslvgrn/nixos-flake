@@ -15,6 +15,8 @@ with lib;
     ./hw.nix
   ];
 
+  programs.wakezilla.tray.enable = true;
+
   # Desktop managers
   services.desktopManager.gnome.enable = true;
   services.desktopManager.plasma6.enable = true;

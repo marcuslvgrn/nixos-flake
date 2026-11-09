@@ -118,6 +118,7 @@ with lib;
         ncdu # show nix disk usage
         nixfmt # For formatting nix files
         nurl # generate fetcher based on url
+        nh # nix helper
         # Network tools
         traceroute
         dig

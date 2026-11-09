@@ -202,6 +202,7 @@
       apps.x86_64-linux.nixos-anywhere = {
         type = "app";
         program = "${inputs.nixos-anywhere.packages.x86_64-linux.nixos-anywhere}/bin/nixos-anywhere";
+        meta.description = "Pinned nixos-anywhere deployment tool";
       };
     };
 }
