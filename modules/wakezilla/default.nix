@@ -77,6 +77,8 @@ in
     })
 
     (lib.mkIf config.programs.wakezilla.server.enable {
+      networking.firewall.allowedTCPPorts = [ 3000 ];
+
       systemd.services.wakezilla-proxy = {
         description = "Wakezilla Wake-on-LAN proxy server";
         wantedBy = [ "multi-user.target" ];
@@ -102,6 +104,8 @@ in
     })
 
     (lib.mkIf config.programs.wakezilla.client.enable {
+      networking.firewall.allowedTCPPorts = [ 3001 ];
+
       systemd.services.wakezilla-client = {
         description = "Wakezilla client server";
         wantedBy = [ "multi-user.target" ];
