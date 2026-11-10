@@ -178,8 +178,7 @@
               hostSettings.nixosModulePath
               {
                 #For printing commit messages in nixos-generations
-                system.configurationRevision =
-                  if self ? dirtyRev then "${self.dirtyRev}-dirty" else self.rev or null;
+                system.configurationRevision = if self ? dirtyRev then self.dirtyRev else self.rev or null;
               }
             ];
             specialArgs = {
@@ -196,6 +195,7 @@
     in
     {
       overlays.firefox = import ./overlays/firefox.nix;
+      formatter.x86_64-linux = inputs.nixpkgs.legacyPackages.x86_64-linux.nixfmt;
       # Assemble all host configurations as NixOS systems.
       nixosConfigurations = builtins.listToAttrs (map mkSystem allHostCfgs);
       # Expose pinned nixos-anywhere so install.sh can use it via `nix run .#nixos-anywhere`

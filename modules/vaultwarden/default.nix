@@ -14,6 +14,7 @@ with lib;
     vaultwarden = {
       hostName = mkOption {
         type = types.str;
+        default = "";
         description = "Hostname for nginx";
       };
       contextPath = mkOption {
@@ -29,6 +30,7 @@ with lib;
     assertions = [
       {
         assertion = cfg.hostName != "";
+        message = "Set vaultwarden.hostName when services.vaultwarden.enable is true.";
       }
     ];
 

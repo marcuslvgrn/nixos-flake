@@ -80,7 +80,7 @@ return [
      *   You should treat it as extremely sensitive data.
      */
     'Security' => [
-        'salt' => env('SECURITY_SALT', '__SALT__'),
+        'salt' => trim(file_get_contents(env('SECURITY_SALT_FILE'))),
     ],
 
     /*

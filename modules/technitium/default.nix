@@ -24,6 +24,7 @@ in
   options.technitium = {
     hostName = lib.mkOption {
       type = lib.types.str;
+      default = "";
       description = "Public hostname for nginx";
     };
     contextPath = lib.mkOption {
@@ -44,6 +45,7 @@ in
     assertions = [
       {
         assertion = cfg.hostName != "";
+        message = "Set technitium.hostName when services.technitium-dns-server.enable is true.";
       }
     ];
 

@@ -35,7 +35,6 @@ in
     #      adminFirstName = "Marcus";
     #      adminLastName = "Lövgren";
     #      adminEmail = "marcus.lovgren@proton.me";
-    #      gmailUserName = "marcuslvgrn@gmail.com";
     #    };
     #    technitium = {
     #      hostName = "mltechnitium.dynv6.net";

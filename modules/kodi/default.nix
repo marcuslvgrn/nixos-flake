@@ -203,37 +203,79 @@ in
       default = "default";
       description = "Nixpkgs channel to use for Kodi and its add-ons.";
     };
+    users = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ "lovgren" ];
+      description = "Users who receive Kodi's YouTube API credentials and access to the IR remote.";
+    };
   };
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.users != [ ];
+        message = "Set kodi.users to at least one account when kodi.enable is true.";
+      }
+      {
+        assertion = lib.all (username: builtins.elem username (config.userNames or [ ])) cfg.users;
+        message = "Every entry in kodi.users must be listed in the host's userNames option.";
+      }
+    ];
+
     sops.secrets = {
       "kodi-youtube/api_key" = {
-        owner = "lovgren";
-        mode = "0400";
+        owner = "root";
+        group = "kodi";
+        mode = "0440";
       };
 
       "kodi-youtube/client_id" = {
-        owner = "lovgren";
-        mode = "0400";
+        owner = "root";
+        group = "kodi";
+        mode = "0440";
       };
 
       "kodi-youtube/client_secret" = {
-        owner = "lovgren";
-        mode = "0400";
+        owner = "root";
+        group = "kodi";
+        mode = "0440";
       };
     };
 
-    systemd.user.services.kodi-youtube-keys = {
-      description = "Install Kodi YouTube API keys";
+    users.groups.kodi = { };
+    users.users = lib.genAttrs cfg.users (_: {
+      extraGroups = [
+        "kodi"
+        "ir"
+      ];
+    });
 
-      wantedBy = [ "default.target" ];
-
-      after = [ "sops-nix.service" ];
-
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = youtubeKeysScript;
+    home-manager.users = lib.genAttrs cfg.users (_: {
+      systemd.user.services.kodi-youtube-keys = {
+        Unit = {
+          Description = "Install Kodi YouTube API keys";
+          After = [ "sops-nix.service" ];
+        };
+        Install.WantedBy = [ "default.target" ];
+        Service = {
+          Type = "oneshot";
+          ExecStart = youtubeKeysScript;
+        };
       };
-    };
+
+      systemd.user.services.kodi-mce-listener = {
+        Unit = {
+          Description = "Kodi listening to the MCE remote";
+          After = [ "graphical-session.target" ];
+          PartOf = [ "graphical-session.target" ];
+        };
+        Install.WantedBy = [ "graphical-session.target" ];
+        Service = {
+          ExecStart = "${pythonWithEvdev}/bin/python3 ${kodiMceListener}";
+          Restart = "on-failure";
+          RestartSec = 3;
+        };
+      };
+    });
 
     services.xserver.desktopManager.kodi = {
       enable = true;
@@ -258,19 +300,7 @@ in
         ]
       );
     };
-    systemd.user.services.kodi-mce-listener = {
-      description = "Kodi listening to the MCE remote";
-      wantedBy = [ "graphical-session.target" ];
-      after = [ "graphical-session.target" ];
-
-      serviceConfig = {
-        ExecStart = "${pythonWithEvdev}/bin/python3 ${kodiMceListener}";
-        Restart = "on-failure";
-        RestartSec = 3;
-      };
-    };
     users.groups.ir = { };
-    users.users.lovgren.extraGroups = [ "ir" ];
     services.udev.extraRules = ''
       SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="Nuvoton w836x7hg Infrared Remote Transceiver", GROUP="ir", MODE="0660"
     '';

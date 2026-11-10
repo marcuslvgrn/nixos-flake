@@ -18,7 +18,9 @@ let
     GNUPGHOME = "${cfg.passboltHome}/.gnupg";
     PHP = "${phpPackage}/bin/php";
     APP_FULL_BASE_URL = "https://${cfg.hostName}";
-    SECURITY_SALT = "${cfg.securitySaltFile}";
+    # Passbolt's app.php reads the secret file at runtime; PHP-FPM's phpEnv
+    # cannot expand a file path into the variable's contents.
+    SECURITY_SALT_FILE = "${cfg.securitySaltFile}";
     DATASOURCES_DEFAULT_HOST = "${cfg.database.host}";
     DATASOURCES_DEFAULT_USERNAME = "${cfg.database.user}";
     #    DATASOURCES_DEFAULT_PASSWORD=
@@ -40,18 +42,23 @@ let
     #    EMAIL_DEFAULT_FROM="${cfg.adminEmail}";
     #    EMAIL_TRANSPORT_DEFAULT_HOST="smtp.gmail.com";
     #    EMAIL_TRANSPORT_DEFAULT_PORT="465";
-    #    EMAIL_TRANSPORT_DEFAULT_USERNAME="${cfg.gmailUserName}";
     #    EMAIL_TRANSPORT_DEFAULT_TLS="true";
     PASSBOLT_SECURITY_SMTP_SETTINGS_ENDPOINTS_DISABLED = "true";
     #    PASSBOLT_PLUGINS_SELF_REGISTRATION_ENABLED="false";
     PASSBOLT_EMAIL_VALIDATE_MX = "true";
-    APP_DEFAULT_TIMEZONE = "Europe/Stockholm";
+    APP_DEFAULT_TIMEZONE = cfg.timeZone;
     #    DEBUG="true";
   };
 
   # convert attrset → "export FOO=bar" lines
   passboltEnvExports = lib.concatStringsSep "\n" (
-    lib.mapAttrsToList (k: v: "export ${k}=${v}") passboltVars
+    lib.mapAttrsToList (
+      k: v:
+      if k == "PATH" then
+        "export PATH=${lib.escapeShellArg (lib.removeSuffix ":$PATH" v)}:\"$PATH\""
+      else
+        "export ${k}=${lib.escapeShellArg v}"
+    ) passboltVars
   );
 
   # convert attrset → env-file format
@@ -100,22 +107,25 @@ let
 
     #Move files that should be writable to ${cfg.passboltHome}
     postInstall = ''
-        cfgDir=$out/share/php/passbolt/config
+      cfgDir=$out/share/php/passbolt/config
 
-        # Use the upstream default files directly instead of maintaining copies
-        cp "$cfgDir/app.default.php" "$cfgDir/app.php"
-        cp "$cfgDir/passbolt.default.php" "$cfgDir/passbolt.php"
-        #install -m644 ${appPhp} "$cfgDir/app.php"
-        #install -m644 ${passboltPhp} "$cfgDir/passbolt.php"
-        
-        ${pkgs.coreutils}/bin/rm -r $out/share/php/passbolt/tmp
-        ${pkgs.coreutils}/bin/ln -s ${cfg.passboltHome}/tmp $out/share/php/passbolt/tmp
-        ${pkgs.coreutils}/bin/rm -r $out/share/php/passbolt/config/jwt
-        ${pkgs.coreutils}/bin/ln -s ${cfg.passboltHome}/jwt $out/share/php/passbolt/config/jwt
-        ${pkgs.coreutils}/bin/rm -r $out/share/php/passbolt/config/gpg
-        ${pkgs.coreutils}/bin/ln -s ${cfg.passboltHome}/gpg $out/share/php/passbolt/config/gpg
-        ${pkgs.coreutils}/bin/ln -s ${cfg.passboltHome}/logs $out/share/php/passbolt/logs
-        echo "passboltPackage installed"
+      # Use the upstream default files directly instead of maintaining copies
+      cp "$cfgDir/app.default.php" "$cfgDir/app.php"
+      cp "$cfgDir/passbolt.default.php" "$cfgDir/passbolt.php"
+      substituteInPlace "$cfgDir/app.php" \
+        --replace-fail "'salt' => env('SECURITY_SALT', '__SALT__')," \
+        "'salt' => trim(file_get_contents(env('SECURITY_SALT_FILE'))),"
+      #install -m644 ${appPhp} "$cfgDir/app.php"
+      #install -m644 ${passboltPhp} "$cfgDir/passbolt.php"
+
+      ${pkgs.coreutils}/bin/rm -r $out/share/php/passbolt/tmp
+      ${pkgs.coreutils}/bin/ln -s ${cfg.passboltHome}/tmp $out/share/php/passbolt/tmp
+      ${pkgs.coreutils}/bin/rm -r $out/share/php/passbolt/config/jwt
+      ${pkgs.coreutils}/bin/ln -s ${cfg.passboltHome}/jwt $out/share/php/passbolt/config/jwt
+      ${pkgs.coreutils}/bin/rm -r $out/share/php/passbolt/config/gpg
+      ${pkgs.coreutils}/bin/ln -s ${cfg.passboltHome}/gpg $out/share/php/passbolt/config/gpg
+      ${pkgs.coreutils}/bin/ln -s ${cfg.passboltHome}/logs $out/share/php/passbolt/logs
+      echo "passboltPackage installed"
     '';
   });
 
@@ -127,17 +137,17 @@ in
     enableNginxACME = mkOption {
       type = types.bool;
       default = true;
-      example = "enable ACME for nginx";
+      description = "Request and use an ACME certificate for the nginx virtual host.";
     };
     enableNginxSSL = mkOption {
       type = types.bool;
       default = true;
-      example = "enable SSL for nginx";
+      description = "Force HTTPS redirects for the nginx virtual host.";
     };
     enableDdclient = mkOption {
       type = types.bool;
       default = true;
-      example = "Enable ddclient registration hook";
+      description = "Register the Passbolt hostname through ddclient.";
     };
 
     passboltHome = mkOption {
@@ -148,6 +158,7 @@ in
 
     hostName = mkOption {
       type = types.str;
+      default = "";
       example = "passbolt.example.com";
     };
 
@@ -155,6 +166,7 @@ in
       host = mkOption {
         type = types.str;
         default = "localhost";
+        description = "Database host; this module currently supports only localhost and manages MariaDB locally.";
       };
       name = mkOption {
         type = types.str;
@@ -191,19 +203,15 @@ in
     };
     adminFirstName = mkOption {
       type = types.str;
-      default = "Your admin first name";
+      default = "";
     };
     adminLastName = mkOption {
       type = types.str;
-      default = "Your admin last name";
+      default = "";
     };
     adminEmail = mkOption {
       type = types.str;
-      default = "admin@example.com";
-    };
-    gmailUserName = mkOption {
-      type = types.str;
-      default = "user@example.com";
+      default = "";
     };
     timeZone = mkOption {
       type = types.str;
@@ -212,6 +220,21 @@ in
   };
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = cfg.hostName != "";
+        message = "Set passbolt.hostName when passbolt.enable is true.";
+      }
+      {
+        assertion = cfg.adminFirstName != "" && cfg.adminLastName != "" && cfg.adminEmail != "";
+        message = "Set passbolt.adminFirstName, passbolt.adminLastName, and passbolt.adminEmail when passbolt.enable is true.";
+      }
+      {
+        assertion = cfg.database.host == "localhost";
+        message = "passbolt.database.host must be \"localhost\" because this module configures MariaDB locally.";
+      }
+    ];
+
     #open firewall
     networking.firewall.allowedTCPPorts = [
       80
@@ -220,13 +243,17 @@ in
 
     # Secrets needed by this service — declared here so they are only
     # decrypted on hosts that actually run passbolt.
-    sops.secrets."passbolt-security-salt" = { };
+    sops.secrets."passbolt-security-salt" = {
+      owner = "nginx";
+      group = "nginx";
+      mode = "0400";
+    };
     sops.secrets."passbolt-env" = { };
 
-    # Generate ACME certs for host automatically
-    security.acme.certs = {
+    # Generate an ACME certificate only when the virtual host uses ACME.
+    security.acme.certs = mkIf cfg.enableNginxACME {
       "${cfg.hostName}" = {
-        email = "${cfg.adminEmail}";
+        email = cfg.adminEmail;
       };
     };
 

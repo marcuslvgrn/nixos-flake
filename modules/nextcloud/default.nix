@@ -3,6 +3,7 @@
   lib,
   pkgs-stable,
   pkgs-unstable,
+  pkgs,
   hostSettings,
   ...
 }:
@@ -20,6 +21,76 @@ let
   };
   # Select the channel explicitly chosen here, or fall back to the host default.
   packageSet = packageChannel.forChannel cfg.packageChannel;
+  initialUserType = lib.types.submodule {
+    options = {
+      username = lib.mkOption {
+        type = lib.types.str;
+        description = "Nextcloud account name.";
+      };
+      displayName = lib.mkOption {
+        type = lib.types.str;
+        description = "Display name for the Nextcloud account.";
+      };
+      email = lib.mkOption {
+        type = lib.types.str;
+        description = "Email address for the Nextcloud account.";
+      };
+      groups = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ "users" ];
+        description = "Exact Nextcloud group membership to maintain for the account.";
+      };
+    };
+  };
+  createInitialUsersScript =
+    occ:
+    lib.concatMapStringsSep "\n" (
+      user:
+      let
+        groups = lib.unique user.groups;
+        userAddArgs = [
+          "--display-name ${lib.escapeShellArg user.displayName}"
+        ]
+        ++ map (group: "--group ${lib.escapeShellArg group}") groups
+        ++ [
+          "--generate-password"
+          "--email ${lib.escapeShellArg user.email}"
+          (lib.escapeShellArg user.username)
+        ];
+      in
+      ''
+        if ! ${occ}/bin/nextcloud-occ user:info ${lib.escapeShellArg user.username} >/dev/null 2>&1; then
+          ${occ}/bin/nextcloud-occ user:add ${lib.concatStringsSep " \\\n          " userAddArgs}
+        fi
+        ${occ}/bin/nextcloud-occ user:setting ${lib.escapeShellArg user.username} settings email ${lib.escapeShellArg user.email}
+
+        currentGroups="$(${occ}/bin/nextcloud-occ group:list --output=json | ${pkgs.jq}/bin/jq -r --arg user ${lib.escapeShellArg user.username} 'to_entries[] | select(.value | index($user)) | .key')"
+        desiredGroups=( ${lib.concatMapStringsSep " " lib.escapeShellArg groups} )
+
+        while IFS= read -r group; do
+          [ -n "$group" ] || continue
+          keepGroup=false
+          for desiredGroup in "''${desiredGroups[@]}"; do
+            if [ "$group" = "$desiredGroup" ]; then
+              keepGroup=true
+              break
+            fi
+          done
+          if [ "$keepGroup" = false ]; then
+            ${occ}/bin/nextcloud-occ group:removeuser "$group" ${lib.escapeShellArg user.username}
+          fi
+        done <<< "$currentGroups"
+
+        for group in "''${desiredGroups[@]}"; do
+          if ! ${occ}/bin/nextcloud-occ group:info "$group" >/dev/null 2>&1; then
+            ${occ}/bin/nextcloud-occ group:add "$group"
+          fi
+          if ! printf '%s\\n' "$currentGroups" | ${pkgs.gnugrep}/bin/grep -Fxq -- "$group"; then
+            ${occ}/bin/nextcloud-occ group:adduser "$group" ${lib.escapeShellArg user.username}
+          fi
+        done
+      ''
+    ) cfg.initialUsers;
   # Normalize a configured mount path so URLs and nginx locations use one form.
   nextcloudWebroot =
     if cfg.contextPath == "/" then
@@ -37,11 +108,47 @@ with lib;
     nextcloud = {
       nextcloudHostName = mkOption {
         type = types.str;
+        default = "";
         description = "Public hostname for nextcloud nginx";
       };
       collaboraHostName = mkOption {
         type = types.str;
+        default = "";
         description = "Public hostname for collabora nginx";
+      };
+      initialUsers = mkOption {
+        type = types.listOf initialUserType;
+        default = [
+          {
+            username = "admin";
+            displayName = "Admin";
+            email = "marcus.lovgren@proton.me";
+            groups = [
+              "admin"
+              "users"
+            ];
+          }
+          {
+            username = "marcus";
+            displayName = "Marcus Lövgren";
+            email = "marcus.lovgren@proton.me";
+            groups = [
+              "admin"
+              "users"
+            ];
+          }
+          {
+            username = "andreas";
+            displayName = "Andreas Lövgren";
+            email = "marcus.lovgren@proton.me";
+          }
+          {
+            username = "gerd";
+            displayName = "Gerd Lövgren";
+            email = "marcus.lovgren@proton.me";
+          }
+        ];
+        description = "Nextcloud accounts to create if missing; email and group memberships are synchronized at startup.";
       };
       contextPath = mkOption {
         type = types.str;
@@ -67,6 +174,20 @@ with lib;
         assertion =
           cfg.contextPath == "/" || builtins.match "^(/[A-Za-z0-9_-]+)+/?$" cfg.contextPath != null;
         message = "nextcloud.contextPath must be / or a slash-prefixed path containing only letters, numbers, _ and -.";
+      }
+      {
+        assertion =
+          let
+            usernames = map (user: user.username) cfg.initialUsers;
+          in
+          builtins.length usernames == builtins.length (lib.unique usernames);
+        message = "nextcloud.initialUsers must not contain duplicate usernames.";
+      }
+      {
+        assertion = lib.all (
+          user: user.username != "" && user.displayName != "" && user.email != ""
+        ) cfg.initialUsers;
+        message = "Each nextcloud.initialUsers entry must set username, displayName, and email.";
       }
     ];
 
@@ -300,7 +421,6 @@ with lib;
           ${occ}/bin/nextcloud-occ richdocuments:setup
           ${occ}/bin/nextcloud-occ config:app:set whiteboard collabBackendUrl --value "https://${cfg.nextcloudHostName}${nextcloudLocationPrefix}whiteboard"
           ${occ}/bin/nextcloud-occ config:app:set whiteboard jwt_secret_key --value "$JWT_SECRET"
-          ${occ}/bin/nextcloud-occ user:setting admin settings email "marcus.lovgren@proton.me"
         '';
         serviceConfig = {
           Type = "oneshot";
@@ -315,25 +435,7 @@ with lib;
         wantedBy = [ "multi-user.target" ];
         after = [ "nextcloud-setup.service" ];
         requires = [ "nextcloud-setup.service" ];
-        script = ''
-          if ! ${occ}/bin/nextcloud-occ user:info marcus >/dev/null 2>&1; then
-            ${occ}/bin/nextcloud-occ user:add --display-name="Marcus Lövgren" \
-            --group "admin" --group "users" --generate-password --email "marcus.lovgren@proton.me" \
-            marcus
-          fi
-          if ! ${occ}/bin/nextcloud-occ user:info andreas >/dev/null 2>&1; then
-            ${occ}/bin/nextcloud-occ user:add --display-name="Andreas Lövgren" \
-            --group "users" --generate-password --email "marcus.lovgren@proton.me" andreas
-          fi
-          if ! ${occ}/bin/nextcloud-occ user:info gerd >/dev/null 2>&1; then
-            ${occ}/bin/nextcloud-occ user:add --display-name="Gerd Lövgren" \
-            --group "users" --generate-password --email "marcus.lovgren@proton.me" gerd
-          fi
-          ${occ}/bin/nextcloud-occ user:setting admin settings email "marcus.lovgren@proton.me"
-          ${occ}/bin/nextcloud-occ user:setting marcus settings email "marcus.lovgren@proton.me"
-          ${occ}/bin/nextcloud-occ user:setting andreas settings email "marcus.lovgren@proton.me"
-          ${occ}/bin/nextcloud-occ user:setting gerd settings email "marcus.lovgren@proton.me"
-        '';
+        script = createInitialUsersScript occ;
         serviceConfig = {
           Type = "oneshot";
         };

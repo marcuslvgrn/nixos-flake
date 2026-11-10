@@ -21,10 +21,12 @@ with lib;
     };
     extraFirefoxExtensions = mkOption {
       type = types.listOf types.str;
+      default = [ ];
       description = "Host specific firefox extensions";
     };
     extraFavoriteApps = mkOption {
       type = types.listOf types.str;
+      default = [ ];
       description = "Host specific favorite apps (for dock)";
     };
     startFirefoxAtLogin = mkEnableOption "Enable starting firefox at login";
@@ -44,9 +46,10 @@ with lib;
       "lovgren"
     ];
 
-    # create-swapfile module is shared by all hosts (previously imported directly
-    # here); enable it in the shared config so every host gets it.
-    create-swapfile.enable = true;
+    # Keep the legacy custom swap-file creator disabled. NixOS generates an
+    # ordered mkswap-* service from swapDevices, so enabling both can race on
+    # the same swap-file path.
+    create-swapfile.enable = false;
     nix = {
       gc = {
         automatic = true;

@@ -68,6 +68,16 @@ in
       assertion = lib.all (u: usersByName ? ${u}) (config.userNames or [ ]);
       message = "config.userNames contains users not defined in userData.nix";
     }
+    {
+      assertion = lib.all (
+        username:
+        let
+          user = usersByName.${username} or { };
+        in
+        !(user.normalUser or false) || (user.username or null) == username
+      ) (config.userNames or [ ]);
+      message = "Normal users in common/users/userData.nix must set username to the matching users attribute name.";
+    }
   ];
 
   # Override NixOS's own mkDefault of "nano" for the shared system editor.

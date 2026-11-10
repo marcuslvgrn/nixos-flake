@@ -73,11 +73,23 @@ in
     enable = lib.mkEnableOption "EasySwitch";
     user = lib.mkOption {
       type = lib.types.str;
+      default = "";
       description = "User allowed to access /dev/uinput";
     };
   };
 
   config = lib.mkIf config.services.easyswitch.enable {
+    assertions = [
+      {
+        assertion = config.services.easyswitch.user != "";
+        message = "Set services.easyswitch.user to the account allowed to access /dev/uinput.";
+      }
+      {
+        assertion = builtins.elem config.services.easyswitch.user (config.userNames or [ ]);
+        message = "services.easyswitch.user must be listed in the host's userNames option.";
+      }
+    ];
+
     environment.systemPackages = [ easyswitch ];
 
     # EasySwitch uses uinput for input injection.
@@ -87,10 +99,13 @@ in
     '';
 
     networking.firewall.allowedTCPPorts = [ 41420 ];
-    networking.firewall.allowedUDPPorts = [ 41417 5353 ];
+    networking.firewall.allowedUDPPorts = [
+      41417
+      5353
+    ];
 
     users.groups.input = { };
-    users.users.${config.services.easyswitch.user or "your-username"}.extraGroups = [ "input" ];
+    users.users.${config.services.easyswitch.user}.extraGroups = [ "input" ];
 
     xdg.portal.enable = true;
     xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gnome ];

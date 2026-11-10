@@ -11,31 +11,21 @@
   };
 
   config = lib.mkIf config.ath11k-suspend.enable {
-    systemd.services.ath11k-resume = {
-      serviceConfig.Type = "oneshot";
-      wantedBy = [
-        "suspend.target"
-        "suspend-then-hibernate.target"
-        "hibernate.target"
-        "hybrid-sleep.target"
-      ];
-      after = [
-        "suspend.target"
-        "suspend-then-hibernate.target"
-        "hibernate.target"
-        "hybrid-sleep.target"
-      ];
-      path = with pkgs; [ bash ];
-      script = ''
-        /run/current-system/sw/bin/modprobe ath11k_pci
-      '';
-    };
-
-    systemd.services.ath11k-suspend = {
-      serviceConfig.Type = "oneshot";
+    systemd.services.ath11k-sleep-hook = {
+      description = "Unload and reload ath11k PCI driver around system sleep";
       wantedBy = [ "sleep.target" ];
-      after = [ "sleep.target" ];
-      path = with pkgs; [ bash ];
+      before = [ "sleep.target" ];
+      unitConfig = {
+        DefaultDependencies = false;
+        StopWhenUnneeded = true;
+      };
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStop = pkgs.writeShellScript "ath11k-resume" ''
+          /run/current-system/sw/bin/modprobe ath11k_pci
+        '';
+      };
       script = ''
         /run/current-system/sw/bin/rmmod ath11k_pci
       '';

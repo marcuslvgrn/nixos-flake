@@ -47,6 +47,7 @@ let
       btrfs-map-physical
       pkgs.coreutils
       pkgs.glibc.bin
+      pkgs.gnused
     ];
 
     text = ''

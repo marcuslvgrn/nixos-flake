@@ -7,6 +7,7 @@
   ...
 }:
 let
+  cfg = config.omarchy;
   omarchyInput =
     if hostSettings.omarchyChannel == "stable" then
       inputs.omarchy-nix-stable
@@ -16,13 +17,19 @@ in
 {
   imports = [ omarchyInput.nixosModules.default ];
 
+  options.omarchy.nixFlakePath = lib.mkOption {
+    type = lib.types.str;
+    default = "/home/lovgren/git/nixos-flake";
+    description = "Path to this consumer flake for Omarchy's NixOS package and update commands.";
+  };
+
   config = lib.mkMerge [
     {
       # Home Manager applies sharedModules to each configured user. Keep this
       # unconditional so the user's omarchy option is declared on every host.
       home-manager.sharedModules = [ omarchyInput.homeModules.default ];
     }
-    (lib.mkIf config.omarchy.enable {
+    (lib.mkIf cfg.enable {
       environment.sessionVariables.NIXOS_OZONE_WL = "1";
       # Quickshell is pinned to Qt 6.11 while the system Qt is newer. Put its
       # matching image plugins first so it can decode Omarchy's WebP wallpapers.
@@ -53,7 +60,7 @@ in
       environment.sessionVariables.NAUTILUS_4_EXTENSION_DIR = lib.mkForce (
         "${config.system.path}/lib/nautilus/extensions-4"
       );
-      environment.sessionVariables.OMARCHY_NIX_FLAKE = "/home/lovgren/git/nixos-flake";
+      environment.sessionVariables.OMARCHY_NIX_FLAKE = cfg.nixFlakePath;
 
       programs.tmux.enable = true;
     })

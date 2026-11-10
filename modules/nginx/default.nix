@@ -14,8 +14,8 @@ let
       loc = proxyCfg.locationPath or "/";
     in
     {
-      enableACME = true;
-      forceSSL = true;
+      enableACME = proxyCfg.enableACME;
+      forceSSL = proxyCfg.forceSSL;
       serverName = host;
       extraConfig = lib.optionalString (proxyCfg.recommendedTlsSettings or false) ''
         # Recommended TLS settings
@@ -30,23 +30,23 @@ let
           proxyPass = proxyCfg.target;
           extraConfig = ''
              ${
-              if (proxyCfg.recommendedProxySettings or false) then
-                ''
-                  # Recommended proxy settings
-                  proxy_redirect          off;
-                  proxy_set_header        Host $host;
-                  proxy_set_header        X-Real-IP $remote_addr;
-                  proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
-                  proxy_set_header        X-Forwarded-Proto $scheme;
-                  proxy_set_header        X-Forwarded-Host $host;
-                  proxy_set_header        X-Forwarded-Port $server_port;
-                ''
-              else
-                ''
-                  # Override globally inherited proxy headers and preserve the upstream host.
-                  proxy_set_header        Host $proxy_host;
-                ''
-            }
+               if (proxyCfg.recommendedProxySettings or false) then
+                 ''
+                   # Recommended proxy settings
+                   proxy_redirect          off;
+                   proxy_set_header        Host $host;
+                   proxy_set_header        X-Real-IP $remote_addr;
+                   proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+                   proxy_set_header        X-Forwarded-Proto $scheme;
+                   proxy_set_header        X-Forwarded-Host $host;
+                   proxy_set_header        X-Forwarded-Port $server_port;
+                 ''
+               else
+                 ''
+                   # Override globally inherited proxy headers and preserve the upstream host.
+                   proxy_set_header        Host $proxy_host;
+                 ''
+             }
             ${proxyCfg.extraConfig or ""}
           '';
           # Prevent NixOS's global recommendedProxySettings from overriding
@@ -73,6 +73,21 @@ let
         type = lib.types.bool;
         default = false;
         description = "Add recommended TLS settings to the vhost";
+      };
+      enableACME = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Request an ACME certificate for this proxy host.";
+      };
+      forceSSL = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Redirect HTTP requests to HTTPS for this proxy host.";
+      };
+      updateDdclient = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Register this proxy host with ddclient.";
       };
       locationPath = lib.mkOption {
         type = lib.types.str;
@@ -130,13 +145,17 @@ with lib;
     ];
 
     security.acme = {
-      # Generate ACME certs for all proxy hosts automatically.
-      certs = lib.genAttrs (builtins.attrNames cfg.proxyHosts) (_: { });
+      # Generate certificates only for proxy hosts that request ACME.
+      certs = lib.genAttrs (builtins.filter (host: cfg.proxyHosts.${host}.enableACME) (
+        builtins.attrNames cfg.proxyHosts
+      )) (_: { });
     };
 
     services = {
       # Register all proxy hostnames + any extra ones with ddclient.
-      ddclient.domains = (builtins.attrNames cfg.proxyHosts) ++ cfg.extraDdclientDomains;
+      ddclient.domains =
+        (builtins.filter (host: cfg.proxyHosts.${host}.updateDdclient) (builtins.attrNames cfg.proxyHosts))
+        ++ cfg.extraDdclientDomains;
 
       nginx = {
         enable = true;
