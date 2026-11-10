@@ -1,5 +1,11 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
+  cfg = config.programs.wakezilla;
   wakezilla = pkgs.rustPlatform.buildRustPackage {
     pname = "wakezilla";
     version = "0.2.14";
@@ -67,16 +73,31 @@ in
 {
   options.programs.wakezilla = {
     server.enable = lib.mkEnableOption "the Wakezilla proxy server";
-    client.enable = lib.mkEnableOption "the Wakezilla client server";
+    client = {
+      enable = lib.mkEnableOption "the Wakezilla client server";
+      port = lib.mkOption {
+        type = lib.types.port;
+        default = 3001;
+        description = "Port used by the Wakezilla client server.";
+      };
+      environmentFile = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = ''
+          Optional systemd EnvironmentFile for the Wakezilla client. Store
+          shutdown credentials in a SOPS-managed file, not in Nix expressions.
+        '';
+      };
+    };
     tray.enable = lib.mkEnableOption "the Wakezilla desktop tray";
   };
 
   config = lib.mkMerge [
-    (lib.mkIf (config.programs.wakezilla.server.enable || config.programs.wakezilla.client.enable || config.programs.wakezilla.tray.enable) {
+    (lib.mkIf (cfg.server.enable || cfg.client.enable || cfg.tray.enable) {
       environment.systemPackages = [ wakezilla ];
     })
 
-    (lib.mkIf config.programs.wakezilla.server.enable {
+    (lib.mkIf cfg.server.enable {
       networking.firewall.allowedTCPPorts = [ 3000 ];
 
       systemd.services.wakezilla-proxy = {
@@ -103,25 +124,32 @@ in
       };
     })
 
-    (lib.mkIf config.programs.wakezilla.client.enable {
-      networking.firewall.allowedTCPPorts = [ 3001 ];
+    (lib.mkIf cfg.client.enable {
+      networking.firewall.allowedTCPPorts = [ cfg.client.port ];
+      sops.secrets."wakezilla-client-env" = { };
 
       systemd.services.wakezilla-client = {
         description = "Wakezilla client server";
         wantedBy = [ "multi-user.target" ];
-        after = [ "network-online.target" ];
+        after = [
+          "network-online.target"
+        ]
+        ++ lib.optional (cfg.client.environmentFile != null) "sops-nix.service";
         wants = [ "network-online.target" ];
+        requires = lib.optional (cfg.client.environmentFile != null) "sops-nix.service";
+        environment.WAKEZILLA__SERVER__CLIENT_PORT = toString cfg.client.port;
 
         serviceConfig = {
           Type = "simple";
           ExecStart = "${wakezilla}/bin/wakezilla --no-update-check client-server";
+          EnvironmentFile = lib.optional (cfg.client.environmentFile != null) cfg.client.environmentFile;
           Restart = "on-failure";
           RestartSec = 5;
         };
       };
     })
 
-    (lib.mkIf config.programs.wakezilla.tray.enable {
+    (lib.mkIf cfg.tray.enable {
       systemd.user.services.wakezilla-tray = {
         description = "Wakezilla desktop tray";
         wantedBy = [ "graphical-session.target" ];

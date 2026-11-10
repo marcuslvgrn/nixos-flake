@@ -5,6 +5,7 @@
 {
   lib,
   pkgs,
+  config,
   ...
 }:
 {
@@ -12,7 +13,10 @@
     ./hw.nix
   ];
 
-  programs.wakezilla.client.enable = true;
+  programs.wakezilla.client = {
+    enable = true;
+    environmentFile = config.sops.secrets."wakezilla-client-env".path;
+  };
 
   services.desktopManager.gnome.enable = true;
   deskflow.enable = true;

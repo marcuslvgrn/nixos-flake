@@ -111,6 +111,23 @@ User records are centralized in `common/users/userData.nix`, while each host cho
 - Kodi's YouTube credentials and IR remote services are scoped to `kodi.users`, which defaults to `[ "lovgren" ]`. Users in that list share the same API credentials and must also be listed in the host's `userNames` option.
 - Nextcloud's `nextcloud.initialUsers` option controls accounts created if missing and synchronized at startup. Each entry has a `username`, `displayName`, `email`, and optional `groups`; email and group memberships are kept in sync with the list, and the default list preserves this configuration's current accounts.
 
+### Wakezilla client
+
+The `programs.wakezilla.client` module manages the service and firewall declaratively. Its `port` defaults to `3001`. To configure client authentication, store an environment file as a SOPS secret and reference it from the host:
+
+```nix
+{ config, ... }:
+{
+  sops.secrets."wakezilla-client-env" = { };
+  programs.wakezilla.client = {
+    enable = true;
+    environmentFile = config.sops.secrets."wakezilla-client-env".path;
+  };
+}
+```
+
+The decrypted environment file should contain `WAKEZILLA__SECURITY__CLIENT_SHUTDOWN_KEY=<generated-key>`. Edit it with SOPS; do not put the key directly in a Nix expression, where it would enter the store.
+
 ## Command reference
 
 ```sh
