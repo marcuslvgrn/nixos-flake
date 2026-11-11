@@ -13,6 +13,8 @@
     plymouth.enable = false;
   };
 
+  shutdownApp.enable = true;
+
   ssd.enable = true;
   kodi.enable = true;
 
