@@ -19,7 +19,7 @@ in
 
   options.omarchy.nixFlakePath = lib.mkOption {
     type = lib.types.str;
-    default = "/home/lovgren/git/nixos-flake";
+    default = "${config.users.homeBaseDir or "/home"}/${builtins.head (lib.filter (username: username != "root") config.userNames)}/git/nixos-flake";
     description = "Path to this consumer flake for Omarchy's NixOS package and update commands.";
   };
 

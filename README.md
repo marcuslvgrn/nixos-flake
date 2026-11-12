@@ -66,7 +66,7 @@ Every directory in `hosts/` is treated as a host. It must include `configuration
 
 `omarchyChannel` selects the Omarchy Nix flake input and defaults to `stable`, independently of `defaultPkgChannel`.
 
-Omarchy's update and package-management commands use `omarchy.nixFlakePath` to find this consumer flake. It defaults to `/home/lovgren/git/nixos-flake`; override it in the host configuration if the checkout is elsewhere. The value may be the flake directory or the path to its `flake.nix` file.
+Omarchy's update and package-management commands use `omarchy.nixFlakePath` to find this consumer flake. It defaults to the first configured non-root user's `$HOME/git/nixos-flake`; override it in the host configuration if the checkout is elsewhere. The value may be the flake directory or the path to its `flake.nix` file.
 
 The PXE module builds a separate minimal netboot NixOS configuration. Its `system.stateVersion` is set to `26.05` in `modules/pxe/default.nix`; this belongs to that nested PXE system and is independent of each host's `stateVersion`.
 
@@ -154,7 +154,7 @@ nix-tree
 The flake exposes a pinned `nixos-anywhere` app for x86_64 Linux, available as `nix run .#nixos-anywhere`. `scripts/install.sh` wraps it for remote installs and handles registering the target machine's SSH host key as a SOPS recipient first.
 
 ```sh
-# From the expected checkout at /home/lovgren/git/nixos-flake
+# From the expected checkout at "$HOME/git/nixos-flake"
 sudo scripts/install.sh -i <target-ip> -h <flake-host>
 
 # Skip the Disko phase, or build the installer configuration on the target
@@ -162,7 +162,7 @@ sudo scripts/install.sh -i <target-ip> -h <flake-host> -d no
 sudo scripts/install.sh -i <target-ip> -h <flake-host> -b remote
 ```
 
-The target must already be reachable as `root` over SSH and have an Ed25519 SSH host key. The script adds that key's age identity to `.sops.yaml`, runs `sops updatekeys` on `modules/sops/root-secrets.yaml`, then invokes the flake-pinned nixos-anywhere app. The source machine needs Nix and the repository's required tools (`ssh`, `ssh-to-age`, `sops`, and `sudo`); `-d yes` is the default and runs Disko; review the host's disk device/layout before using it because partitioning can erase data. `-d no` skips only the Disko phase. The script expects the checkout at `/home/lovgren/git/nixos-flake` and copies `/home/lovgren/git` into the install's extra files.
+The target must already be reachable as `root` over SSH and have an Ed25519 SSH host key. The script adds that key's age identity to `.sops.yaml`, runs `sops updatekeys` on `modules/sops/root-secrets.yaml`, then invokes the flake-pinned nixos-anywhere app. The source machine needs Nix and the repository's required tools (`ssh`, `ssh-to-age`, `sops`, and `sudo`); `-d yes` is the default and runs Disko; review the host's disk device/layout before using it because partitioning can erase data. `-d no` skips only the Disko phase. The script expects the checkout at `$HOME/git/nixos-flake` and copies `$HOME/git` into the install's extra files.
 
 ## Neovim shortcuts
 

@@ -10,7 +10,9 @@
   hostSettings,
   ...
 }:
-
+let
+  nixdFlakePath = "${config.home.homeDirectory}/git/nixos-flake";
+in
 {
   imports = [
     (
@@ -86,7 +88,17 @@
           enable = true;
           servers = {
             lua_ls.enable = true;
-            nixd.enable = true;
+            nixd = {
+              enable = true;
+              settings.nixd.options = {
+                nixos.expr = ''
+                  (builtins.getFlake "${nixdFlakePath}").nixosConfigurations.${hostSettings.hostname}.options
+                '';
+                home-manager.expr = ''
+                  (builtins.getFlake "${nixdFlakePath}").nixosConfigurations.${hostSettings.hostname}.options.home-manager.users.type.getSubOptions []
+                '';
+              };
+            };
           };
         };
         lualine.enable = true;
@@ -100,6 +112,7 @@
         };
         cmp = {
           enable = true;
+          autoLoad = true;
 
           settings = {
             snippet = {
@@ -108,15 +121,23 @@
 
             completion = {
               autocomplete = [
-                "InsertEnter"
-                "TextChanged"
+                "cmp.TriggerEvent.InsertEnter"
+                "cmp.TriggerEvent.TextChanged"
               ];
+            };
+
+            mapping = {
+              "<C-Space>" = "cmp.mapping.complete()";
+              "<CR>" = "cmp.mapping.confirm({ select = true })";
             };
 
             sources = [
               { name = "nvim_lsp"; }
               { name = "luasnip"; } # ← THIS makes snippets appear
-              { name = "buffer"; }
+              {
+                name = "buffer";
+                option.keyword_length = 1;
+              }
             ];
           };
         };
@@ -252,6 +273,12 @@
           key = "<leader>f";
           action = "<cmd>lua local pos = vim.api.nvim_win_get_cursor(0); vim.cmd('%!nixfmt -'); vim.api.nvim_win_set_cursor(0, pos)<CR>";
           options.desc = "Format current buffer";
+        }
+        {
+          mode = "i";
+          key = "<C-x><C-o>";
+          action = "<cmd>lua require('cmp').complete()<CR>";
+          options.desc = "Open completion menu";
         }
         {
           mode = "i";

@@ -60,9 +60,17 @@ if [[ ! "$host" =~ ^[A-Za-z_][A-Za-z0-9_-]*$ ]]; then
     exit 1
 fi
 
-cd /home/lovgren/git/nixos-flake
 repo_owner=${SUDO_USER:-$(id -un)}
+repo_home=$(getent passwd "$repo_owner" | cut -d: -f6)
+if [[ -z "$repo_home" ]]; then
+    echo "Error: could not determine home directory for $repo_owner."
+    exit 1
+fi
+repo_dir="$repo_home/git/nixos-flake"
+cd "$repo_dir"
 repo_group=$(id -gn "$repo_owner")
+repo_uid=$(id -u "$repo_owner")
+repo_gid=$(id -g "$repo_owner")
 
 # Register the target's existing SSH host key as a SOPS recipient before
 # installing. nixos-anywhere's --copy-host-keys then preserves the matching
@@ -129,15 +137,15 @@ cleanup() {
 trap cleanup EXIT
 
 # Git repos
-install -d -m755 "$temp/home/lovgren/git"
-cp -r /home/lovgren/git/* "$temp/home/lovgren/git/"
+install -d -m755 "$temp/home/$repo_owner/git"
+cp -r "$repo_home"/git/* "$temp/home/$repo_owner/git/"
 
 # Install NixOS using the pinned nixos-anywhere from the flake
-sudo nix run path:/home/lovgren/git/nixos-flake#nixos-anywhere -- \
+sudo nix run "path:$repo_dir#nixos-anywhere" -- \
     --copy-host-keys \
     --extra-files "$temp" \
     --phases "$phases" \
-    --chown /home/lovgren/git 1000:100 \
-    --flake "path:/home/lovgren/git/nixos-flake#$host" \
+    --chown "$repo_home/git" "$repo_uid:$repo_gid" \
+    --flake "path:$repo_dir#$host" \
     --target-host "root@$ipnumber" \
     --build-on "$build"
