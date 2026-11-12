@@ -128,7 +128,7 @@ in
       networking.firewall.allowedTCPPorts = [ cfg.client.port ];
 
       sops.secrets."wakezilla-client-env" = { };
-      environmentFile = config.sops.secrets."wakezilla-client-env".path;
+      programs.wakezilla.client.environmentFile = config.sops.secrets."wakezilla-client-env".path;
 
       systemd.services.wakezilla-client = {
         description = "Wakezilla client server";
