@@ -126,17 +126,15 @@ in
 
     (lib.mkIf cfg.client.enable {
       networking.firewall.allowedTCPPorts = [ cfg.client.port ];
+
       sops.secrets."wakezilla-client-env" = { };
+      environmentFile = config.sops.secrets."wakezilla-client-env".path;
 
       systemd.services.wakezilla-client = {
         description = "Wakezilla client server";
         wantedBy = [ "multi-user.target" ];
-        after = [
-          "network-online.target"
-        ]
-        ++ lib.optional (cfg.client.environmentFile != null) "sops-nix.service";
+        after = [ "network-online.target" ];
         wants = [ "network-online.target" ];
-        requires = lib.optional (cfg.client.environmentFile != null) "sops-nix.service";
         environment.WAKEZILLA__SERVER__CLIENT_PORT = toString cfg.client.port;
 
         serviceConfig = {
