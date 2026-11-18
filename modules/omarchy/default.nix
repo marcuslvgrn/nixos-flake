@@ -62,6 +62,43 @@ in
       );
       environment.sessionVariables.OMARCHY_NIX_FLAKE = cfg.nixFlakePath;
 
+      # Some laptop displays return from suspend in a valid but incorrect mode.
+      # Reload each active Hyprland instance after resume so its explicit
+      # monitors.lua mode is applied again. Other desktop sessions have no
+      # Hyprland socket and are left alone.
+      powerManagement.resumeCommands = ''
+        sleep 1
+        ${pkgs.findutils}/bin/find /run/user -type s -path '*/hypr/*/.socket.sock' -print0 2>/dev/null |
+          while IFS= read -r -d $'\0' socket; do
+            instance_dir="''${socket%/.socket.sock}"
+            instance="''${instance_dir##*/}"
+            runtime_dir="''${instance_dir%/hypr/*}"
+            uid="''${runtime_dir##*/}"
+            username="$(${pkgs.coreutils}/bin/id -nu "$uid" 2>/dev/null)" || continue
+
+            if XDG_RUNTIME_DIR="$runtime_dir" HYPRLAND_INSTANCE_SIGNATURE="$instance" \
+              ${pkgs.util-linux}/bin/runuser --preserve-environment -u "$username" -- \
+              ${config.programs.hyprland.package}/bin/hyprctl reload; then
+              ${pkgs.util-linux}/bin/logger -t omarchy-monitor-resume \
+                "Reloaded Hyprland monitor configuration for $username ($instance)"
+            else
+              ${pkgs.util-linux}/bin/logger -t omarchy-monitor-resume \
+                "Failed to reload Hyprland monitor configuration for $username ($instance)"
+            fi
+          done
+      '';
+
+      # The upstream lock PAM file is hand-written and uses the unqualified
+      # pam_fprintd.so name. NixOS resolves that under linux-pam, but the module
+      # is shipped by fprintd (or fprintd-tod on this host).
+      security.pam.services.omarchy-lock-fingerprint.text = lib.mkIf cfg.fingerprint.enable (
+        lib.mkForce ''
+          #%PAM-1.0
+          auth       required                    ${config.services.fprintd.package}/lib/security/pam_fprintd.so
+          account    required                    pam_unix.so
+        ''
+      );
+
       programs.tmux.enable = true;
     })
   ];

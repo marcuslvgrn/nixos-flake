@@ -26,6 +26,7 @@
   services.displayManager.defaultSession = "gnome";
   omarchy = {
     enable = true;
+    fingerprint.enable = true;
     plymouth.enable = false;
   };
 

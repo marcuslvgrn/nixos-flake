@@ -143,6 +143,7 @@ with lib;
         ripgrep
         # Show system info
         fastfetch
+        jq
       ]
     )
     #      ++

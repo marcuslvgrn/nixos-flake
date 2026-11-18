@@ -6,7 +6,24 @@
   #  pkgs-unstable,
   ...
 }:
+let
+  footTmuxStart = pkgs.writeShellApplication {
+    name = "foot-tmux-start";
+    runtimeInputs = [ pkgs.tmux ];
+    text = ''
+      session="foot-workspace"
 
+      if ! tmux has-session -t "$session" 2>/dev/null; then
+        tmux new-session -d -s "$session" -n nixos-flake -c "$HOME/git/nixos-flake" nvim
+        tmux new-window -d -t "$session":2 -n nixos-flake-shell -c "$HOME/git/nixos-flake"
+        tmux new-window -d -t "$session":3 -n home -c "$HOME"
+        tmux select-window -t "$session":1
+      fi
+
+      exec tmux attach-session -t "$session"
+    '';
+  };
+in
 {
   imports = [ ];
 
@@ -15,6 +32,12 @@
       # Enable home manager omarchy module
       omarchy.enable = true;
 
+      # Omarchy's keybinding resolver uses `lua -E`, which Lua 5.1 does not
+      # support. Use nixpkgs' current Lua alias and put it first in the
+      # graphical session PATH so plugins can read effective Hyprland binds.
+      home.packages = [ pkgs.lua ];
+      home.sessionPath = [ "${pkgs.lua}/bin" ];
+
       # Omarchy owns shell.json as an editable runtime file and has no module
       # option for individual widgets. Preserve its current and future settings,
       # while enforcing just this one preference after Home Manager writes files.
@@ -22,7 +45,7 @@
         shell_config="$HOME/.config/omarchy/shell.json"
         if [ -f "$shell_config" ]; then
           shell_config_tmp=$(mktemp "$shell_config.XXXXXX")
-          ${pkgs.jq}/bin/jq '(.bar.layout |= with_entries(.value |= map(select(.id != "omarchy.system-update"))))' \
+          ${pkgs.jq}/bin/jq '(.idle.screensaver = 600) | (.bar.layout |= with_entries(.value |= map(select(.id != "omarchy.system-update"))))' \
             "$shell_config" >"$shell_config_tmp"
           if ! cmp -s "$shell_config" "$shell_config_tmp"; then
             chmod --reference="$shell_config" "$shell_config_tmp"
@@ -50,6 +73,37 @@
             },
           })
         '';
+      };
+      programs.foot = {
+        enable = true;
+        settings = {
+          main = {
+            include = "~/.local/state/omarchy/current/theme/foot.ini";
+            shell = "${footTmuxStart}/bin/foot-tmux-start";
+            term = "xterm-256color";
+            font = "JetBrainsMono Nerd Font:size=9";
+            pad = "14x14";
+            initial-window-mode = "windowed";
+            workers = 0;
+          };
+          scrollback = {
+            lines = 10000;
+            multiplier = 7.0;
+          };
+          cursor = {
+            style = "block";
+            blink = "no";
+          };
+          "key-bindings" = {
+            clipboard-copy = "Control+Insert Control+Shift+c XF86Copy";
+            primary-paste = "none";
+            clipboard-paste = "Shift+Insert Control+Shift+v XF86Paste";
+          };
+          "text-bindings" = {
+            "\\x1b[13;2u" = "Shift+Return";
+            "\\x1b[13;4u" = "Mod1+Shift+Return";
+          };
+        };
       };
     })
   ];
