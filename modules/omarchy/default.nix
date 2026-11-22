@@ -30,6 +30,25 @@ in
       home-manager.sharedModules = [ omarchyInput.homeModules.default ];
     }
     (lib.mkIf cfg.enable {
+      # Omarchy's graphical-session units otherwise also start in GNOME.
+      # Keep them available in a Hyprland/Omarchy session, but skip them in
+      # other desktop sessions.
+      systemd.user.services = lib.genAttrs [
+        "bt-agent"
+        "omarchy-fcitx5"
+        "omarchy-migrate-notify"
+        "omarchy-migrate"
+        "omarchy-sleep-lock"
+        "omarchy-recover-internal-monitor"
+        "omarchy-crash-watch"
+        "owed"
+        "omarchy-tailscale-receive"
+      ] (_: {
+        unitConfig.ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
+      }) // {
+        "app-ibus\\x2ddaemon@autostart".enable = false;
+      };
+
       environment.sessionVariables.NIXOS_OZONE_WL = "1";
       # Quickshell is pinned to Qt 6.11 while the system Qt is newer. Put its
       # matching image plugins first so it can decode Omarchy's WebP wallpapers.
@@ -42,8 +61,6 @@ in
       # IBus' generic desktop-file autostart launches its daemon outside the
       # compositor's Wayland input-method setup and raises a warning on Omarchy.
       # Omarchy does not use IBus as its Wayland input method.
-      systemd.user.services."app-ibus\\x2ddaemon@autostart".enable = false;
-
       # Use the upstream Omarchy desktop shell, bar, shortcuts, and menu here.
       omarchy = {
         sddm.theme = false;

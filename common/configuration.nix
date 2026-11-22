@@ -189,7 +189,9 @@ with lib;
       hostName = hostSettings.hostname;
       useDHCP = lib.mkDefault true;
       enableIPv6 = false;
-      networkmanager.enable = true;
+      networkmanager.enable = lib.mkDefault true;
+      networkmanager.dhcp = lib.mkDefault "internal";
+      dhcpcd.enable = lib.mkDefault false;
     };
 
     # This option defines the first version of NixOS you have installed on this particular machine,

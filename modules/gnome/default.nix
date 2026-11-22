@@ -29,6 +29,12 @@ in
 
   config = lib.mkIf config.services.desktopManager.gnome.enable {
     desktopEnvironment.enable = true;
+    # GNOME has its own NetworkManager indicator. Keep nm-applet available in
+    # other sessions such as XFCE, but don't start its duplicate tray icon in
+    # GNOME.
+    systemd.user.services = {
+      nm-applet.unitConfig.ConditionEnvironment = "!XDG_CURRENT_DESKTOP=GNOME";
+    };
     services = {
       gnome.gnome-browser-connector.enable = true;
       displayManager.gdm.enable = true;
@@ -89,6 +95,18 @@ in
           lib.filter (u: (userData.users.${u}.normalUser or false)) (config.userNames or [ ])
         )
         (username: {
+          # Cinnamon enables Blueman system-wide. Limit its XDG autostart
+          # entry to XFCE so GNOME's built-in Bluetooth menu is the only tray
+          # indicator in GNOME sessions.
+          xdg.configFile."autostart/blueman.desktop".text = ''
+            [Desktop Entry]
+            Type=Application
+            Name=Blueman Applet
+            Exec=blueman-applet
+            Terminal=false
+            NoDisplay=true
+            OnlyShowIn=XFCE;
+          '';
           dconf = lib.mkIf config.services.desktopManager.gnome.enable {
             enable = true;
             settings."org/gnome/shell" = {
