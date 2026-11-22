@@ -10,6 +10,15 @@
   # There is an SSD
   ssd.enable = true;
 
+  boot.loader.grub.extraEntries = ''
+    menuentry "Omarchy" {
+      insmod part_gpt
+      insmod fat
+      search --no-floppy --fs-uuid --set=root 1C71-3185
+      chainloader /EFI/limine/limine_x64.efi
+    }
+  '';
+
   # Filesystems
   swapDevices = [
     {
