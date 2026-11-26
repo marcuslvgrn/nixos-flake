@@ -57,14 +57,16 @@ Every directory in `hosts/` is treated as a host. It must include `configuration
   # Optional; each defaults to defaultPkgChannel:
   homeManagerChannel = "stable";
   nixvimChannel = "unstable";
-  # Optional; defaults to "stable":
+  # Optional; selects the zicochaos/omarchy-nix input, defaults to "stable":
   omarchyChannel = "stable";
+  # Optional; defaults to "release" for stable nixpkgs, "edge" for unstable:
+  nixarchyChannel = "release"; # or "edge"
 }
 ```
 
 `defaultPkgChannel` chooses the main nixpkgs set, and also selects the corresponding NixOS library and kernel policy (unstable hosts use `linuxPackages_latest`). Home Manager and Nixvim can override their channel independently. Both package sets are passed to modules, so an individual module can deliberately choose stable or unstable packages.
 
-`omarchyChannel` selects the Omarchy Nix flake input and defaults to `stable`, independently of `defaultPkgChannel`.
+`omarchyChannel` selects the `zicochaos/omarchy-nix` input and defaults to `stable`, independently of `defaultPkgChannel`. `nixarchyChannel` selects the `release` or `edge` input for `olafkfreund/nixarchy`, defaulting to `release` with stable nixpkgs and `edge` with unstable nixpkgs. To enable Nixarchy, set `programs.nixarchy.enable = true;` in that host's `configuration.nix`. Its release channel follows stable Home Manager and its edge channel follows unstable Home Manager, so keep `homeManagerChannel` aligned. A host should enable only one (`omarchy.enable` or `programs.nixarchy.enable`).
 
 Omarchy's update and package-management commands use `omarchy.nixFlakePath` to find this consumer flake. It defaults to the first configured non-root user's `$HOME/git/nixos-flake`; override it in the host configuration if the checkout is elsewhere. The value may be the flake directory or the path to its `flake.nix` file.
 

@@ -28,6 +28,23 @@
       url = "github:zicochaos/omarchy-nix";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    # Upstream Omarchy vendored for NixOS by Nixarchy.
+    nixarchy-release = {
+      url = "github:olafkfreund/nixarchy/release";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+      inputs.home-manager-stable.follows = "home-manager";
+      inputs.nix-flatpak.follows = "nix-flatpak";
+      inputs.sops-nix.follows = "sops-nix";
+    };
+    nixarchy-edge = {
+      url = "github:olafkfreund/nixarchy/edge";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.home-manager.follows = "home-manager-unstable";
+      inputs.home-manager-stable.follows = "home-manager";
+      inputs.nix-flatpak.follows = "nix-flatpak";
+      inputs.sops-nix.follows = "sops-nix";
+    };
     #Disk partitioning
     disko = {
       url = "github:nix-community/disko";
@@ -112,6 +129,20 @@
           homeManagerChannel = resolveChannel "homeManagerChannel" defaultPkgChannel false;
           nixvimChannel = resolveChannel "nixvimChannel" defaultPkgChannel false;
           omarchyChannel = resolveChannel "omarchyChannel" "stable" false;
+          nixarchyChannel =
+            let
+              defaultNixarchyChannel = if defaultPkgChannel == "stable" then "release" else "edge";
+              channel = hostSettings.nixarchyChannel or defaultNixarchyChannel;
+            in
+            if
+              builtins.elem channel [
+                "release"
+                "edge"
+              ]
+            then
+              channel
+            else
+              builtins.throw "hosts/${hostname}/hostSettings.nix nixarchyChannel must be \"release\" or \"edge\"";
         in
         hostSettings
         // {
@@ -122,6 +153,7 @@
             homeManagerChannel
             nixvimChannel
             omarchyChannel
+            nixarchyChannel
             ;
           system = "x86_64-linux";
           nixosModulePath = checkedNixosModulePath;
@@ -153,7 +185,6 @@
           pkgs-unstable = mkPkgs inputs.nixpkgs-unstable hostSettings overlays;
           # This is the chosen nixpkg based on configuration
           useStable = hostSettings.defaultPkgChannel == "stable";
-          pkgs = if useStable then pkgs-stable else pkgs-unstable;
           #For choosing the correct input libs based on configuration
           inputLib = if useStable then inputs.nixpkgs.lib else inputs.nixpkgs-unstable.lib;
           homeManagerInput =
@@ -166,8 +197,14 @@
         {
           name = hostSettings.hostname;
           value = inputLib.nixosSystem {
-            inherit pkgs;
+            system = hostSettings.system;
             modules = [
+              {
+                nixpkgs = {
+                  config.allowUnfree = true;
+                  inherit overlays;
+                };
+              }
               #load default.nix in the modules directory, will import all modules
               ./modules
               #load the correct home-manager module depending on configuration

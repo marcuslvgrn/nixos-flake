@@ -19,7 +19,9 @@ in
 
   options.omarchy.nixFlakePath = lib.mkOption {
     type = lib.types.str;
-    default = "${config.users.homeBaseDir or "/home"}/${builtins.head (lib.filter (username: username != "root") config.userNames)}/git/nixos-flake";
+    default = "${config.users.homeBaseDir or "/home"}/${
+      builtins.head (lib.filter (username: username != "root") config.userNames)
+    }/git/nixos-flake";
     description = "Path to this consumer flake for Omarchy's NixOS package and update commands.";
   };
 
@@ -33,21 +35,25 @@ in
       # Omarchy's graphical-session units otherwise also start in GNOME.
       # Keep them available in a Hyprland/Omarchy session, but skip them in
       # other desktop sessions.
-      systemd.user.services = lib.genAttrs [
-        "bt-agent"
-        "omarchy-fcitx5"
-        "omarchy-migrate-notify"
-        "omarchy-migrate"
-        "omarchy-sleep-lock"
-        "omarchy-recover-internal-monitor"
-        "omarchy-crash-watch"
-        "owed"
-        "omarchy-tailscale-receive"
-      ] (_: {
-        unitConfig.ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
-      }) // {
-        "app-ibus\\x2ddaemon@autostart".enable = false;
-      };
+      systemd.user.services =
+        lib.genAttrs
+          [
+            "bt-agent"
+            "omarchy-fcitx5"
+            "omarchy-migrate-notify"
+            "omarchy-migrate"
+            "omarchy-sleep-lock"
+            "omarchy-recover-internal-monitor"
+            "omarchy-crash-watch"
+            "owed"
+            "omarchy-tailscale-receive"
+          ]
+          (_: {
+            unitConfig.ConditionEnvironment = "XDG_CURRENT_DESKTOP=Hyprland";
+          })
+        // {
+          "app-ibus\\x2ddaemon@autostart".enable = false;
+        };
 
       environment.sessionVariables.NIXOS_OZONE_WL = "1";
       # Quickshell is pinned to Qt 6.11 while the system Qt is newer. Put its
@@ -71,7 +77,7 @@ in
       };
       # Keep GNOME's GDM as the sole display manager; the Omarchy shell does not
       # depend on SDDM or its greeter theme.
-      services.displayManager.sddm.enable = false;
+      services.displayManager.sddm.enable = lib.mkForce false;
       # GNOME and Omarchy provide different Nautilus extension paths. Follow
       # GNOME's store-backed path so its extensions remain discoverable.
       environment.sessionVariables.NAUTILUS_4_EXTENSION_DIR = lib.mkForce (

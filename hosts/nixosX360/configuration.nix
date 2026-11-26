@@ -13,6 +13,7 @@ with lib;
 {
   imports = [
     ./hw.nix
+    ./nixarchy-apps.nix
   ];
 
   programs.wakezilla.tray.enable = true;
@@ -29,9 +30,10 @@ with lib;
   # Plasma and XFCE suggest different graphical pinentry packages.
   programs.gnupg.agent.pinentryPackage = pkgs.pinentry-qt;
   omarchy = {
-    enable = true;
+    enable = false;
     plymouth.enable = false;
   };
+  programs.nixarchy.enable = true;
 
   ai-tools.cli.enable = true;
   ai-tools.gui.enable = true;
